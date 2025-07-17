@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom color palette for WiFi billing system */
+  --color-primary-50: oklch(0.98 0.02 200);
+  --color-primary-100: oklch(0.95 0.05 200);
+  --color-primary-200: oklch(0.89 0.1 200);
+  --color-primary-300: oklch(0.83 0.15 200);
+  --color-primary-400: oklch(0.76 0.2 200);
+  --color-primary-500: oklch(0.65 0.25 200);
+  --color-primary-600: oklch(0.55 0.22 200);
+  --color-primary-700: oklch(0.45 0.18 200);
+  --color-primary-800: oklch(0.35 0.14 200);
+  --color-primary-900: oklch(0.25 0.1 200);
+
+  --color-success-50: oklch(0.98 0.02 120);
+  --color-success-100: oklch(0.95 0.05 120);
+  --color-success-500: oklch(0.65 0.15 120);
+  --color-success-600: oklch(0.55 0.12 120);
+
+  --color-danger-50: oklch(0.98 0.02 20);
+  --color-danger-100: oklch(0.95 0.05 20);
+  --color-danger-500: oklch(0.65 0.15 20);
+  --color-danger-600: oklch(0.55 0.12 20);
+
+  --color-warning-50: oklch(0.98 0.02 60);
+  --color-warning-100: oklch(0.95 0.05 60);
+  --color-warning-500: oklch(0.75 0.15 60);
+  --color-warning-600: oklch(0.65 0.12 60);
+
+  /* Custom gradients */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-700)
+  );
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--color-success-500),
+    var(--color-success-600)
+  );
+  --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  /* Custom shadows */
+  --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.3);
+  --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  /* Custom animations */
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-bounce-slow: bounce 2s infinite;
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+
+  /* Custom fonts */
+  --font-brand: "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", Consolas, monospace;
+}
+
+/* Custom utility classes */
+@utility glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@utility glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility gradient-primary {
+  background: var(--gradient-primary);
+}
+
+@utility gradient-success {
+  background: var(--gradient-success);
+}
+
+@utility gradient-hero {
+  background: var(--gradient-hero);
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility shadow-float {
+  box-shadow: var(--shadow-float);
+}
+
+@utility text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-400)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@utility animate-fade-in {
+  animation: var(--animate-fade-in);
+}
+
+@utility animate-slide-up {
+  animation: var(--animate-slide-up);
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-primary-600 font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border border-primary-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-float;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .plan-card {
+    @apply bg-white rounded-2xl p-6 shadow-card hover:shadow-float transition-all duration-300 border-2 border-transparent hover:border-primary-200 cursor-pointer;
+  }
+
+  .plan-card.selected {
+    @apply border-primary-500 bg-primary-50;
+  }
+}
+
+/* Responsive text scaling */
+@utility text-responsive-sm {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+@utility text-responsive-base {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+}
+
+@utility text-responsive-lg {
+  font-size: clamp(1.125rem, 3vw, 1.25rem);
+}
+
+@utility text-responsive-xl {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+}
+
+@utility text-responsive-2xl {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+@utility text-responsive-3xl {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
