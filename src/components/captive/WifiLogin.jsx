@@ -165,7 +165,7 @@ export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
 
         {/* Customer Support Section */}
         <div className="mt-8 mb-2 flex flex-col items-center justify-center">
-          <div className="glass backdrop-blur-md border border-white/20 rounded-xl w-full lg:w-fit px-5 md:px-8 py-4 shadow-lg bg-white/10 hover:bg-white/15 transition-all duration-300">
+          <div className="glass backdrop-blur-md border border-white/20 rounded-xl w-full lg:w-fit px-4 md:px-8 py-4 shadow-lg bg-white/10 hover:bg-white/15 transition-all duration-300">
             <p className="text-gray-600 text-sm font-medium mb-3 text-center">
               Need help? Contact our support team
             </p>
