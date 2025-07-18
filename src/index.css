@@ -67,6 +67,7 @@ body {
   /* Custom fonts */
   --font-brand: "Outfit", system-ui, sans-serif;
   --font-mono: "Fira Code", Consolas, monospace;
+  --font-lexend: "Lexend", system-ui, sans-serif;
 }
 
 /* Custom utility classes */
@@ -171,7 +172,7 @@ body {
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-float;
+    @apply bg-white rounded-2xl shadow-card p-4 md:p-6 transition-all duration-300 hover:shadow-float;
   }
 
   .input-field {
