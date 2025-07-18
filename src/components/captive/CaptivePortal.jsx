@@ -24,7 +24,7 @@ const demoPlans = [
     features: [
       "High Speed Internet Access",
       "HD Video Streaming",
-      "Youtube, Tiktok, Social Media Browsing",
+      "Youtube, Tiktok, Social Media, Browsing",
     ],
   },
   {
