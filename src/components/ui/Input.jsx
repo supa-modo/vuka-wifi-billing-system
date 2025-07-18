@@ -14,19 +14,19 @@ export const Input = ({
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-secondary-600 mb-2">
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-400">{icon}</span>
+            <span className="text-gray-500">{icon}</span>
           </div>
         )}
         <input
           type={type}
-          className={`${inputClasses} ${icon ? "pl-10" : ""}`}
+          className={`${inputClasses} ${icon ? "pl-11" : ""}`}
           {...props}
         />
       </div>

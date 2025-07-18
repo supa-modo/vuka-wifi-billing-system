@@ -3,6 +3,10 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Card, CardContent } from "../ui/Card";
 import { WifiIcon, AlertIcon } from "../ui/Icons";
+import { TbAlertTriangle, TbShieldLock, TbMailFilled } from "react-icons/tb";
+import { FcWiFiLogo } from "react-icons/fc";
+import { LuLogIn } from "react-icons/lu";
+import { PiPasswordDuotone } from "react-icons/pi";
 
 export const AdminLogin = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({
@@ -53,34 +57,37 @@ export const AdminLogin = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-primary-100 to-primary-200 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-md lg:max-w-lg">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-full mb-4">
-            <WifiIcon size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="flex flex-col items-center justify-center text-center mb-3 md:mb-4 lg:mb-5">
+          <FcWiFiLogo size={80} className="text-white" />
+
+          <h1 className="text-2xl lg:text-3xl font-bold text-primary-600 mb-1 md:mb-2 lg:mb-3">
             VukaWiFi Admin
           </h1>
-          <p className="text-gray-600">
-            Sign in to manage your WiFi billing system
+          <p className="text-primary-500 text-[0.9rem] lg:text-base max-w-sm mx-auto">
+            Secure admin access to your WiFi billing system
           </p>
         </div>
 
-        <Card>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-danger-50 border border-danger-200 rounded-lg p-4 flex items-center">
-                  <AlertIcon
-                    size={20}
-                    className="text-danger-500 mr-3 flex-shrink-0"
-                  />
-                  <span className="text-danger-700 text-sm">{error}</span>
+        <div className="glass backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 lg:p-8 shadow-xl">
+          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-5">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl py-2 px-3 lg:px-4 lg:py-3 flex items-start space-x-3 animate-fade-in">
+                <TbAlertTriangle
+                  size={20}
+                  className="text-red-500 mt-0.5 flex-shrink-0"
+                />
+                <div>
+                  <span className="text-red-600 text-sm font-medium">
+                    {error}
+                  </span>
                 </div>
-              )}
+              </div>
+            )}
 
+            <div className="space-y-3 lg:space-y-4">
               <Input
                 label="Email Address"
                 type="email"
@@ -88,6 +95,8 @@ export const AdminLogin = ({ onLogin }) => {
                 value={credentials.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 disabled={isLoading}
+                className="text-base focus:outline-none"
+                icon={<TbMailFilled size={20} />}
               />
 
               <Input
@@ -97,44 +106,62 @@ export const AdminLogin = ({ onLogin }) => {
                 value={credentials.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 disabled={isLoading}
+                className="text-base focus:outline-none"
+                icon={<PiPasswordDuotone size={20} />}
               />
+            </div>
 
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                    Signing in...
-                  </div>
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Demo Credentials */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">
-            Demo Credentials:
-          </h3>
-          <div className="text-sm text-blue-700 space-y-1">
-            <p>
-              <strong>Email:</strong> admin@vukawifi.com
-            </p>
-            <p>
-              <strong>Password:</strong> admin123
-            </p>
-          </div>
+            <Button
+              type="submit"
+              variant="gradient"
+              size="lg"
+              className="w-full h-12 font-semibold shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3"></div>
+                  <span>Signing in...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  <LuLogIn size={20} className="mr-2" />
+                  <span className="text-[0.9rem] lg:text-base">
+                    Sign In to Dashboard
+                  </span>
+                </div>
+              )}
+            </Button>
+          </form>
         </div>
 
-        <div className="mt-8 text-center text-xs text-gray-500">
-          <p>&copy; 2025 VukaWiFi. All rights reserved.</p>
+        {/* Demo Credentials */}
+        {/* <div className="mt-6 lg:mt-8 p-4 lg:p-5 glass backdrop-blur-md border border-white/20 rounded-xl shadow-sm">
+          <div className="text-sm text-white/90 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Email:</span>
+              <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs border border-white/20">
+                admin@vukawifi.com
+              </code>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Password:</span>
+              <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs border border-white/20">
+                admin123
+              </code>
+            </div>
+          </div>
+          <p className="text-xs text-white/70 mt-3 italic">
+            Use these credentials to access the demo admin dashboard
+          </p>
+        </div> */}
+
+        {/* Footer */}
+        <div className="mt-8 lg:mt-10 text-center">
+          <div className="text-xs text-white/60 space-y-1">
+            <p>&copy; 2025 VukaWiFi. All rights reserved.</p>
+            <p className="text-white/50">Secure • Reliable • Fast</p>
+          </div>
         </div>
       </div>
     </div>

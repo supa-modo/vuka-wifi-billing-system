@@ -63,7 +63,7 @@ const demoPlans = [
   },
 ];
 
-export const CaptivePortal = () => {
+export const CaptivePortal = ({ onNavigateToAdmin }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -281,6 +281,16 @@ export const CaptivePortal = () => {
 
   return (
     <div className="min-h-screen gradient-hero">
+      {/* Admin Navigation Button */}
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={onNavigateToAdmin}
+          className="bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur transition-colors text-sm font-medium"
+        >
+          Admin Login
+        </button>
+      </div>
+
       {/* Header */}
       <div className="text-center pt-12 pb-8 px-4">
         <div className="animate-float mb-6">
@@ -290,8 +300,8 @@ export const CaptivePortal = () => {
           Welcome to VukaWiFi
         </h1>
         <p className="text-responsive-lg text-white/90 max-w-3xl mx-auto">
-          Get instant high speed internet access with our flexible plans. Pay with M-Pesa
-          and connect immediately!
+          Get instant high speed internet access with our flexible plans. Pay
+          with M-Pesa and connect immediately!
         </p>
       </div>
 

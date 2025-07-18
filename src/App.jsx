@@ -1,128 +1,124 @@
-import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { useState, useEffect } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
-import { Button } from "./components/ui/Button";
 
-function App() {
-  const [currentApp, setCurrentApp] = useState("selector"); // 'selector', 'captive', 'admin'
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const adminUser = JSON.parse(localStorage.getItem("adminUser"));
+
+  if (!adminUser) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return children;
+};
+
+// Admin Login Component with Navigation
+const AdminLoginPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleAdminLogin = (user) => {
+    localStorage.setItem("adminUser", JSON.stringify(user));
+    navigate("/admin/dashboard");
+  };
+
+  return (
+    <div>
+      {/* Back to Captive Portal */}
+      <div className="absolute top-4 left-4 z-50">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur transition-colors"
+        >
+          ← Back to WiFi Portal
+        </button>
+      </div>
+      <AdminLogin onLogin={handleAdminLogin} />
+    </div>
+  );
+};
+
+// Admin Dashboard Component with Navigation
+const AdminDashboardPage = () => {
+  const navigate = useNavigate();
   const [adminUser, setAdminUser] = useState(null);
   const [currentAdminView, setCurrentAdminView] = useState("dashboard");
 
-  const handleAdminLogin = (user) => {
-    setAdminUser(user);
-    setCurrentApp("admin");
-  };
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("adminUser"));
+    if (user) {
+      setAdminUser(user);
+    }
+  }, []);
 
   const handleAdminLogout = () => {
+    localStorage.removeItem("adminUser");
     setAdminUser(null);
-    setCurrentApp("selector");
-    setCurrentAdminView("dashboard");
+    navigate("/");
   };
 
   const handleViewChange = (view) => {
     setCurrentAdminView(view);
   };
 
-  // App Selector (for demo purposes)
-  if (currentApp === "selector") {
-    return (
-      <div className="min-h-screen gradient-hero flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-responsive-3xl font-bold text-white mb-4">
-            VukaWiFi Demo
-          </h1>
-          <p className="text-responsive-lg text-white/90 mb-8 max-w-2xl">
-            Choose which interface you'd like to view:
-          </p>
-
-          <div className="space-y-4 max-w-md mx-auto">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full"
-              onClick={() => setCurrentApp("captive")}
-            >
-              Customer Portal
-              <span className="block text-sm opacity-75">
-                WiFi Plans & Payment
-              </span>
-            </Button>
-
-            <Button
-              variant="gradient"
-              size="lg"
-              className="w-full"
-              onClick={() => setCurrentApp("admin")}
-            >
-              Admin Dashboard
-              <span className="block text-sm opacity-75">
-                System Management
-              </span>
-            </Button>
-          </div>
-
-          <div className="mt-8 text-white/70 text-sm">
-            <p>This is a demo of the WiFi billing system</p>
-            <p>Both interfaces are fully functional with demo data</p>
-          </div>
-        </div>
-      </div>
-    );
+  if (!adminUser) {
+    return <Navigate to="/admin" replace />;
   }
 
-  // Captive Portal
-  if (currentApp === "captive") {
-    return (
-      <div>
-        {/* Back to Demo Selector */}
-        <div className="absolute top-4 left-4 z-50">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setCurrentApp("selector")}
-            className="bg-white/10 text-white hover:bg-white/20 backdrop-blur"
-          >
-            ← Back to Demo
-          </Button>
-        </div>
-        <CaptivePortal />
-      </div>
-    );
-  }
+  return (
+    <AdminDashboard
+      user={adminUser}
+      onLogout={handleAdminLogout}
+      currentView={currentAdminView}
+      onViewChange={handleViewChange}
+    />
+  );
+};
 
-  // Admin Dashboard
-  if (currentApp === "admin") {
-    if (!adminUser) {
-      return (
-        <div>
-          {/* Back to Demo Selector */}
-          <div className="absolute top-4 left-4 z-50">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentApp("selector")}
-              className="bg-white/10 text-gray-600 hover:bg-gray-100"
-            >
-              ← Back to Demo
-            </Button>
-          </div>
-          <AdminLogin onLogin={handleAdminLogin} />
-        </div>
-      );
-    }
+// Captive Portal Component with Navigation
+const CaptivePortalPage = () => {
+  const navigate = useNavigate();
 
-    return (
-      <AdminDashboard
-        user={adminUser}
-        onLogout={handleAdminLogout}
-        currentView={currentAdminView}
-        onViewChange={handleViewChange}
-      />
-    );
-  }
+  const handleNavigateToAdmin = () => {
+    navigate("/admin");
+  };
 
-  return null;
+  return <CaptivePortal onNavigateToAdmin={handleNavigateToAdmin} />;
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Root route - Captive Portal */}
+        <Route path="/" element={<CaptivePortalPage />} />
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all route - redirect to root */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

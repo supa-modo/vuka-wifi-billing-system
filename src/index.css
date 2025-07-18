@@ -1,17 +1,33 @@
 @import "tailwindcss";
 
+body {
+  font-family: "Outfit", system-ui, sans-serif;
+}
+
 @theme {
-  /* Custom color palette for WiFi billing system */
-  --color-primary-50: oklch(0.98 0.02 200);
-  --color-primary-100: oklch(0.95 0.05 200);
-  --color-primary-200: oklch(0.89 0.1 200);
-  --color-primary-300: oklch(0.83 0.15 200);
-  --color-primary-400: oklch(0.76 0.2 200);
-  --color-primary-500: oklch(0.65 0.25 200);
-  --color-primary-600: oklch(0.55 0.22 200);
-  --color-primary-700: oklch(0.45 0.18 200);
-  --color-primary-800: oklch(0.35 0.14 200);
-  --color-primary-900: oklch(0.25 0.1 200);
+  /* Custom color palette for WiFi billing system - Purple theme */
+  --color-primary-50: oklch(0.98 0.02 280);
+  --color-primary-100: oklch(0.95 0.05 280);
+  --color-primary-200: oklch(0.89 0.1 280);
+  --color-primary-300: oklch(0.83 0.15 280);
+  --color-primary-400: oklch(0.76 0.2 280);
+  --color-primary-500: oklch(0.65 0.25 280);
+  --color-primary-600: oklch(0.55 0.22 280);
+  --color-primary-700: oklch(0.45 0.18 280);
+  --color-primary-800: oklch(0.35 0.14 280);
+  --color-primary-900: oklch(0.25 0.1 280);
+
+  /* Secondary color palette based on amber-600 theme */
+  --color-secondary-50: oklch(0.98 0.02 60);
+  --color-secondary-100: oklch(0.95 0.05 60);
+  --color-secondary-200: oklch(0.89 0.1 60);
+  --color-secondary-300: oklch(0.83 0.15 60);
+  --color-secondary-400: oklch(0.76 0.2 60);
+  --color-secondary-500: oklch(0.65 0.25 60);
+  --color-secondary-600: oklch(0.55 0.22 60);
+  --color-secondary-700: oklch(0.45 0.18 60);
+  --color-secondary-800: oklch(0.35 0.14 60);
+  --color-secondary-900: oklch(0.25 0.1 60);
 
   --color-success-50: oklch(0.98 0.02 120);
   --color-success-100: oklch(0.95 0.05 120);
@@ -29,11 +45,7 @@
   --color-warning-600: oklch(0.65 0.12 60);
 
   /* Custom gradients */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--color-primary-500),
-    var(--color-primary-700)
-  );
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-success: linear-gradient(
     135deg,
     var(--color-success-500),
@@ -53,7 +65,7 @@
   --animate-slide-up: slideUp 0.5s ease-out;
 
   /* Custom fonts */
-  --font-brand: "Inter", system-ui, sans-serif;
+  --font-brand: "Outfit", system-ui, sans-serif;
   --font-mono: "Fira Code", Consolas, monospace;
 }
 
