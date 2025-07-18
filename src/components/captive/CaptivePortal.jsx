@@ -14,7 +14,7 @@ import {
   TbChevronRight,
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
-import { FaChevronRight, FaCreditCard } from "react-icons/fa";
+import { FaChevronRight, FaCreditCard, FaMinus, FaPlus } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 
 // Demo data for plans
@@ -84,6 +84,14 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
   const [paymentStep, setPaymentStep] = useState("plans"); // 'plans', 'payment', 'processing', 'success'
   const navigate = useNavigate();
   const location = useLocation();
+  const [deviceCounts, setDeviceCounts] = useState(() => {
+    // Default: 1 device per plan
+    const counts = {};
+    demoPlans.forEach((plan) => {
+      counts[plan.id] = 1;
+    });
+    return counts;
+  });
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
@@ -121,6 +129,14 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
       return "254" + cleaned;
     }
     return cleaned;
+  };
+
+  // Helper to get price for a plan and device count
+  const getPlanPrice = (plan, count) => {
+    // Example: each extra device is +60% of base price (customize as needed)
+    if (count <= 1) return plan.price;
+    // e.g. 2 devices = 1.6x, 3 devices = 2.2x, 4 devices = 2.8x, etc.
+    return Math.round(plan.price * (1 + 0.6 * (count - 1)));
   };
 
   //   if (paymentStep === "processing") {
@@ -403,11 +419,45 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         {plan.name}
                       </h3>
                       <div className="text-3xl font-lexend font-extrabold text-primary-600 mb-1">
-                        Kshs. {plan.price}
+                        Kshs. {getPlanPrice(plan, deviceCounts[plan.id])}
                       </div>
-                      <p className="text-gray-500 font-medium text-sm">
-                        {plan.duration}
-                      </p>
+                      {/* Device controls */}
+                      <div className="flex items-center justify-center gap-1 mt-2">
+                        <button
+                          type="button"
+                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 shadow-md hover:bg-white/60 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
+                          onClick={() =>
+                            setDeviceCounts((prev) => ({
+                              ...prev,
+                              [plan.id]: Math.max(1, prev[plan.id] - 1),
+                            }))
+                          }
+                          disabled={deviceCounts[plan.id] <= 1}
+                          aria-label="Decrease devices"
+                        >
+                          <FaMinus size={16} />
+                        </button>
+                        <span className="font-semibold text-primary-700 text-base min-w-[80px] text-center">
+                          <span className="font-lexend">
+                            {deviceCounts[plan.id]}
+                          </span>{" "}
+                          device
+                          {deviceCounts[plan.id] > 1 ? "s" : ""}
+                        </span>
+                        <button
+                          type="button"
+                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 shadow-md hover:bg-white/60 text-secondary-500 font-bold text-lg transition-all duration-150"
+                          onClick={() =>
+                            setDeviceCounts((prev) => ({
+                              ...prev,
+                              [plan.id]: prev[plan.id] + 1,
+                            }))
+                          }
+                          aria-label="Increase devices"
+                        >
+                          <FaPlus size={16} />
+                        </button>
+                      </div>
                     </div>
                     <div className="mt-auto w-full">
                       <div className="space-y-2 pl-4 mb-3 md:mb-4 lg:mb-6">
@@ -456,10 +506,14 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     <div className="bg-primary-50 border border-primary-200 rounded-lg px-3.5 py-4 md:p-4 mb-4 md:mb-6">
                       <div className="flex justify-between items-center">
                         <div>
-                          <h3 className="font-lexend font-semibold text-primary-900">
-                            {selectedPlan.name}
+                          <h3 className="font-lexend font-semibold text-primary-700">
+                            {selectedPlan.name} -{" "}
+                            <span className="text-[0.9rem] md:text-base text-primary-600">
+                              {deviceCounts[selectedPlan.id]} device
+                              {deviceCounts[selectedPlan.id] > 1 ? "s" : ""}
+                            </span>
                           </h3>
-                          <p className="font-lexend font-medium text-[0.78rem] md:text-sm text-primary-700">
+                          <p className="font-lexend font-semibold text-[0.78rem] md:text-sm text-primary-600">
                             {selectedPlan.duration} •{" "}
                             <span className="text-gray-500">
                               Unlimited Internet
@@ -468,7 +522,11 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         </div>
                         <div className="text-right font-lexend">
                           <p className="text-[1.4rem] lg:text-3xl font-bold text-secondary-500">
-                            Kshs. {selectedPlan.price}
+                            Kshs.{" "}
+                            {getPlanPrice(
+                              selectedPlan,
+                              deviceCounts[selectedPlan.id]
+                            )}
                           </p>
                         </div>
                       </div>
@@ -504,7 +562,11 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         className="flex-1"
                       >
                         <FaCreditCard className="mr-2 w-4 h-4 md:w-5 md:h-5" />
-                        Pay Kshs. {selectedPlan?.price}
+                        Pay Kshs.{" "}
+                        {getPlanPrice(
+                          selectedPlan,
+                          deviceCounts[selectedPlan.id]
+                        )}
                         <FaChevronRight className="ml-2" />
                       </Button>
                     </div>
@@ -534,7 +596,11 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                   <p className="text-sm text-gray-600 font-medium">
                     Amount:
                     <span className="ml-2 text-secondary-600 font-semibold font-lexend">
-                      Kshs. {selectedPlan?.price}
+                      Kshs.{" "}
+                      {getPlanPrice(
+                        selectedPlan,
+                        deviceCounts[selectedPlan.id]
+                      )}
                     </span>{" "}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">
