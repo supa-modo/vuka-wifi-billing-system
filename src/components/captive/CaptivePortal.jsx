@@ -559,7 +559,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         variant="gradient"
                         onClick={handlePayment}
                         disabled={!phoneNumber || phoneNumber.length < 12}
-                        className="flex-1"
+                        className="flex-1 min-w-fit"
                       >
                         <FaCreditCard className="mr-2 w-4 h-4 md:w-5 md:h-5" />
                         Pay Kshs.{" "}
