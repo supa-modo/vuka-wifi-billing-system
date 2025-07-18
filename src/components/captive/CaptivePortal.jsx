@@ -425,7 +425,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                       <div className="flex items-center justify-center gap-1 mt-2">
                         <button
                           type="button"
-                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 shadow-md hover:bg-white/60 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
+                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
                           onClick={() =>
                             setDeviceCounts((prev) => ({
                               ...prev,
@@ -446,7 +446,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         </span>
                         <button
                           type="button"
-                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 shadow-md hover:bg-white/60 text-secondary-500 font-bold text-lg transition-all duration-150"
+                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg transition-all duration-150"
                           onClick={() =>
                             setDeviceCounts((prev) => ({
                               ...prev,
