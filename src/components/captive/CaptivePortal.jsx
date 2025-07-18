@@ -687,7 +687,8 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
               href="#"
               className="hover:underline hover:text-secondary-300 transition-colors"
             >
-              Terms &amp; Conditions
+              {/* Terms &amp; Conditions */}
+              FAQs
             </a>
           </div>
         </div>
