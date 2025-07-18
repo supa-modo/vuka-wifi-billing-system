@@ -6,7 +6,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
@@ -23,47 +23,26 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // Admin Login Component with Navigation
-const AdminLoginPage = () => {
+const AdminLoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const handleAdminLogin = (user) => {
     localStorage.setItem("adminUser", JSON.stringify(user));
+    onLogin();
     navigate("/admin/dashboard");
   };
-
-  return (
-    <div>
-      {/* Back to Captive Portal */}
-      <div className="absolute top-4 left-4 z-50">
-        <button
-          onClick={() => navigate("/")}
-          className="bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur transition-colors"
-        >
-          ← Back to WiFi Portal
-        </button>
-      </div>
-      <AdminLogin onLogin={handleAdminLogin} />
-    </div>
-  );
+  const handleBack = () => navigate("/");
+  return <AdminLogin onLogin={handleAdminLogin} onBack={handleBack} />;
 };
 
 // Admin Dashboard Component with Navigation
-const AdminDashboardPage = () => {
+const AdminDashboardPage = ({ onLogout }) => {
   const navigate = useNavigate();
-  const [adminUser, setAdminUser] = useState(null);
+  const adminUser = JSON.parse(localStorage.getItem("adminUser"));
   const [currentAdminView, setCurrentAdminView] = useState("dashboard");
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("adminUser"));
-    if (user) {
-      setAdminUser(user);
-    }
-  }, []);
 
   const handleAdminLogout = () => {
     localStorage.removeItem("adminUser");
-    setAdminUser(null);
+    onLogout();
     navigate("/");
   };
 
@@ -97,6 +76,13 @@ const CaptivePortalPage = () => {
 };
 
 function App() {
+  // This state is used to force a re-render on login/logout
+  const [authChanged, setAuthChanged] = useState(0);
+
+  const handleAuthChange = () => {
+    setAuthChanged((c) => c + 1);
+  };
+
   return (
     <Router>
       <Routes>
@@ -104,12 +90,15 @@ function App() {
         <Route path="/" element={<CaptivePortalPage />} />
 
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route
+          path="/admin"
+          element={<AdminLoginPage onLogin={handleAuthChange} />}
+        />
         <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoute>
-              <AdminDashboardPage />
+              <AdminDashboardPage onLogout={handleAuthChange} />
             </ProtectedRoute>
           }
         />

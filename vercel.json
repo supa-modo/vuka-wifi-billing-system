@@ -1,0 +1,29 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "vite",
+  "redirects": [
+    {
+      "source": "/webmail",
+      "destination": "https://webmail.lako.co.ke",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "lako.co.ke"
+        }
+      ],
+      "destination": "https://www.lako.co.ke",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

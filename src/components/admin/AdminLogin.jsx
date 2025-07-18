@@ -3,12 +3,17 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Card, CardContent } from "../ui/Card";
 import { WifiIcon, AlertIcon } from "../ui/Icons";
-import { TbAlertTriangle, TbShieldLock, TbMailFilled } from "react-icons/tb";
+import {
+  TbAlertTriangle,
+  TbShieldLock,
+  TbMailFilled,
+  TbArrowBack,
+} from "react-icons/tb";
 import { FcWiFiLogo } from "react-icons/fc";
 import { LuLogIn } from "react-icons/lu";
 import { PiPasswordDuotone } from "react-icons/pi";
 
-export const AdminLogin = ({ onLogin }) => {
+export const AdminLogin = ({ onLogin, onBack }) => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -57,21 +62,20 @@ export const AdminLogin = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-primary-100 to-primary-200 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md lg:max-w-lg">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-primary-100 to-primary-200 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-md lg:max-w-lg flex flex-col flex-grow justify-center">
         {/* Logo and Title */}
         <div className="flex flex-col items-center justify-center text-center mb-3 md:mb-4 lg:mb-5">
           <FcWiFiLogo size={80} className="text-white" />
-
           <h1 className="text-2xl lg:text-3xl font-bold text-primary-600 mb-1 md:mb-2 lg:mb-3">
             VukaWiFi Admin
           </h1>
-          <p className="text-primary-500 text-[0.9rem] lg:text-base max-w-sm mx-auto">
-            Secure admin access to your WiFi billing system
+          <p className="text-primary-500 text-[0.9rem] lg:text-base max-w-md font-medium mx-auto">
+            Secure administrator access to VukaWiFi billing system
           </p>
         </div>
 
-        <div className="glass backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 lg:p-8 shadow-xl">
+        <div className="glass backdrop-blur-md border border-white/30 rounded-2xl p-4 md:p-6 lg:p-8 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-5">
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl py-2 px-3 lg:px-4 lg:py-3 flex items-start space-x-3 animate-fade-in">
@@ -135,35 +139,27 @@ export const AdminLogin = ({ onLogin }) => {
           </form>
         </div>
 
-        {/* Demo Credentials */}
-        {/* <div className="mt-6 lg:mt-8 p-4 lg:p-5 glass backdrop-blur-md border border-white/20 rounded-xl shadow-sm">
-          <div className="text-sm text-white/90 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium">Email:</span>
-              <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs border border-white/20">
-                admin@vukawifi.com
-              </code>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-medium">Password:</span>
-              <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs border border-white/20">
-                admin123
-              </code>
-            </div>
+        {/* Back to WiFi Portal Button */}
+        {onBack && (
+          <div className="flex justify-center mt-5 lg:mt-8">
+            <button
+              onClick={onBack}
+              className="flex items-center justify-center underline underline-offset-4 hover:cursor-pointer text-primary-700 transition-colors font-medium text-sm"
+              type="button"
+            >
+              <TbArrowBack size={20} className="mr-2" />
+              Back to WiFi Portal
+            </button>
           </div>
-          <p className="text-xs text-white/70 mt-3 italic">
-            Use these credentials to access the demo admin dashboard
-          </p>
-        </div> */}
-
-        {/* Footer */}
-        <div className="mt-8 lg:mt-10 text-center">
-          <div className="text-xs text-white/60 space-y-1">
-            <p>&copy; 2025 VukaWiFi. All rights reserved.</p>
-            <p className="text-white/50">Secure • Reliable • Fast</p>
-          </div>
-        </div>
+        )}
       </div>
+      {/* Sticky Footer */}
+      <footer className="w-full max-w-md lg:max-w-lg mx-auto mt-8 lg:mt-10 text-center pb-2">
+        <div className="text-xs font-medium text-primary-600 space-y-1">
+          <p>&copy; 2025 VukaWiFi. All rights reserved.</p>
+          <p className="text-primary-600">Secure • Reliable • Fast</p>
+        </div>
+      </footer>
     </div>
   );
 };
