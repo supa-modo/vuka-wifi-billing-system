@@ -14,7 +14,7 @@ import {
   TbChevronRight,
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
-import { FaCreditCard } from "react-icons/fa";
+import { FaChevronRight, FaCreditCard } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 
 // Demo data for plans
@@ -478,7 +478,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     <Input
                       label="Phone Number"
                       type="tel"
-                      className="pl-[5.5rem] focus:outline-none placeholder:font-normal font-medium text-gray-700 font-lexend"
+                      className="pl-[5.5rem] tracking-wide focus:outline-none placeholder:font-normal font-medium text-gray-700 font-lexend"
                       maxLength={12}
                       placeholder="07XXXXXXXX"
                       value={phoneNumber}
@@ -503,8 +503,9 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         disabled={!phoneNumber || phoneNumber.length < 12}
                         className="flex-1"
                       >
-                        <FaCreditCard className="mr-2" />
+                        <FaCreditCard className="mr-2 w-4 h-4 md:w-5 md:h-5" />
                         Pay Kshs. {selectedPlan?.price}
+                        <FaChevronRight className="ml-2" />
                       </Button>
                     </div>
                   </div>
@@ -523,7 +524,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
             <div className="flex justify-center">
               <Card className="w-full max-w-xl text-center">
                 <div className="animate-spin w-12 h-12 border-4 border-secondary-200 border-t-secondary-500 rounded-full mx-auto mb-2 md:mb-4"></div>
-                <h2 className="text-2xl font-bold text-secondary-500 mb-2">
+                <h2 className="text-xl md:text-2xl font-bold text-secondary-500 mb-2">
                   Processing Payment
                 </h2>
                 <p className="text-gray-600 text-[0.9rem] md:text-[0.95rem] lg:text-base mb-2">
@@ -562,14 +563,14 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                 <div className="flex justify-center mx-auto mb-2 mt-3">
                   <FiCheckCircle className="text-success-600 w-12 h-12" />
                 </div>
-                <h2 className="text-2xl font-bold text-success-600 mb-3">
+                <h2 className="text-xl md:text-2xl font-bold text-success-600 mb-3">
                   Payment Successful!
                 </h2>
                 <p className="text-gray-600 text-[0.9rem] md:text-[0.95rem] lg:text-base mb-4">
                   Your WiFi login credentials have also been sent to your phone
-                  via SMS
+                  via SMS. Keep this info. safe
                 </p>
-                <div className="bg-success-50/40 border border-success-200 rounded-lg p-6 mb-3 md:mb-4">
+                <div className="bg-success-50/40 border border-success-200 rounded-lg py-4 px-6 mb-3 md:mb-4">
                   <h3 className="font-semibold text-success-800 mb-3">
                     WiFi Credentials (VukaWiFi_Guest)
                   </h3>
@@ -671,7 +672,10 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
               href="tel:+254790193402"
               className="hover:underline hover:text-secondary-300 transition-colors"
             >
-              Customer Support: <span className="ml-1 text-secondary-400 font-semibold">+254790193402</span>
+              Customer Support:{" "}
+              <span className="ml-1 text-secondary-400 font-semibold">
+                +254790193402
+              </span>
             </a>
             <a
               href="#"

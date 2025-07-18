@@ -4,6 +4,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { FcWiFiLogo } from "react-icons/fc";
 import {
+  TbAlertTriangle,
   TbArrowBack,
   TbArrowRight,
   TbChevronRight,
@@ -90,7 +91,7 @@ export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
           <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-5">
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl py-2 px-3 lg:px-4 lg:py-3 flex items-start space-x-3 animate-fade-in">
-                <TbArrowBack
+                <TbAlertTriangle
                   size={20}
                   className="text-red-500 mt-0.5 flex-shrink-0"
                 />
