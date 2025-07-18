@@ -436,13 +436,13 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
               <div className="flex justify-center">
                 <Card className="w-full max-w-xl">
                   {selectedPlan && (
-                    <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-6">
+                    <div className="bg-primary-50 border border-primary-200 rounded-lg px-3.5 py-4 md:p-4 mb-6">
                       <div className="flex justify-between items-center">
                         <div>
                           <h3 className="font-lexend font-semibold text-primary-900">
                             {selectedPlan.name}
                           </h3>
-                          <p className="font-lexend font-medium text-sm text-primary-700">
+                          <p className="font-lexend font-medium text-[0.78rem] md:text-sm text-primary-700">
                             {selectedPlan.duration} •{" "}
                             <span className="text-gray-500">
                               Unlimited Internet
@@ -450,7 +450,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                           </p>
                         </div>
                         <div className="text-right font-lexend">
-                          <p className="text-2xl lg:text-3xl font-bold text-secondary-500">
+                          <p className="text-[1.4rem] lg:text-3xl font-bold text-secondary-500">
                             Kshs. {selectedPlan.price}
                           </p>
                         </div>

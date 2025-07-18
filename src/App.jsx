@@ -10,7 +10,7 @@ import { useState } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
