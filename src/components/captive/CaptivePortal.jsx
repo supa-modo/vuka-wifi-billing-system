@@ -9,6 +9,7 @@ import { FcWiFiLogo } from "react-icons/fc";
 import MpesaIcon from "../ui/MpesaIcon";
 import { TbArrowLeft, TbArrowRight, TbChevronRight } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
+import { FaCreditCard } from "react-icons/fa";
 
 // Demo data for plans
 const demoPlans = [
@@ -436,7 +437,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
               <div className="flex justify-center">
                 <Card className="w-full max-w-xl">
                   {selectedPlan && (
-                    <div className="bg-primary-50 border border-primary-200 rounded-lg px-3.5 py-4 md:p-4 mb-6">
+                    <div className="bg-primary-50 border border-primary-200 rounded-lg px-3.5 py-4 md:p-4 mb-4 md:mb-6">
                       <div className="flex justify-between items-center">
                         <div>
                           <h3 className="font-lexend font-semibold text-primary-900">
@@ -486,6 +487,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         disabled={!phoneNumber || phoneNumber.length < 12}
                         className="flex-1"
                       >
+                        <FaCreditCard className="mr-2" />
                         Pay KSH {selectedPlan?.price}
                       </Button>
                     </div>
