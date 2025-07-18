@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Card } from "../ui/Card";
 import { WifiIcon, PhoneIcon, ClockIcon, CheckIcon } from "../ui/Icons";
-import { PiUserDuotone } from "react-icons/pi";
+import { PiChecksBold, PiUserDuotone } from "react-icons/pi";
 import { FcWiFiLogo } from "react-icons/fc";
 import MpesaIcon from "../ui/MpesaIcon";
-import { TbArrowRight, TbChevronRight } from "react-icons/tb";
+import { TbArrowLeft, TbArrowRight, TbChevronRight } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
 
 // Demo data for plans
@@ -74,6 +75,8 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState("plans"); // 'plans', 'payment', 'processing', 'success'
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
@@ -333,7 +336,16 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
       {/* Header */}
       <div className="text-center pt-12 pb-8">
         <div className="animate-float">
-          <FcWiFiLogo className="text-white mx-auto w-[5rem] h-[5rem] md:w-[6rem] md:h-[6rem] lg:w-28 lg:h-28" />
+          <FcWiFiLogo
+            className="text-white mx-auto w-[5rem] h-[5rem] md:w-[6rem] md:h-[6rem] lg:w-28 lg:h-28 cursor-pointer"
+            onClick={() => {
+              if (location.pathname === "/") {
+                window.location.reload();
+              } else {
+                navigate("/");
+              }
+            }}
+          />
         </div>
         <h1 className="text-responsive-2xl font-bold text-white mb-2 md:mb-3 lg:mb-4">
           Welcome to VukaWiFi
@@ -376,18 +388,20 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                       <div className="text-3xl font-lexend font-extrabold text-primary-600 mb-1">
                         Kshs. {plan.price}
                       </div>
-                      <p className="text-gray-600 text-sm">{plan.duration}</p>
+                      <p className="text-gray-500 font-medium text-sm">
+                        {plan.duration}
+                      </p>
                     </div>
                     <div className="mt-auto w-full">
-                      <div className="space-y-2 mb-3 md:mb-4 lg:mb-6">
+                      <div className="space-y-2 pl-4 mb-3 md:mb-4 lg:mb-6">
                         {plan.features.map((feature, index) => (
                           <div
                             key={index}
                             className="flex items-center text-sm"
                           >
-                            <CheckIcon
+                            <PiChecksBold
                               size={16}
-                              className="text-success-500 mr-2 flex-shrink-0"
+                              className="text-success-600 mr-2 flex-shrink-0"
                             />
                             <span className="text-gray-700">{feature}</span>
                           </div>
@@ -428,8 +442,11 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                           <h3 className="font-lexend font-semibold text-primary-900">
                             {selectedPlan.name}
                           </h3>
-                          <p className="font-lexend text-sm text-primary-700">
-                            {selectedPlan.duration} • {selectedPlan.dataLimit}
+                          <p className="font-lexend font-medium text-sm text-primary-700">
+                            {selectedPlan.duration} •{" "}
+                            <span className="text-gray-500">
+                              Unlimited Internet
+                            </span>
                           </p>
                         </div>
                         <div className="text-right font-lexend">
@@ -460,6 +477,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         onClick={() => setPaymentStep("plans")}
                         className="flex-1"
                       >
+                        <TbArrowLeft size={18} className="mr-2" />
                         Back
                       </Button>
                       <Button
@@ -588,26 +606,27 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div className="text-white">
-                <MpesaIcon
-                  variant="white"
-                  width={80}
-                  height={48}
-                  className="mx-auto mb-4 text-white/80"
-                />
-                <h3 className="text-lg font-semibold mb-2 text-secondary-400">
-                  Fast Secure Payments
-                </h3>
-                <p className="text-white/90 text-sm">
-                  Secure, fast and convenient mobile payment
-                </p>
-              </div>
-              <div className="text-white">
                 <ClockIcon size={48} className="mx-auto mb-4 text-white/80" />
                 <h3 className="text-lg font-semibold mb-2 text-secondary-400">
                   Instant Internet Access
                 </h3>
                 <p className="text-white/90 text-sm">
                   Connect immediately after payment
+                </p>
+              </div>
+
+              <div className="text-white">
+                <MpesaIcon
+                  variant="white"
+                  width={80}
+                  height={20}
+                  className="mx-auto mb-4 md:h-12 text-white/80"
+                />
+                <h3 className="text-lg font-semibold mb-2 text-secondary-400">
+                  Fast Secure Payments
+                </h3>
+                <p className="text-white/90 text-sm">
+                  Secure, fast and convenient mobile payment
                 </p>
               </div>
 

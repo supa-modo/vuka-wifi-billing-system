@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Card, CardContent } from "../ui/Card";
@@ -20,6 +21,9 @@ export const AdminLogin = ({ onLogin, onBack }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleInputChange = (field, value) => {
     setCredentials((prev) => ({
@@ -66,7 +70,17 @@ export const AdminLogin = ({ onLogin, onBack }) => {
       <div className="w-full max-w-md lg:max-w-lg flex flex-col flex-grow justify-center">
         {/* Logo and Title */}
         <div className="flex flex-col items-center justify-center text-center mb-3 md:mb-4 lg:mb-5">
-          <FcWiFiLogo size={80} className="text-white" />
+          <FcWiFiLogo
+            size={80}
+            className="text-white cursor-pointer"
+            onClick={() => {
+              if (location.pathname === "/") {
+                window.location.reload();
+              } else {
+                navigate("/");
+              }
+            }}
+          />
           <h1 className="text-2xl lg:text-3xl font-bold text-primary-600 mb-1 md:mb-2 lg:mb-3">
             VukaWiFi Admin
           </h1>
