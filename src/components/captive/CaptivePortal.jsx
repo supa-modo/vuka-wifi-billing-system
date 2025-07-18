@@ -506,14 +506,14 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     <div className="bg-primary-50 border border-primary-200 rounded-lg px-3.5 py-4 md:p-4 mb-4 md:mb-6">
                       <div className="flex justify-between items-center">
                         <div>
-                          <h3 className="font-lexend font-semibold text-primary-700">
+                          <h3 className="font-lexend font-semibold text-primary-700 text-sm md:text-[0.9rem]">
                             {selectedPlan.name} -{" "}
-                            <span className="text-[0.9rem] md:text-base text-primary-600">
+                            <span className="text-sm md:text-[0.9rem] text-primary-600">
                               {deviceCounts[selectedPlan.id]} device
                               {deviceCounts[selectedPlan.id] > 1 ? "s" : ""}
                             </span>
                           </h3>
-                          <p className="font-lexend font-semibold text-[0.78rem] md:text-sm text-primary-600">
+                          <p className="font-lexend font-semibold text-[0.75rem] md:text-[0.83rem] text-primary-600">
                             {selectedPlan.duration} •{" "}
                             <span className="text-gray-500">
                               Unlimited Internet
