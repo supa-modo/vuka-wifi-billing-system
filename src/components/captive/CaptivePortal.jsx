@@ -7,6 +7,7 @@ import { PiUserDuotone } from "react-icons/pi";
 import { FcWiFiLogo } from "react-icons/fc";
 import MpesaIcon from "../ui/MpesaIcon";
 import { TbArrowRight, TbChevronRight } from "react-icons/tb";
+import { FiCheckCircle } from "react-icons/fi";
 
 // Demo data for plans
 const demoPlans = [
@@ -484,28 +485,36 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
 
           {paymentStep === "processing" && (
             <div className="flex justify-center">
-              <Card className="w-full max-w-md text-center">
-                <div className="animate-spin w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-6"></div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <Card className="w-full max-w-xl text-center">
+                <div className="animate-spin w-12 h-12 border-4 border-secondary-200 border-t-secondary-500 rounded-full mx-auto mb-2 md:mb-4"></div>
+                <h2 className="text-2xl font-bold text-secondary-500 mb-2">
                   Processing Payment
                 </h2>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 text-[0.9rem] md:text-[0.95rem] lg:text-base mb-2">
                   Please complete the M-Pesa payment on your phone
                 </p>
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-gray-700">
-                    <strong>Amount:</strong> KSH {selectedPlan?.price}
+                <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-600 font-medium">
+                    Amount:
+                    <span className="ml-2 text-secondary-600 font-semibold font-lexend">
+                      Kshs. {selectedPlan?.price}
+                    </span>{" "}
                   </p>
-                  <p className="text-sm text-gray-700">
-                    <strong>Plan:</strong> {selectedPlan?.name} -{" "}
-                    {selectedPlan?.duration}
+                  <p className="text-sm text-gray-600 font-medium">
+                    Plan:
+                    <span className="ml-2 text-secondary-600 font-semibold font-lexend">
+                      {selectedPlan?.name} - {selectedPlan?.duration}
+                    </span>{" "}
                   </p>
-                  <p className="text-sm text-gray-700">
-                    <strong>Phone:</strong> +{phoneNumber}
+                  <p className="text-sm text-gray-600 font-medium">
+                    Phone:
+                    <span className="ml-2 text-secondary-600 font-semibold font-lexend">
+                      +{phoneNumber}
+                    </span>{" "}
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">
-                  Check your phone for the M-Pesa payment request
+                <p className="text-xs md:text-[0.8rem] text-gray-500">
+                  Check your phone for the M-Pesa STK Push request and confirm
                 </p>
               </Card>
             </div>
@@ -513,31 +522,27 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
 
           {paymentStep === "success" && (
             <div className="flex justify-center">
-              <Card className="w-full max-w-md text-center">
-                <div className="w-16 h-16 bg-success-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckIcon size={32} className="text-white" />
+              <Card className="w-full max-w-xl text-center">
+                <div className="flex justify-center mx-auto mb-2 mt-3">
+                  <FiCheckCircle className="text-success-600 w-12 h-12" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                <h2 className="text-2xl font-bold text-success-600 mb-3">
                   Payment Successful!
                 </h2>
-                <p className="text-gray-600 mb-6">
-                  Your WiFi credentials have been sent to your phone via SMS
+                <p className="text-gray-600 text-[0.9rem] md:text-[0.95rem] lg:text-base mb-4">
+                  Your WiFi login credentials have also been sent to your phone
+                  via SMS
                 </p>
-                <div className="bg-success-50 border border-success-200 rounded-lg p-6 mb-6">
+                <div className="bg-success-50/40 border border-success-200 rounded-lg p-6 mb-3 md:mb-4">
                   <h3 className="font-semibold text-success-800 mb-3">
-                    WiFi Credentials
+                    WiFi Credentials (VukaWiFi_Guest)
                   </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-success-700">Network:</span>
-                      <span className="font-mono text-success-900">
-                        VukaWiFi_Guest
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
                       <span className="text-success-700">Username:</span>
                       <span className="font-mono text-success-900">
-                        user_abc123
+                        {/* User's phone number */}
+                        {phoneNumber}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -569,7 +574,6 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     • Your access will automatically expire after{" "}
                     {selectedPlan?.duration.toLowerCase()}
                   </p>
-                  <p>• Keep this information safe</p>
                 </div>
               </Card>
             </div>

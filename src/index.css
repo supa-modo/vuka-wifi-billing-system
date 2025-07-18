@@ -29,10 +29,11 @@ body {
   --color-secondary-800: oklch(0.35 0.14 60);
   --color-secondary-900: oklch(0.25 0.1 60);
 
-  --color-success-50: oklch(0.98 0.02 120);
-  --color-success-100: oklch(0.95 0.05 120);
-  --color-success-500: oklch(0.65 0.15 120);
-  --color-success-600: oklch(0.55 0.12 120);
+  /* Green based success colors */
+  --color-success-50: oklch(0.95 0.05 146.12); /* Very light green */
+  --color-success-100: oklch(0.88 0.1 146.12); /* Light green */
+  --color-success-500: oklch(0.6824 0.2067 146.12); /* Base green */
+  --color-success-600: oklch(0.58 0.19 146.12); /* Slightly darker */
 
   --color-danger-50: oklch(0.98 0.02 20);
   --color-danger-100: oklch(0.95 0.05 20);
