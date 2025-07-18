@@ -3,6 +3,10 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Card } from "../ui/Card";
 import { WifiIcon, PhoneIcon, ClockIcon, CheckIcon } from "../ui/Icons";
+import { PiUserDuotone } from "react-icons/pi";
+import { FcWiFiLogo } from "react-icons/fc";
+import MpesaIcon from "../ui/MpesaIcon";
+import { TbArrowRight } from "react-icons/tb";
 
 // Demo data for plans
 const demoPlans = [
@@ -10,39 +14,41 @@ const demoPlans = [
     id: "1",
     name: "1 Hour",
     duration: "1 Hour",
-    price: 20,
+    price: 15,
     dataLimit: "500 MB",
     speed: "10 Mbps",
     popular: false,
-    features: ["High Speed Internet", "Basic Streaming", "Social Media Access"],
+    features: [
+      "High Speed Internet Access",
+      "HD Video Streaming",
+      "Youtube, Tiktok, Social Media Browsing",
+    ],
   },
   {
     id: "2",
     name: "1 Day",
     duration: "24 Hours",
-    price: 150,
+    price: 50,
     dataLimit: "5 GB",
     speed: "15 Mbps",
     popular: true,
     features: [
-      "High Speed Internet",
-      "HD Streaming",
-      "Video Calls",
-      "File Downloads",
+      "High Speed Internet Access",
+      "UHD Video Streaming",
+      "Youtube, Tiktok, Social Media Browsing",
     ],
   },
   {
     id: "3",
     name: "1 Week",
     duration: "7 Days",
-    price: 800,
+    price: 350,
     dataLimit: "25 GB",
     speed: "20 Mbps",
     popular: false,
     features: [
-      "Ultra High Speed",
-      "Unlimited Streaming",
-      "Gaming Support",
+      "Ultra High Speed Internet Access",
+      "Online Gaming Support",
       "Priority Support",
     ],
   },
@@ -50,15 +56,14 @@ const demoPlans = [
     id: "4",
     name: "1 Month",
     duration: "30 Days",
-    price: 2500,
+    price: 1000,
     dataLimit: "Unlimited",
     speed: "25 Mbps",
     popular: false,
     features: [
-      "Maximum Speed",
-      "Unlimited Everything",
-      "Premium Gaming",
-      "24/7 Support",
+      "Maximum Internet Speed",
+      "Premium Online Gaming Speeds",
+      "24/7 Customer Support",
     ],
   },
 ];
@@ -285,30 +290,31 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={onNavigateToAdmin}
-          className="bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur transition-colors text-sm font-medium"
+          className="flex items-center justify-center bg-white/10 text-white hover:bg-white/20 px-4 py-1.5 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
-          Admin Login
+          <PiUserDuotone className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
+          User Login
         </button>
       </div>
 
       {/* Header */}
-      <div className="text-center pt-12 pb-8 px-4">
-        <div className="animate-float mb-6">
-          <WifiIcon size={64} className="text-white mx-auto" />
+      <div className="text-center pt-12 pb-8">
+        <div className="animate-float">
+          <FcWiFiLogo className="text-white mx-auto w-[5rem] h-[5rem] md:w-[6rem] md:h-[6rem] lg:w-28 lg:h-28" />
         </div>
-        <h1 className="text-responsive-3xl font-bold text-white mb-4">
+        <h1 className="text-responsive-2xl font-bold text-white mb-2 md:mb-3 lg:mb-4">
           Welcome to VukaWiFi
         </h1>
-        <p className="text-responsive-lg text-white/90 max-w-3xl mx-auto">
-          Get instant high speed internet access with our flexible plans. Pay
-          with M-Pesa and connect immediately!
+        <p className="text-responsive-base text-white/90 max-w-4xl mx-auto">
+          Get instant reliable high speed internet access with our flexible
+          plans. Pay with M-Pesa and connect immediately!
         </p>
       </div>
 
       {/* Plans Grid */}
       <div className="px-4 pb-12">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-responsive-2xl font-bold text-white text-center mb-8">
+          <h2 className="text-responsive-2xl font-bold text-secondary-400 text-center mb-5 lg:mb-8">
             Choose Your Plan
           </h2>
 
@@ -316,10 +322,10 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
             {demoPlans.map((plan) => (
               <div
                 key={plan.id}
-                className={`plan-card relative ${
+                className={`plan-card relative flex flex-col h-full ${
                   selectedPlan?.id === plan.id ? "selected" : ""
                 }`}
-                onClick={() => handlePlanSelect(plan)}
+                // Remove onClick from the card itself
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -330,16 +336,16 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                 )}
 
                 <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-secondary-500 mb-2">
                     {plan.name}
                   </h3>
-                  <div className="text-3xl font-bold text-primary-600 mb-1">
-                    KSH {plan.price}
+                  <div className="text-3xl font-extrabold text-primary-600 mb-1">
+                    Kshs. {plan.price}
                   </div>
                   <p className="text-gray-600 text-sm">{plan.duration}</p>
                 </div>
 
-                <div className="space-y-3 mb-6">
+                {/* <div className="space-y-3 mb-6">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Data Limit:</span>
                     <span className="font-medium">{plan.dataLimit}</span>
@@ -348,9 +354,9 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     <span className="text-gray-600">Speed:</span>
                     <span className="font-medium">{plan.speed}</span>
                   </div>
-                </div>
+                </div> */}
 
-                <div className="space-y-2 mb-6">
+                <div className="space-y-2 mb-3 md:mb-4 lg:mb-6 flex-1">
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-center text-sm">
                       <CheckIcon
@@ -362,23 +368,27 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                   ))}
                 </div>
 
-                <div className="mt-auto">
-                  {selectedPlan?.id === plan.id ? (
-                    <div className="text-center text-primary-600 font-medium">
-                      <CheckIcon size={20} className="inline mr-2" />
-                      Selected
-                    </div>
-                  ) : (
-                    <div className="text-center text-gray-500 text-sm">
-                      Click to select
-                    </div>
-                  )}
+                {/* Button always at the bottom */}
+                <div className="mt-auto pt-2">
+                  <button
+                    className={`w-full btn-primary py-2 px-4 rounded-lg text-base font-semibold flex items-center justify-center ${
+                      selectedPlan?.id === plan.id ? "bg-primary-600" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedPlan(plan);
+                      setPaymentStep("payment");
+                    }}
+                  >
+                    Select this plan
+                    <TbArrowRight size={18} className="ml-2" />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          {selectedPlan && (
+          {/* Remove Proceed to Payment button */}
+          {/* {selectedPlan && (
             <div className="mt-8 text-center animate-slide-up">
               <Button
                 variant="gradient"
@@ -389,7 +399,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                 Proceed to Payment
               </Button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -405,8 +415,13 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
               </p>
             </div>
             <div className="text-white">
-              <PhoneIcon size={48} className="mx-auto mb-4 text-white/80" />
-              <h3 className="text-lg font-semibold mb-2">M-Pesa Payment</h3>
+              <MpesaIcon
+                variant="white"
+                width={80}
+                height={48}
+                className="mx-auto mb-4 text-white/80"
+              />
+              <h3 className="text-lg font-semibold mb-2">Pay with Mpesa</h3>
               <p className="text-white/80 text-sm">
                 Secure and convenient mobile payment
               </p>

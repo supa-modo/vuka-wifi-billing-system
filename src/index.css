@@ -183,11 +183,11 @@ body {
   }
 
   .plan-card {
-    @apply bg-white rounded-2xl p-6 shadow-card hover:shadow-float transition-all duration-300 border-2 border-transparent hover:border-primary-200 cursor-pointer;
+    @apply bg-white rounded-2xl p-4 md:p-5 shadow-card hover:shadow-float transition-all duration-300 border-2 border-transparent hover:border-primary-200 cursor-pointer;
   }
 
   .plan-card.selected {
-    @apply border-primary-500 bg-primary-50;
+    @apply border-secondary-400 bg-secondary-50;
   }
 }
 
