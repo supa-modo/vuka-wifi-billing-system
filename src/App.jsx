@@ -10,6 +10,7 @@ import { useState } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
+import { Analytics } from "@vercel/analytics/next";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -84,29 +85,32 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        {/* Root route - Captive Portal */}
-        <Route path="/" element={<CaptivePortalPage />} />
+    <>
+      <Analytics />
+      <Router>
+        <Routes>
+          {/* Root route - Captive Portal */}
+          <Route path="/" element={<CaptivePortalPage />} />
 
-        {/* Admin routes */}
-        <Route
-          path="/admin"
-          element={<AdminLoginPage onLogin={handleAuthChange} />}
-        />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute>
-              <AdminDashboardPage onLogout={handleAuthChange} />
-            </ProtectedRoute>
-          }
-        />
+          {/* Admin routes */}
+          <Route
+            path="/admin"
+            element={<AdminLoginPage onLogin={handleAuthChange} />}
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage onLogout={handleAuthChange} />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Catch all route - redirect to root */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+          {/* Catch all route - redirect to root */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
