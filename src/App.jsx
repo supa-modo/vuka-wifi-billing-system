@@ -10,6 +10,7 @@ import { useState } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
+import { WifiLogin } from "./components/captive/WifiLogin";
 import { Analytics } from "@vercel/analytics/react";
 
 // Protected Route Component
@@ -65,6 +66,16 @@ const AdminDashboardPage = ({ onLogout }) => {
   );
 };
 
+const WifiLoginPage = () => {
+  const navigate = useNavigate();
+  return (
+    <WifiLogin
+      onPurchasePlan={() => navigate("/portal")}
+      onNavigateToAdmin={() => navigate("/admin")}
+    />
+  );
+};
+
 // Captive Portal Component with Navigation
 const CaptivePortalPage = () => {
   const navigate = useNavigate();
@@ -89,9 +100,10 @@ function App() {
       <Analytics />
       <Router>
         <Routes>
-          {/* Root route - Captive Portal */}
-          <Route path="/" element={<CaptivePortalPage />} />
-
+          {/* Default route - WiFi Login */}
+          <Route path="/" element={<WifiLoginPage />} />
+          {/* Captive Portal route */}
+          <Route path="/portal" element={<CaptivePortalPage />} />
           {/* Admin routes */}
           <Route
             path="/admin"

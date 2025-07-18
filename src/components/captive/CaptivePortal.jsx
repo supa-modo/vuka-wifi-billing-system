@@ -7,9 +7,15 @@ import { WifiIcon, PhoneIcon, ClockIcon, CheckIcon } from "../ui/Icons";
 import { PiChecksBold, PiUserDuotone } from "react-icons/pi";
 import { FcWiFiLogo } from "react-icons/fc";
 import MpesaIcon from "../ui/MpesaIcon";
-import { TbArrowLeft, TbArrowRight, TbChevronRight } from "react-icons/tb";
+import {
+  TbArrowBack,
+  TbArrowLeft,
+  TbArrowRight,
+  TbChevronRight,
+} from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
 import { FaCreditCard } from "react-icons/fa";
+import { RiAdminLine } from "react-icons/ri";
 
 // Demo data for plans
 const demoPlans = [
@@ -24,7 +30,7 @@ const demoPlans = [
     features: [
       "High Speed Internet Access",
       "HD Video Streaming",
-      "Youtube, Tiktok, Social Media, Browsing",
+      "Unlimited Internet, Youtube, Tiktok",
     ],
   },
   {
@@ -38,7 +44,7 @@ const demoPlans = [
     features: [
       "High Speed Internet Access",
       "UHD Video Streaming",
-      "Youtube, Tiktok, Social Media Browsing",
+      "Unlimited Internet, Youtube, Tiktok",
     ],
   },
   {
@@ -52,7 +58,7 @@ const demoPlans = [
     features: [
       "Ultra High Speed Internet Access",
       "Online Gaming Support",
-      "Priority Support",
+      "Unlimited Internet, Youtube, Tiktok",
     ],
   },
   {
@@ -322,14 +328,24 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
 
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
+      {/* Back to Login Page Button */}
+      <div className="absolute top-[1.15rem] left-4 z-50">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center justify-center underline underline-offset-4 text-white hover:text-secondary-400 transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
+        >
+          <TbArrowBack className="w-4 h-4 mr-2" />
+          Back to Login
+        </button>
+      </div>
       {/* Admin Navigation Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={onNavigateToAdmin}
           className="flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
-          <PiUserDuotone className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
-          User Login
+          <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
+          Admin Login
           <TbChevronRight className="w-4 h-4 ml-1" />
         </button>
       </div>
@@ -474,7 +490,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     />
                     <div className="flex space-x-3">
                       <Button
-                        variant="secondary"
+                        variant="secondary2"
                         onClick={() => setPaymentStep("plans")}
                         className="flex-1"
                       >
@@ -488,7 +504,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                         className="flex-1"
                       >
                         <FaCreditCard className="mr-2" />
-                        Pay KSH {selectedPlan?.price}
+                        Pay Kshs. {selectedPlan?.price}
                       </Button>
                     </div>
                   </div>
@@ -651,6 +667,12 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
             &copy; {new Date().getFullYear()} VukaWiFi. All rights reserved.
           </div>
           <div className="flex-1 flex justify-end space-x-4">
+            <a
+              href="tel:+254790193402"
+              className="hover:underline hover:text-secondary-300 transition-colors"
+            >
+              Customer Support: <span className="ml-1 text-secondary-400 font-semibold">+254790193402</span>
+            </a>
             <a
               href="#"
               className="hover:underline hover:text-secondary-300 transition-colors"
