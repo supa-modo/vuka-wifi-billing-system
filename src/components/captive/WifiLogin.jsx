@@ -60,8 +60,8 @@ export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
           className="flex items-center justify-center bg-primary-400/20 border border-primary-400/20 text-primary-500 hover:bg-primary-400/30 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
-          Admin Login
-          <TbChevronRight className="w-4 h-4 ml-1" />
+
+          <TbChevronRight className="w-4 h-4" />
         </button>
       </div>
 

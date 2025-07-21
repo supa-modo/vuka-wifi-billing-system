@@ -30,7 +30,7 @@ const demoPlans = [
     features: [
       "High Speed Internet Access",
       "HD Video Streaming",
-      "Unlimited Internet, Youtube, Tiktok",
+      "Unlimited Internet, Youtube, + more",
     ],
   },
   {
@@ -44,7 +44,7 @@ const demoPlans = [
     features: [
       "High Speed Internet Access",
       "UHD Video Streaming",
-      "Unlimited Internet, Youtube, Tiktok",
+      "Unlimited Internet, Youtube, + more",
     ],
   },
   {
@@ -57,8 +57,8 @@ const demoPlans = [
     popular: false,
     features: [
       "Ultra High Speed Internet Access",
-      "Online Gaming Support",
-      "Unlimited Internet, Youtube, Tiktok",
+      "Online Gaming Support & streaming",
+      "Unlimited Internet, Youtube, + more",
     ],
   },
   {
@@ -139,208 +139,6 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
     return Math.round(plan.price * (1 + 0.6 * (count - 1)));
   };
 
-  //   if (paymentStep === "processing") {
-  //     return (
-  //       <div className="min-h-screen gradient-hero flex items-center justify-center p-4">
-  //         <Card className="w-full max-w-md text-center">
-  //           <div className="animate-spin w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-6"></div>
-  //           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-  //             Processing Payment
-  //           </h2>
-  //           <p className="text-gray-600 mb-4">
-  //             Please complete the M-Pesa payment on your phone
-  //           </p>
-  //           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-  //             <p className="text-sm text-gray-700">
-  //               <strong>Amount:</strong> KSH {selectedPlan?.price}
-  //             </p>
-  //             <p className="text-sm text-gray-700">
-  //               <strong>Plan:</strong> {selectedPlan?.name} -{" "}
-  //               {selectedPlan?.duration}
-  //             </p>
-  //             <p className="text-sm text-gray-700">
-  //               <strong>Phone:</strong> +{phoneNumber}
-  //             </p>
-  //           </div>
-  //           <p className="text-xs text-gray-500">
-  //             Check your phone for the M-Pesa payment request
-  //           </p>
-  //         </Card>
-  //       </div>
-  //     );
-  //   }
-
-  //   if (paymentStep === "success") {
-  //     return (
-  //       <div className="min-h-screen gradient-hero flex items-center justify-center p-4">
-  //         <Card className="w-full max-w-md text-center">
-  //           <div className="w-16 h-16 bg-success-500 rounded-full flex items-center justify-center mx-auto mb-6">
-  //             <CheckIcon size={32} className="text-white" />
-  //           </div>
-  //           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-  //             Payment Successful!
-  //           </h2>
-  //           <p className="text-gray-600 mb-6">
-  //             Your WiFi credentials have been sent to your phone via SMS
-  //           </p>
-
-  //           <div className="bg-success-50 border border-success-200 rounded-lg p-6 mb-6">
-  //             <h3 className="font-semibold text-success-800 mb-3">
-  //               WiFi Credentials
-  //             </h3>
-  //             <div className="space-y-2 text-sm">
-  //               <div className="flex justify-between">
-  //                 <span className="text-success-700">Network:</span>
-  //                 <span className="font-mono text-success-900">
-  //                   VukaWiFi_Guest
-  //                 </span>
-  //               </div>
-  //               <div className="flex justify-between">
-  //                 <span className="text-success-700">Username:</span>
-  //                 <span className="font-mono text-success-900">user_abc123</span>
-  //               </div>
-  //               <div className="flex justify-between">
-  //                 <span className="text-success-700">Password:</span>
-  //                 <span className="font-mono text-success-900">temp_xyz789</span>
-  //               </div>
-  //               <div className="flex justify-between">
-  //                 <span className="text-success-700">Valid Until:</span>
-  //                 <span className="font-mono text-success-900">
-  //                   {new Date(
-  //                     Date.now() +
-  //                       (selectedPlan?.name === "1 Hour"
-  //                         ? 3600000
-  //                         : selectedPlan?.name === "1 Day"
-  //                         ? 86400000
-  //                         : selectedPlan?.name === "1 Week"
-  //                         ? 604800000
-  //                         : 2592000000)
-  //                   ).toLocaleString()}
-  //                 </span>
-  //               </div>
-  //             </div>
-  //           </div>
-
-  //           <div className="text-xs text-gray-500 space-y-1">
-  //             <p>• Connect to the WiFi network using these credentials</p>
-  //             <p>
-  //               • Your access will automatically expire after{" "}
-  //               {selectedPlan?.duration.toLowerCase()}
-  //             </p>
-  //             <p>• Keep this information safe</p>
-  //           </div>
-  //         </Card>
-  //       </div>
-  //     );
-  //   }
-
-  //   if (paymentStep === "payment") {
-  //     return (
-  //       <div className="min-h-screen gradient-hero flex flex-col items-center justify-center p-4">
-  //         {/* Payment Header */}
-  //         <div className="w-full max-w-md mx-auto flex flex-col items-center text-center mb-6">
-  //           <MpesaIcon variant="white" width={56} height={36} className="mb-3" />
-  //           <h2 className="text-2xl lg:text-3xl font-bold text-primary-600 mb-1">
-  //             Pay with M-Pesa
-  //           </h2>
-  //           <p className="text-primary-100 text-base max-w-xs mx-auto mb-2 font-medium">
-  //             Enter your phone number to receive a payment prompt
-  //           </p>
-  //         </div>
-  //         {/* Original Payment Card */}
-  //         <Card className="w-full max-w-md">
-  //           <div className="text-center mb-6">
-  //             <WifiIcon size={48} className="text-primary-600 mx-auto mb-4" />
-  //             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-  //               Complete Payment
-  //             </h2>
-  //             <p className="text-gray-600">
-  //               Enter your phone number to pay via M-Pesa
-  //             </p>
-  //           </div>
-
-  //           {selectedPlan && (
-  //             <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-6">
-  //               <div className="flex justify-between items-center">
-  //                 <div>
-  //                   <h3 className="font-semibold text-primary-900">
-  //                     {selectedPlan.name}
-  //                   </h3>
-  //                   <p className="text-sm text-primary-700">
-  //                     {selectedPlan.duration} • {selectedPlan.dataLimit}
-  //                   </p>
-  //                 </div>
-  //                 <div className="text-right">
-  //                   <p className="text-2xl font-bold text-primary-900">
-  //                     KSH {selectedPlan.price}
-  //                   </p>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           )}
-
-  //           <div className="space-y-4">
-  //             <Input
-  //               label="Phone Number"
-  //               type="tel"
-  //               placeholder="07XXXXXXXX or 254XXXXXXXXX"
-  //               value={phoneNumber}
-  //               onChange={(e) =>
-  //                 setPhoneNumber(formatPhoneNumber(e.target.value))
-  //               }
-  //               icon={<PhoneIcon size={20} />}
-  //               helperText="You'll receive an M-Pesa payment request on this number"
-  //             />
-
-  //             <div className="flex space-x-3">
-  //               <Button
-  //                 variant="secondary"
-  //                 onClick={() => setPaymentStep("plans")}
-  //                 className="flex-1"
-  //               >
-  //                 Back
-  //               </Button>
-  //               <Button
-  //                 variant="gradient"
-  //                 onClick={handlePayment}
-  //                 disabled={!phoneNumber || phoneNumber.length < 12}
-  //                 className="flex-1"
-  //               >
-  //                 Pay KSH {selectedPlan?.price}
-  //               </Button>
-  //             </div>
-  //           </div>
-
-  //           <div className="mt-6 text-xs text-gray-500 text-center">
-  //             <p>Secure payment powered by M-Pesa</p>
-  //             <p>
-  //               You will receive WiFi credentials via SMS after successful payment
-  //             </p>
-  //           </div>
-  //         </Card>
-  //         {/* Bottom Strip Bar */}
-  //         <div className="w-full max-w-md mx-auto bg-white/10 border-t border-white/20 py-3 px-8 flex flex-col md:flex-row items-center justify-between text-xs md:text-[0.8rem] lg:text-[0.83rem] text-white md:font-medium backdrop-blur-sm mt-6">
-  //           <div className="mb-2 md:mb-0 flex-1 text-left">
-  //             &copy; {new Date().getFullYear()} VukaWiFi. All rights reserved.
-  //           </div>
-  //           <div className="flex-1 flex justify-end space-x-4">
-  //             <a
-  //               href="#"
-  //               className="hover:underline hover:text-secondary-300 transition-colors"
-  //             >
-  //               Privacy Policy
-  //             </a>
-  //             <a
-  //               href="#"
-  //               className="hover:underline hover:text-secondary-300 transition-colors"
-  //             >
-  //               Terms &amp; Conditions
-  //             </a>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
 
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
@@ -361,8 +159,8 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
           className="flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
-          Admin Login
-          <TbChevronRight className="w-4 h-4 ml-1" />
+
+          <TbChevronRight className="w-4 h-4" />
         </button>
       </div>
 
@@ -460,19 +258,43 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                       </div>
                     </div>
                     <div className="mt-auto w-full">
-                      <div className="space-y-2 pl-4 mb-3 md:mb-4 lg:mb-6">
-                        {plan.features.map((feature, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center text-sm"
-                          >
-                            <PiChecksBold
-                              size={16}
-                              className="text-success-600 mr-2 flex-shrink-0"
-                            />
-                            <span className="text-gray-700">{feature}</span>
-                          </div>
-                        ))}
+                      <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4 lg:mb-6">
+                        {plan.features.map((feature, index) => {
+                          // Check if feature contains '+ more'
+                          const moreIndex = feature.indexOf("+ more");
+                          if (moreIndex !== -1) {
+                            const mainText = feature.slice(0, moreIndex).trim();
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center text-sm"
+                              >
+                                <PiChecksBold
+                                  size={16}
+                                  className="text-success-600 mr-2 flex-shrink-0"
+                                />
+                                <span className="text-gray-700">
+                                  {mainText}{" "}
+                                </span>
+                                <span className="ml-2 md:ml-1 inline-block rounded-full bg-secondary-100 text-secondary-700 px-3 md:px-2 py-0.5 text-xs font-semibold align-middle">
+                                  + more
+                                </span>
+                              </div>
+                            );
+                          }
+                          return (
+                            <div
+                              key={index}
+                              className="flex items-center text-sm"
+                            >
+                              <PiChecksBold
+                                size={16}
+                                className="text-success-600 mr-2 flex-shrink-0"
+                              />
+                              <span className="text-gray-700">{feature}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="pt-2">
                         <button
