@@ -14,7 +14,7 @@ export const Input = ({
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-semibold text-secondary-500 mb-1 md:mb-2">
+        <label className="block text-[0.8rem] md:text-sm font-semibold text-secondary-500 mb-1 md:mb-2">
           {label}
         </label>
       )}
@@ -32,7 +32,9 @@ export const Input = ({
       </div>
       {error && <p className="mt-1 text-sm text-danger-500">{error}</p>}
       {helperText && !error && (
-        <p className="mt-1 text-[0.8rem] md:text-[0.83rem] lg:text-sm text-gray-500">{helperText}</p>
+        <p className="mt-1 text-[0.8rem] md:text-[0.83rem] lg:text-sm text-gray-500">
+          {helperText}
+        </p>
       )}
     </div>
   );

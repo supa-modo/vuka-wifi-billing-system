@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
@@ -16,82 +16,50 @@ import {
 import { FiCheckCircle } from "react-icons/fi";
 import { FaChevronRight, FaCreditCard, FaMinus, FaPlus } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
-
-// Demo data for plans
-const demoPlans = [
-  {
-    id: "1",
-    name: "1 Hour",
-    duration: "1 Hour",
-    price: 15,
-    dataLimit: "500 MB",
-    speed: "10 Mbps",
-    popular: false,
-    features: [
-      "High Speed Internet Access",
-      "HD Video Streaming",
-      "Unlimited Internet, Youtube, + more",
-    ],
-  },
-  {
-    id: "2",
-    name: "1 Day",
-    duration: "24 Hours",
-    price: 50,
-    dataLimit: "5 GB",
-    speed: "15 Mbps",
-    popular: true,
-    features: [
-      "High Speed Internet Access",
-      "UHD Video Streaming",
-      "Unlimited Internet, Youtube, + more",
-    ],
-  },
-  {
-    id: "3",
-    name: "1 Week",
-    duration: "7 Days",
-    price: 350,
-    dataLimit: "25 GB",
-    speed: "20 Mbps",
-    popular: false,
-    features: [
-      "Ultra High Speed Internet Access",
-      "Online Gaming Support & streaming",
-      "Unlimited Internet, Youtube, + more",
-    ],
-  },
-  {
-    id: "4",
-    name: "1 Month",
-    duration: "30 Days",
-    price: 1000,
-    dataLimit: "Unlimited",
-    speed: "25 Mbps",
-    popular: false,
-    features: [
-      "Maximum Internet Speed",
-      "Premium Online Gaming Speeds",
-      "24/7 Customer Support",
-    ],
-  },
-];
+import apiService from "../../services/api";
 
 export const CaptivePortal = ({ onNavigateToAdmin }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState("plans"); // 'plans', 'payment', 'processing', 'success'
+  const [plans, setPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const [deviceCounts, setDeviceCounts] = useState(() => {
-    // Default: 1 device per plan
-    const counts = {};
-    demoPlans.forEach((plan) => {
-      counts[plan.id] = 1;
-    });
-    return counts;
-  });
+  const [deviceCounts, setDeviceCounts] = useState({});
+
+  // Fetch payment plans on component mount
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoadingPlans(true);
+        const response = await apiService.getPaymentPlans(true);
+
+        if (response.success) {
+          const fetchedPlans = response.data;
+          setPlans(fetchedPlans);
+
+          // Initialize device counts (default: 1 device per plan)
+          const counts = {};
+          fetchedPlans.forEach((plan) => {
+            counts[plan.id] = 1;
+          });
+          setDeviceCounts(counts);
+        } else {
+          setError("Failed to load payment plans");
+        }
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+        setError("Failed to connect to server. Please try again.");
+      } finally {
+        setLoadingPlans(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
@@ -132,13 +100,27 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
   };
 
   // Helper to get price for a plan and device count
-  const getPlanPrice = (plan, count) => {
-    // Example: each extra device is +60% of base price (customize as needed)
+  const getPlanPrice = async (plan, count) => {
     if (count <= 1) return plan.price;
-    // e.g. 2 devices = 1.6x, 3 devices = 2.2x, 4 devices = 2.8x, etc.
+
+    try {
+      const response = await apiService.calculatePlanPrice(plan.id, count);
+      if (response.success) {
+        return response.data.calculatedPrice;
+      }
+    } catch (error) {
+      console.error("Error calculating price:", error);
+    }
+
+    // Fallback calculation
     return Math.round(plan.price * (1 + 0.6 * (count - 1)));
   };
 
+  // Sync version for immediate display
+  const getPlanPriceSync = (plan, count) => {
+    if (count <= 1) return plan.price;
+    return Math.round(plan.price * (1 + 0.6 * (count - 1)));
+  };
 
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
@@ -197,73 +179,133 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                 Choose Your Plan
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {demoPlans.map((plan) => (
-                  <div
-                    key={plan.id}
-                    className={`plan-card relative flex flex-col h-full ${
-                      selectedPlan?.id === plan.id ? "selected" : ""
-                    }`}
-                  >
-                    {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span className="bg-warning-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                          Most Popular
-                        </span>
+              {/* Error State */}
+              {error && (
+                <div className="text-center mb-6 max-w-3xl mx-auto">
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-10 rounded-lg">
+                    <p className="font-medium">
+                      This is an example error we are displaying{error}
+                    </p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-2 text-sm underline hover:no-underline"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Loading State */}
+              {loadingPlans && !error && (
+                <div className="text-center mb-8">
+                  <div className="animate-spin w-7 md:w-8 lg:w-10 h-7 md:h-8 lg:h-10 border-4 border-secondary-200 border-t-secondary-500 rounded-full mx-auto mb-4"></div>
+                  <p className="text-secondary-200 font-medium">
+                    Loading available plans, please wait...
+                  </p>
+                </div>
+              )}
+
+              {/* Plans Grid */}
+              {!loadingPlans && !error && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {plans.map((plan) => (
+                    <div
+                      key={plan.id}
+                      className={`plan-card relative flex flex-col h-full ${
+                        selectedPlan?.id === plan.id ? "selected" : ""
+                      }`}
+                    >
+                      {plan.isPopular && (
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                          <span className="bg-warning-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                            Most Popular
+                          </span>
+                        </div>
+                      )}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-lexend font-bold text-secondary-500 mb-2">
+                          {plan.name}
+                        </h3>
+                        <div className="text-3xl font-lexend font-extrabold text-primary-600 mb-1">
+                          Kshs.{" "}
+                          {getPlanPriceSync(plan, deviceCounts[plan.id] || 1)}
+                        </div>
+                        {/* Device controls */}
+                        <div className="flex items-center justify-center gap-1 mt-2">
+                          <button
+                            type="button"
+                            className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
+                            onClick={() =>
+                              setDeviceCounts((prev) => ({
+                                ...prev,
+                                [plan.id]: Math.max(
+                                  1,
+                                  (prev[plan.id] || 1) - 1
+                                ),
+                              }))
+                            }
+                            disabled={(deviceCounts[plan.id] || 1) <= 1}
+                            aria-label="Decrease devices"
+                          >
+                            <FaMinus size={16} />
+                          </button>
+                          <span className="font-semibold text-primary-700 text-base min-w-[80px] text-center">
+                            <span className="font-lexend">
+                              {deviceCounts[plan.id] || 1}
+                            </span>{" "}
+                            device
+                            {(deviceCounts[plan.id] || 1) > 1 ? "s" : ""}
+                          </span>
+                          <button
+                            type="button"
+                            className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
+                            onClick={() =>
+                              setDeviceCounts((prev) => ({
+                                ...prev,
+                                [plan.id]: Math.min(
+                                  plan.maxDevices || 5,
+                                  (prev[plan.id] || 1) + 1
+                                ),
+                              }))
+                            }
+                            disabled={
+                              (deviceCounts[plan.id] || 1) >=
+                              (plan.maxDevices || 5)
+                            }
+                            aria-label="Increase devices"
+                          >
+                            <FaPlus size={16} />
+                          </button>
+                        </div>
                       </div>
-                    )}
-                    <div className="text-center mb-4">
-                      <h3 className="text-xl font-lexend font-bold text-secondary-500 mb-2">
-                        {plan.name}
-                      </h3>
-                      <div className="text-3xl font-lexend font-extrabold text-primary-600 mb-1">
-                        Kshs. {getPlanPrice(plan, deviceCounts[plan.id])}
-                      </div>
-                      {/* Device controls */}
-                      <div className="flex items-center justify-center gap-1 mt-2">
-                        <button
-                          type="button"
-                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg disabled:opacity-50 transition-all duration-150"
-                          onClick={() =>
-                            setDeviceCounts((prev) => ({
-                              ...prev,
-                              [plan.id]: Math.max(1, prev[plan.id] - 1),
-                            }))
-                          }
-                          disabled={deviceCounts[plan.id] <= 1}
-                          aria-label="Decrease devices"
-                        >
-                          <FaMinus size={16} />
-                        </button>
-                        <span className="font-semibold text-primary-700 text-base min-w-[80px] text-center">
-                          <span className="font-lexend">
-                            {deviceCounts[plan.id]}
-                          </span>{" "}
-                          device
-                          {deviceCounts[plan.id] > 1 ? "s" : ""}
-                        </span>
-                        <button
-                          type="button"
-                          className="w-9 h-7 flex items-center justify-center rounded-lg bg-white/40 border border-secondary-200 hover:border-secondary-300 shadow-md hover:cursor-pointer hover:bg-secondary-100/90 text-secondary-500 font-bold text-lg transition-all duration-150"
-                          onClick={() =>
-                            setDeviceCounts((prev) => ({
-                              ...prev,
-                              [plan.id]: prev[plan.id] + 1,
-                            }))
-                          }
-                          aria-label="Increase devices"
-                        >
-                          <FaPlus size={16} />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="mt-auto w-full">
-                      <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4 lg:mb-6">
-                        {plan.features.map((feature, index) => {
-                          // Check if feature contains '+ more'
-                          const moreIndex = feature.indexOf("+ more");
-                          if (moreIndex !== -1) {
-                            const mainText = feature.slice(0, moreIndex).trim();
+                      <div className="mt-auto w-full">
+                        <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4 lg:mb-6">
+                          {plan.features.map((feature, index) => {
+                            // Check if feature contains '+ more'
+                            const moreIndex = feature.indexOf("+ more");
+                            if (moreIndex !== -1) {
+                              const mainText = feature
+                                .slice(0, moreIndex)
+                                .trim();
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center text-sm"
+                                >
+                                  <PiChecksBold
+                                    size={16}
+                                    className="text-success-600 mr-2 flex-shrink-0"
+                                  />
+                                  <span className="text-gray-700">
+                                    {mainText}{" "}
+                                  </span>
+                                  <span className="ml-2 md:ml-1 inline-block rounded-full bg-secondary-100 text-secondary-700 px-3 md:px-2 py-0.5 text-xs font-semibold align-middle">
+                                    + more
+                                  </span>
+                                </div>
+                              );
+                            }
                             return (
                               <div
                                 key={index}
@@ -273,47 +315,32 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                                   size={16}
                                   className="text-success-600 mr-2 flex-shrink-0"
                                 />
-                                <span className="text-gray-700">
-                                  {mainText}{" "}
-                                </span>
-                                <span className="ml-2 md:ml-1 inline-block rounded-full bg-secondary-100 text-secondary-700 px-3 md:px-2 py-0.5 text-xs font-semibold align-middle">
-                                  + more
-                                </span>
+                                <span className="text-gray-700">{feature}</span>
                               </div>
                             );
-                          }
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center text-sm"
-                            >
-                              <PiChecksBold
-                                size={16}
-                                className="text-success-600 mr-2 flex-shrink-0"
-                              />
-                              <span className="text-gray-700">{feature}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="pt-2">
-                        <button
-                          className={`w-full btn-primary py-2 px-4 rounded-lg text-base font-semibold flex items-center justify-center ${
-                            selectedPlan?.id === plan.id ? "bg-primary-600" : ""
-                          }`}
-                          onClick={() => {
-                            setSelectedPlan(plan);
-                            setPaymentStep("payment");
-                          }}
-                        >
-                          Select this plan
-                          <TbArrowRight size={18} className="ml-2" />
-                        </button>
+                          })}
+                        </div>
+                        <div className="pt-2">
+                          <button
+                            className={`w-full btn-primary py-2 px-4 rounded-lg text-base font-semibold flex items-center justify-center ${
+                              selectedPlan?.id === plan.id
+                                ? "bg-primary-600"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setSelectedPlan(plan);
+                              setPaymentStep("payment");
+                            }}
+                          >
+                            Select this plan
+                            <TbArrowRight size={18} className="ml-2" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
 
@@ -331,23 +358,28 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                           <h3 className="font-lexend font-semibold text-primary-700 text-sm md:text-[0.9rem]">
                             {selectedPlan.name} -{" "}
                             <span className="text-sm md:text-[0.9rem] text-primary-600">
-                              {deviceCounts[selectedPlan.id]} device
-                              {deviceCounts[selectedPlan.id] > 1 ? "s" : ""}
+                              {deviceCounts[selectedPlan.id] || 1} device
+                              {(deviceCounts[selectedPlan.id] || 1) > 1
+                                ? "s"
+                                : ""}
                             </span>
                           </h3>
                           <p className="font-lexend font-semibold text-[0.75rem] md:text-[0.83rem] text-primary-600">
-                            {selectedPlan.duration} •{" "}
+                            {selectedPlan.durationDisplay ||
+                              `${selectedPlan.durationHours} Hours`}{" "}
+                            •{" "}
                             <span className="text-gray-500">
-                              Unlimited Internet
+                              {selectedPlan.dataLimitDisplay ||
+                                "Unlimited Internet"}
                             </span>
                           </p>
                         </div>
                         <div className="text-right font-lexend">
                           <p className="text-[1.4rem] lg:text-3xl font-bold text-secondary-500">
                             Kshs.{" "}
-                            {getPlanPrice(
+                            {getPlanPriceSync(
                               selectedPlan,
-                              deviceCounts[selectedPlan.id]
+                              deviceCounts[selectedPlan.id] || 1
                             )}
                           </p>
                         </div>
@@ -356,7 +388,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                   )}
                   <div className="space-y-4">
                     <Input
-                      label="Phone Number"
+                      label="Your Registered Mpesa Number"
                       type="tel"
                       className="pl-[5.5rem] tracking-wide focus:outline-none placeholder:font-normal font-medium text-gray-700 font-lexend"
                       maxLength={12}
@@ -385,9 +417,9 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                       >
                         <FaCreditCard className="mr-2 w-4 h-4 md:w-5 md:h-5" />
                         Pay Kshs.{" "}
-                        {getPlanPrice(
+                        {getPlanPriceSync(
                           selectedPlan,
-                          deviceCounts[selectedPlan.id]
+                          deviceCounts[selectedPlan.id] || 1
                         )}
                         <FaChevronRight className="ml-2" />
                       </Button>
@@ -419,16 +451,18 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                     Amount:
                     <span className="ml-2 text-secondary-600 font-semibold font-lexend">
                       Kshs.{" "}
-                      {getPlanPrice(
+                      {getPlanPriceSync(
                         selectedPlan,
-                        deviceCounts[selectedPlan.id]
+                        deviceCounts[selectedPlan.id] || 1
                       )}
                     </span>{" "}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">
                     Plan:
                     <span className="ml-2 text-secondary-600 font-semibold font-lexend">
-                      {selectedPlan?.name} - {selectedPlan?.duration}
+                      {selectedPlan?.name} -{" "}
+                      {selectedPlan?.durationDisplay ||
+                        `${selectedPlan?.durationHours} Hours`}
                     </span>{" "}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">
@@ -462,7 +496,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                   <h3 className="font-semibold text-success-800 mb-3">
                     WiFi Credentials (VukaWiFi_Guest)
                   </h3>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1 md:space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-success-700">Username:</span>
                       <span className="font-mono text-success-900">
@@ -497,7 +531,7 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
                   <p>• Connect to the WiFi network using these credentials</p>
                   <p>
                     • Your access will automatically expire after{" "}
-                    {selectedPlan?.duration.toLowerCase()}
+                    {selectedPlan?.duration?.toLowerCase()}
                   </p>
                 </div>
               </Card>
