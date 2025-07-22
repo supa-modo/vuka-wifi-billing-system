@@ -109,7 +109,7 @@ const AdminSidebar = ({ collapsed = false }) => {
                     to={item.path}
                     end={item.end}
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-3.5 rounded-lg transition-all duration-200 group gap-2
+                      `flex items-center px-4 py-3.5 rounded-[0.7rem] transition-all duration-200 group gap-2
                       ${
                         isActive
                           ? "bg-gradient-to-r from-secondary-500/70 to-secondary-500/60 text-secondary-300 font-bold shadow-glow"

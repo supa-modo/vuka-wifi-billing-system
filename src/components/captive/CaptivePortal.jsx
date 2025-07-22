@@ -18,7 +18,7 @@ import { FaChevronRight, FaCreditCard, FaMinus, FaPlus } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import apiService from "../../services/api";
 
-export const CaptivePortal = ({ onNavigateToAdmin }) => {
+export const CaptivePortal = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -137,11 +137,10 @@ export const CaptivePortal = ({ onNavigateToAdmin }) => {
       {/* Admin Navigation Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={onNavigateToAdmin}
+          onClick={() => navigate("/admin")}
           className="flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
-
           <TbChevronRight className="w-4 h-4" />
         </button>
       </div>

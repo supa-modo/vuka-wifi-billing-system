@@ -24,24 +24,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const WifiLoginPage = () => {
-  const navigate = useNavigate();
-  return (
-    <WifiLogin
-      onPurchasePlan={() => navigate("/portal")}
-      onNavigateToAdmin={() => navigate("/admin")}
-    />
-  );
-};
-
-const CaptivePortalPage = () => {
-  const navigate = useNavigate();
-  const handleNavigateToAdmin = () => {
-    navigate("/admin");
-  };
-  return <CaptivePortal onNavigateToAdmin={handleNavigateToAdmin} />;
-};
-
 function App() {
   const [authChanged, setAuthChanged] = useState(0);
   const handleAuthChange = () => {
@@ -54,9 +36,9 @@ function App() {
       <Router>
         <Routes>
           {/* Default route - WiFi Login */}
-          <Route path="/" element={<WifiLoginPage />} />
+          <Route path="/" element={<WifiLogin />} />
           {/* Captive Portal route */}
-          <Route path="/portal" element={<CaptivePortalPage />} />
+          <Route path="/portal" element={<CaptivePortal />} />
           {/* Admin routes */}
           <Route
             path="/admin"

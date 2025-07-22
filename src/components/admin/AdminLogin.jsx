@@ -14,7 +14,7 @@ import { FcWiFiLogo } from "react-icons/fc";
 import { LuLogIn } from "react-icons/lu";
 import { PiPasswordDuotone } from "react-icons/pi";
 
-export const AdminLogin = ({ onLogin, onBack }) => {
+export const AdminLogin = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -154,18 +154,17 @@ export const AdminLogin = ({ onLogin, onBack }) => {
         </div>
 
         {/* Back to WiFi Portal Button */}
-        {onBack && (
-          <div className="flex justify-center mt-5 lg:mt-8">
-            <button
-              onClick={onBack}
-              className="flex items-center justify-center underline underline-offset-4 hover:cursor-pointer text-primary-700 transition-colors font-medium text-sm"
-              type="button"
-            >
-              <TbArrowBack size={20} className="mr-2" />
-              Back to WiFi Portal
-            </button>
-          </div>
-        )}
+
+        <div className="flex justify-center mt-5 lg:mt-8">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center justify-center underline underline-offset-4 hover:cursor-pointer text-primary-700 transition-colors font-medium text-sm"
+            type="button"
+          >
+            <TbArrowBack size={20} className="mr-2" />
+            Back to WiFi Portal
+          </button>
+        </div>
       </div>
       {/* Sticky Footer */}
       <footer className="w-full max-w-md lg:max-w-lg mx-auto mt-8 lg:mt-10 text-center pb-2">

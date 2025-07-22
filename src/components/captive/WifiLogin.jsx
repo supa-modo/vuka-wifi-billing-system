@@ -15,7 +15,7 @@ import { PiPasswordDuotone, PiUserDuotone } from "react-icons/pi";
 import { RiAdminLine } from "react-icons/ri";
 import { FaChevronRight, FaCreditCard } from "react-icons/fa";
 
-export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
+export const WifiLogin = () => {
   const [credentials, setCredentials] = useState({
     phone: "",
     password: "",
@@ -56,11 +56,10 @@ export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-primary-100 to-primary-200 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8">
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={onNavigateToAdmin}
+          onClick={() => navigate("/admin")}
           className="flex items-center justify-center bg-primary-400/20 border border-primary-400/20 text-primary-500 hover:bg-primary-400/30 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
-
           <TbChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -153,7 +152,7 @@ export const WifiLogin = ({ onPurchasePlan, onNavigateToAdmin }) => {
             Don't have a password? Explore our flexible plans
           </p>
           <Button
-            onClick={onPurchasePlan}
+            onClick={() => navigate("/portal")}
             variant="secondary"
             size="lg"
             className="w-fit h-11 font-semibold shadow-lg shadow-secondary-500/25 hover:shadow-xl hover:shadow-secondary-500/30 transition-all duration-300"
