@@ -368,8 +368,9 @@ export const CaptivePortal = () => {
                               `${selectedPlan.durationHours} Hours`}{" "}
                             •{" "}
                             <span className="text-gray-500">
-                              {selectedPlan.dataLimitDisplay ||
-                                "Unlimited Internet"}
+                              {/* {selectedPlan.dataLimitDisplay || */}
+                              Unlimited Internet
+                              {/* } */}
                             </span>
                           </p>
                         </div>
