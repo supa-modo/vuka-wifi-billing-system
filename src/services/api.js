@@ -142,6 +142,15 @@ const demoPlans = [
   },
 ];
 
+export const apiFetch = async (url, options = {}) => {
+  const token = localStorage.getItem("adminToken");
+  const headers = {
+    ...(options.headers || {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+  return fetch(url, { ...options, headers });
+};
+
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;

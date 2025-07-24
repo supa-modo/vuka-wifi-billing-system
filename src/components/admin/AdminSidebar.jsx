@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { RouterIcon } from "../ui/Icons";
 import { LuLogOut } from "react-icons/lu";
 import { FcWiFiLogo } from "react-icons/fc";
 import {
+  TbCalendarDollar,
   TbCoins,
   TbMessage,
   TbPresentationAnalytics,
   TbSettings,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
-// import { useAuth } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
+import { PiUsersThreeDuotone } from "react-icons/pi";
 
 // Sidebar navigation items (no submenus)
 const navItems = [
@@ -34,6 +36,16 @@ const navItems = [
         path: "/admin/dashboard/router",
       },
       {
+        name: "Users Management",
+        icon: PiUsersThreeDuotone,
+        path: "/admin/dashboard/users",
+      },
+      {
+        name: "Payment Plans",
+        icon: TbCalendarDollar,
+        path: "/admin/dashboard/payment-plans",
+      },
+      {
         name: "Payments",
         icon: TbCoins,
         path: "/admin/dashboard/payments",
@@ -44,9 +56,9 @@ const navItems = [
         path: "/admin/dashboard/sms-logs",
       },
     ],
-  },
+  },  
   {
-    category: "Analytics",
+    category: "Reports",
     items: [
       {
         name: "Analytics",
@@ -61,18 +73,18 @@ const navItems = [
       {
         name: "Settings",
         icon: TbSettings,
-        path: "/admin/settings",
+        path: "/admin/dashboard/settings",
       },
     ],
   },
 ];
 
 const AdminSidebar = ({ collapsed = false }) => {
-  //   const { logout, user } = useAuth();
+  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // logout();
+    logout();
     navigate("/admin");
   };
 
