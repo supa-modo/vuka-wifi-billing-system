@@ -122,6 +122,21 @@ export const CaptivePortal = () => {
     return Math.round(plan.price * (1 + 0.6 * (count - 1)));
   };
 
+  // Helper function to format bandwidth limit for display
+  const formatBandwidthLimit = (bandwidthLimit) => {
+    if (!bandwidthLimit) return "Standard Speed";
+
+    // Extract download speed from format like "3M/1M" or "10M/5M"
+    const downloadSpeed = bandwidthLimit.split("/")[0];
+    const uploadSpeed = bandwidthLimit.split("/")[1];
+
+    // Convert to Mbps for display
+    const downloadMbps = downloadSpeed.replace("M", "");
+    const uploadMbps = uploadSpeed.replace("M", "");
+
+    return `${downloadMbps} Mbps`;
+  };
+
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
       {/* Back to Login Page Button */}
@@ -137,7 +152,7 @@ export const CaptivePortal = () => {
       {/* Admin Navigation Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate("/admin/login")}
           className="flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />
@@ -147,18 +162,16 @@ export const CaptivePortal = () => {
 
       {/* Header */}
       <div className="text-center pt-12 pb-8">
-        <div className="animate-float">
-          <FcWiFiLogo
-            className="text-white mx-auto w-[5rem] h-[5rem] md:w-[6rem] md:h-[6rem] lg:w-28 lg:h-28 cursor-pointer"
-            onClick={() => {
-              if (location.pathname === "/") {
-                window.location.reload();
-              } else {
-                navigate("/");
-              }
-            }}
-          />
-        </div>
+        <FcWiFiLogo
+          className="text-white mx-auto w-[5rem] h-[5rem] md:w-[6rem] md:h-[6rem] lg:w-28 lg:h-28 cursor-pointer"
+          onClick={() => {
+            if (location.pathname === "/") {
+              window.location.reload();
+            } else {
+              navigate("/");
+            }
+          }}
+        />
         <h1 className="text-responsive-2xl font-bold text-white mb-2 md:mb-3 lg:mb-4">
           Welcome to VukaWiFi
         </h1>
@@ -230,6 +243,9 @@ export const CaptivePortal = () => {
                           Kshs.{" "}
                           {getPlanPriceSync(plan, deviceCounts[plan.id] || 1)}
                         </div>
+                        <div className="text-sm font-lexend font-semibold text-primary-500 mb-2">
+                          {formatBandwidthLimit(plan.bandwidthLimit)}
+                        </div>
                         {/* Device controls */}
                         <div className="flex items-center justify-center gap-1 mt-2">
                           <button
@@ -279,7 +295,7 @@ export const CaptivePortal = () => {
                         </div>
                       </div>
                       <div className="mt-auto w-full">
-                        <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4 lg:mb-6">
+                        <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4">
                           {plan.features.map((feature, index) => {
                             // Check if feature contains '+ more'
                             const moreIndex = feature.indexOf("+ more");
@@ -319,7 +335,7 @@ export const CaptivePortal = () => {
                             );
                           })}
                         </div>
-                        <div className="pt-2">
+                        <div className="">
                           <button
                             className={`w-full btn-primary py-2 px-4 rounded-lg text-base font-semibold flex items-center justify-center ${
                               selectedPlan?.id === plan.id
@@ -364,13 +380,14 @@ export const CaptivePortal = () => {
                             </span>
                           </h3>
                           <p className="font-lexend font-semibold text-[0.75rem] md:text-[0.83rem] text-primary-600">
-                            {selectedPlan.durationDisplay ||
-                              `${selectedPlan.durationHours} Hours`}{" "}
+                            {/* {selectedPlan.durationDisplay ||
+                              `${selectedPlan.durationHours} Hours`} */}
+                              Unlimited Internet {" "}
                             •{" "}
                             <span className="text-gray-500">
-                              {/* {selectedPlan.dataLimitDisplay || */}
-                              Unlimited Internet
-                              {/* } */}
+                              {formatBandwidthLimit(
+                                selectedPlan.bandwidthLimit
+                              )}
                             </span>
                           </p>
                         </div>
@@ -462,7 +479,8 @@ export const CaptivePortal = () => {
                     <span className="ml-2 text-secondary-600 font-semibold font-lexend">
                       {selectedPlan?.name} -{" "}
                       {selectedPlan?.durationDisplay ||
-                        `${selectedPlan?.durationHours} Hours`}
+                        `${selectedPlan?.durationHours} Hours`}{" "}
+                      - {formatBandwidthLimit(selectedPlan?.bandwidthLimit)}
                     </span>{" "}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">

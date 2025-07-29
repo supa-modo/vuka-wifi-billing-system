@@ -42,7 +42,7 @@ export const AdminLogin = () => {
   const handleCredentialsSubmit = async (e) => {
     e.preventDefault();
     if (!credentials.email || !credentials.password) {
-      setError("Please fill in all fields");
+      setError("Please fill in all the fields to continue");
       return;
     }
     setIsLoading(true);
@@ -67,7 +67,7 @@ export const AdminLogin = () => {
       login(data.token, data.admin);
       navigate("/admin/dashboard");
     } catch (err) {
-      setError("Network error. Please try again.");
+      setError("Network server error. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +125,7 @@ export const AdminLogin = () => {
       login(data.token, data.admin);
       navigate("/admin/dashboard");
     } catch (err) {
-      setError("Network error. Please try again.");
+      setError("Network server error. Please try again.");
     } finally {
       setIsLoading(false);
     }

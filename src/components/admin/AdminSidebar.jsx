@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { RouterIcon } from "../ui/Icons";
 import { LuLogOut } from "react-icons/lu";
@@ -9,10 +9,16 @@ import {
   TbMessage,
   TbPresentationAnalytics,
   TbSettings,
+  TbChevronLeft,
+  TbChevronRight,
+  TbLayoutSidebarLeftCollapse,
+  TbLayoutSidebarRightCollapse,
+  TbRouter,
+  TbServer2,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
 import { AuthContext } from "../../context/AuthContext";
-import { PiUsersThreeDuotone } from "react-icons/pi";
+import { PiComputerTowerDuotone, PiUsersThreeDuotone } from "react-icons/pi";
 
 // Sidebar navigation items (no submenus)
 const navItems = [
@@ -36,7 +42,7 @@ const navItems = [
         path: "/admin/dashboard/router",
       },
       {
-        name: "Users Management",
+        name: "Registered Users",
         icon: PiUsersThreeDuotone,
         path: "/admin/dashboard/users",
       },
@@ -51,12 +57,17 @@ const navItems = [
         path: "/admin/dashboard/payments",
       },
       {
+        name: "Router Management",
+        icon: TbRouter,
+        path: "/admin/dashboard/routers",
+      },
+      {
         name: "SMS Logs",
         icon: TbMessage,
         path: "/admin/dashboard/sms-logs",
       },
     ],
-  },  
+  },
   {
     category: "Reports",
     items: [
@@ -75,17 +86,34 @@ const navItems = [
         icon: TbSettings,
         path: "/admin/dashboard/settings",
       },
+      {
+        name: "System Status",
+        icon: PiComputerTowerDuotone,
+        path: "/admin/dashboard/system-status",
+      },
     ],
   },
 ];
 
-const AdminSidebar = ({ collapsed = false }) => {
+const AdminSidebar = ({
+  collapsed: initialCollapsed = false,
+  onToggleCollapse,
+}) => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(initialCollapsed);
 
   const handleLogout = () => {
     logout();
     navigate("/admin");
+  };
+
+  const handleToggleCollapse = () => {
+    const newCollapsedState = !collapsed;
+    setCollapsed(newCollapsedState);
+    if (onToggleCollapse) {
+      onToggleCollapse(newCollapsedState);
+    }
   };
 
   return (
@@ -96,14 +124,37 @@ const AdminSidebar = ({ collapsed = false }) => {
     >
       {/* Sidebar content */}
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <div className="flex items-center pl-4 mb-8">
-          <FcWiFiLogo size={50} className="text-primary-400" />
-          {!collapsed && (
-            <span className="font-bold text-primary-100 text-lg tracking-wide ml-2">
-              VukaWiFi
-            </span>
-          )}
-        </div>
+        {/* Toggle button and logo/title */}
+        {collapsed ? (
+          <div className="flex flex-col items-center mb-4">
+            <button
+              onClick={handleToggleCollapse}
+              // className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-200 hover:scale-105 border border-white/10 mb-2"
+              className=" text-white transition-all duration-200 hover:scale-105 mb-2"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <TbLayoutSidebarRightCollapse size={30} />
+            </button>
+            <FcWiFiLogo size={50} className="text-primary-400" />
+          </div>
+        ) : (
+          <div className="flex items-center justify-between pl-4 pr-4 mb-8">
+            <div className="flex items-center">
+              <FcWiFiLogo size={50} className="text-primary-400" />
+              <span className="font-bold text-primary-100 text-lg tracking-wide ml-2">
+                VukaWiFi
+              </span>
+            </div>
+            <button
+              onClick={handleToggleCollapse}
+              // className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-200 hover:scale-105 border border-white/10"
+              className=" text-white transition-all duration-200 hover:scale-105"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <TbLayoutSidebarLeftCollapse size={30} />
+            </button>
+          </div>
+        )}
         <nav>
           {navItems.map((category, index) => (
             <div key={index} className="mb-1 px-3">
@@ -121,7 +172,9 @@ const AdminSidebar = ({ collapsed = false }) => {
                     to={item.path}
                     end={item.end}
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-3.5 rounded-[0.7rem] transition-all duration-200 group gap-2
+                      `flex items-center ${
+                        collapsed ? "px-3.5 py-3" : "px-4 py-3.5"
+                      }   rounded-[0.7rem] transition-all duration-200 group gap-2
                       ${
                         isActive
                           ? "bg-gradient-to-r from-secondary-500/70 to-secondary-500/60 text-secondary-300 font-bold shadow-glow"

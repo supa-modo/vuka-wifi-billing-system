@@ -18,12 +18,13 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 import AdminResetRequest from "./components/admin/AdminResetRequest";
 import AdminResetConfirm from "./components/admin/AdminResetConfirm";
 import AdminSettings from "./components/admin/AdminSettings";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { token } = useContext(AuthContext);
   if (!token) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
   return children;
 };
@@ -39,7 +40,7 @@ function App() {
           {/* Captive Portal route */}
           <Route path="/portal" element={<CaptivePortal />} />
           {/* Admin routes */}
-          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/forgot-password"
             element={<AdminResetRequest />}
@@ -54,7 +55,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<PaymentsManager />} />
+            <Route index element={<AdminDashboard />} />
             <Route path="payments" element={<PaymentsManager />} />
             <Route path="sms-logs" element={<SMSLogs />} />
             <Route path="router" element={<RouterManager />} />
@@ -94,6 +95,24 @@ function App() {
                 </div>
               }
             />
+            <Route path="system-status" element={
+                <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
+                  <h2 className="text-2xl font-bold mb-4">
+                    System Status Coming Soon
+                  </h2>
+                  <p className="text-lg">System Status will appear here.</p>
+                </div>
+              }
+            />
+            <Route path="routers" element={
+              <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
+                <h2 className="text-2xl font-bold mb-4">
+                  Routers Management Coming Soon
+                </h2>
+                <p className="text-lg">Routers Management will appear here.</p>
+              </div>
+            } />
+            
           </Route>
           {/* Catch all route - redirect to root */}
           <Route path="*" element={<Navigate to="/" replace />} />

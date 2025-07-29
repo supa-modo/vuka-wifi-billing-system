@@ -33,7 +33,7 @@ export const WifiLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!credentials.phone || !credentials.password) {
-      setError("Please fill in all fields");
+      setError("Please fill in all the fields to continue");
       return;
     }
     setIsLoading(true);
@@ -56,7 +56,7 @@ export const WifiLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-primary-100 to-primary-200 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8">
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate("/admin/login")}
           className="flex items-center justify-center bg-primary-400/20 border border-primary-400/20 text-primary-500 hover:bg-primary-400/30 px-3.5 md:px-4 py-1 md:py-2 rounded-lg backdrop-blur transition-colors font-medium text-[0.8rem] lg:text-sm lg:font-medium"
         >
           <RiAdminLine className="w-3.5 h-3.5 md:w-4 lg:w-5 md:h-4 lg:h-5 mr-2" />

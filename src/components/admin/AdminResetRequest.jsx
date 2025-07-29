@@ -25,7 +25,7 @@ const AdminResetRequest = () => {
       await res.json();
       setSuccess(true);
     } catch {
-      setError("Network error. Please try again.");
+      setError("Network server error. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +51,8 @@ const AdminResetRequest = () => {
           {success ? (
             <div className="bg-green-500/10 border border-green-500/20 rounded-xl py-3 px-4 flex items-center space-x-3 animate-fade-in">
               <span className="text-green-700 text-sm font-medium">
-                If your email exists in the system, pleasecheck your inbox for a reset link.
+                If your email exists in the system, pleasecheck your inbox for a
+                reset link.
               </span>
             </div>
           ) : (

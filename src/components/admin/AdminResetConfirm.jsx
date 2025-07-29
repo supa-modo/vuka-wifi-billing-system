@@ -18,7 +18,7 @@ const AdminResetConfirm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!password || !confirm) {
-      setError("Please fill in all fields");
+      setError("Please fill in all the fields to continue");
       return;
     }
     if (password.length < 6) {
@@ -45,7 +45,7 @@ const AdminResetConfirm = () => {
       }
       setSuccess(true);
     } catch {
-      setError("Network error. Please try again.");
+      setError("Network server error. Please try again.");
     } finally {
       setIsLoading(false);
     }
