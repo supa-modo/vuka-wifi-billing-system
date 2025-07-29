@@ -15,50 +15,31 @@ import {
   Cell,
   AreaChart,
   Area,
+  RadialBarChart,
+  RadialBar,
 } from "recharts";
 import {
-  FiUsers,
-  FiDollarSign,
-  FiWifi,
-  FiClock,
-  FiActivity,
-  FiTrendingUp,
-  FiTrendingDown,
   FiArrowUp,
   FiArrowDown,
-  FiEye,
-  FiDownload,
   FiRefreshCw,
-  FiZap,
-  FiShield,
-  FiCheckCircle,
-  FiAlertCircle,
-  FiMoreVertical,
   FiChevronRight,
-  FiStar,
-  FiMonitor,
-  FiSmartphone,
-  FiTablet,
-  FiPieChart,
 } from "react-icons/fi";
 import { RiUserAddLine } from "react-icons/ri";
-import {
-  PiCaretDownDuotone,
-  PiUsersDuotone,
-  PiUsersThreeDuotone,
-} from "react-icons/pi";
+import { PiCaretDownDuotone, PiUsersDuotone } from "react-icons/pi";
 import { Button } from "../ui/Button";
 import {
-  TbCash,
   TbClock,
+  TbDeviceMobile,
   TbMessageShare,
   TbMoneybag,
   TbPresentationAnalytics,
   TbRouter,
   TbSettings,
 } from "react-icons/tb";
+import { FaComputer, FaMobile, FaTablet } from "react-icons/fa6";
 import { RouterIcon } from "../ui/Icons";
 import { MdLibraryAdd } from "react-icons/md";
+import { BsTvFill } from "react-icons/bs";
 
 // mock data with more realistic metrics
 const statsData = [
@@ -118,135 +99,71 @@ const revenueData = [
   { name: "Sun", revenue: 6800, users: 260, sessions: 175 },
 ];
 
+// change device colors to different colors from those of the plans
 const deviceData = [
-  { name: "Mobile", value: 65, color: "#3B82F6", icon: <FiSmartphone /> },
-  { name: "Desktop", value: 25, color: "#8B5CF6", icon: <FiMonitor /> },
-  { name: "Tablet", value: 10, color: "#F59E0B", icon: <FiTablet /> },
+  { name: "Mobile", value: 65, color: "#ff1a1a", icon: FaMobile },
+  { name: "Desktop", value: 25, color: "#e855e8", icon: FaComputer },
+  { name: "Tablet", value: 10, color: "#00abe9", icon: FaTablet },
+  { name: "Other", value: 10, color: "#426f6f", icon: BsTvFill },
 ];
 
-const planSubscriptionData = [
+const planSubscriptionAnalysisData = [
+  {
+    name: "1 Day Plan",
+    users: 780,
+    color: "#10B981",
+    revenue: 27300,
+    percentage: 43.8,
+  },
   {
     name: "2 Hours Plan",
-    value: 450,
     users: 450,
     color: "#3B82F6",
     revenue: 4500,
-    price: "Kshs. 10",
-    icon: "⏰",
-    description: "Quick browsing sessions",
     percentage: 25.3,
   },
   {
     name: "3 Hours Plan",
-    value: 320,
     users: 320,
     color: "#8B5CF6",
     revenue: 6400,
-    price: "Kshs. 20",
-    icon: "📱",
-    description: "Extended browsing",
     percentage: 18.0,
   },
   {
-    name: "1 Day Plan",
-    value: 780,
-    users: 780,
-    color: "#10B981",
-    revenue: 27300,
-    price: "Kshs. 35",
-    icon: "🌅",
-    description: "Most popular choice",
-    percentage: 43.8,
-  },
-  {
     name: "1 Week Plan",
-    value: 230,
     users: 230,
     color: "#F59E0B",
     revenue: 69000,
-    price: "Kshs. 300",
-    icon: "📅",
-    description: "Premium long-term",
     percentage: 12.9,
   },
 ];
 
-const recentActivity = [
+const planPerformanceData = [
   {
-    id: 1,
-    type: "payment",
-    title: "Payment received",
-    description: "Kshs. 35 for 1 Day plan",
-    time: "2 minutes ago",
-    status: "success",
-    amount: "+35",
-    user: "254712345678",
+    name: "1 Day",
+    dataUsage: 5.2,
+    peakTime: "4 PM - 8 PM",
+    color: "#10B981",
   },
   {
-    id: 2,
-    type: "user",
-    title: "New user registered",
-    description: "254712345678 joined",
-    time: "5 minutes ago",
-    status: "info",
-    user: "254712345678",
+    name: "2 Hours",
+    dataUsage: 0.8,
+    peakTime: "12 PM - 2 PM",
+    color: "#3B82F6",
   },
   {
-    id: 3,
-    type: "session",
-    title: "Session started",
-    description: "User 254723456789 connected",
-    time: "8 minutes ago",
-    status: "success",
-    user: "254723456789",
+    name: "3 Hours",
+    dataUsage: 1.5,
+    peakTime: "8 PM - 11 PM",
+    color: "#8B5CF6",
   },
   {
-    id: 4,
-    type: "alert",
-    title: "Low bandwidth alert",
-    description: "Router 1 experiencing high load",
-    time: "12 minutes ago",
-    status: "warning",
-    severity: "medium",
+    name: "1 Week",
+    dataUsage: 25.0,
+    peakTime: "All Day",
+    color: "#F59E0B",
   },
-  {
-    id: 5,
-    type: "payment",
-    title: "Payment failed",
-    description: "Kshs. 300 for 1 Week plan",
-    time: "15 minutes ago",
-    status: "error",
-    amount: "-300",
-    user: "254734567890",
-  },
-];
-
-const quickStats = [
-  {
-    title: "Today's Revenue",
-    value: "Kshs. 8,450",
-    change: "+15.2%",
-    changeType: "increase",
-    icon: <FiTrendingUp className="text-emerald-500" size={20} />,
-    bgColor: "bg-gradient-to-r from-emerald-50 to-emerald-100",
-  },
-  {
-    title: "Active Users",
-    value: "156",
-    change: "+8.4%",
-    changeType: "increase",
-    icon: <PiUsersThreeDuotone className="text-blue-500" size={20} />,
-    bgColor: "bg-gradient-to-r from-blue-50 to-blue-100",
-  },
-  {
-    title: "System Health",
-    value: "98.5%",
-    change: "+0.3%",
-    changeType: "increase",
-    icon: <FiShield className="text-emerald-500" size={20} />,
-    bgColor: "bg-gradient-to-r from-emerald-50 to-emerald-100",
-  },
-];
+].sort((a, b) => a.dataUsage - b.dataUsage);
 
 // Custom label function for pie chart
 const renderCustomLabel = ({
@@ -288,32 +205,6 @@ export const AdminDashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "success":
-        return <FiCheckCircle className="text-emerald-500" size={18} />;
-      case "warning":
-        return <FiAlertCircle className="text-amber-500" size={18} />;
-      case "error":
-        return <FiAlertCircle className="text-red-500" size={18} />;
-      default:
-        return <FiActivity className="text-blue-500" size={18} />;
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "success":
-        return "bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200";
-      case "warning":
-        return "bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200";
-      case "error":
-        return "bg-gradient-to-r from-red-50 to-red-100 border-red-200";
-      default:
-        return "bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200";
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
@@ -337,14 +228,12 @@ export const AdminDashboard = () => {
         <div className="p-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-2">
-              <h1>Overview Dashboard</h1>
-              <p className="text-slate-600 text-lg">
+              <h1 className="text-2xl font-lexend leading-tight tracking-tight font-bold text-primary-600">
+                Admin Overview Dashboard
+              </h1>
+              <p className="text-slate-500 font-medium">
                 Real-time insights into your Hotspot network performance
               </p>
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span>Last updated: just now</span>
-              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="relative">
@@ -438,7 +327,7 @@ export const AdminDashboard = () => {
           <div className="xl:col-span-2">
             {/* Main Revenue Chart */}
             <div className=" backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-secondary-600 mb-1">
                     Performance Analytics
@@ -469,7 +358,7 @@ export const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="h-96">
+              <div className="h-[22rem]">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={revenueData}
@@ -600,16 +489,157 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Elegant Plan Performance Summary */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm mt-4 p-6">
-              <div className="text-center">
-                <div>
-                  <h3 className="text-xl font-bold text-primary-600 mb-1">
-                    Plan Perfomance content will be displayed here
-                  </h3>
-                  <p className=" my-10 text-secondary-400 text-base">
-                    //TODO: to be implemented later
-                  </p>
+            {/* Plan Performance Section */}
+            <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/30 shadow-xl shadow-blue-500/5 p-6 mt-4">
+              {/* Main Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                {/* Device Connections Doughnut Chart */}
+                <div className="lg:col-span-2 ">
+                  <div className="relative flex flex-col ">
+                    <p className="text-sm font-medium text-slate-500/80 mb-2">
+                      Active devices connected to the network & data usage
+                    </p>
+                    <div className="relative flex items-center">
+                      <div className="relative w-full h-[210px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={deviceData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius="65%"
+                              outerRadius="85%"
+                              fill="#8884d8"
+                              paddingAngle={5}
+                              dataKey="value"
+                              cornerRadius={10}
+                            >
+                              {deviceData.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={entry.color}
+                                  stroke={entry.color}
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              cursor={{ fill: "transparent" }}
+                              contentStyle={{
+                                borderRadius: "12px",
+                                border: "1px solid rgba(226, 232, 240, 0.8)",
+                                backgroundColor: "rgba(255, 255, 255, 0.95)",
+                              }}
+                              formatter={(value, name) => [
+                                `${value} Connections`,
+                                name,
+                              ]}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                          <p className="text-slate-400 font-lexend font-medium text-[0.8rem]">
+                            Active Devices
+                          </p>
+                          <p className="text-3xl font-bold font-lexend text-secondary-700">
+                            {deviceData.reduce(
+                              (sum, item) => sum + item.value,
+                              0
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="space-y-2.5">
+                        {deviceData.map((item) => (
+                          <div
+                            key={item.name}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <div className="flex items-center">
+                              {/* This should display each device's individual icon */}
+                              <item.icon
+                                className="mr-3"
+                                style={{ color: item.color }}
+                                size={16}
+                              />
+                              <span className="font-semibold text-gray-500/80">
+                                {item.name}
+                              </span>
+                            </div>
+                            <span className="font-bold font-lexend pl-3 text-secondary-600/80">
+                              {item.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plan Data Usage Bar Chart */}
+                <div className="lg:col-span-3 ">
+                  {/* <h4 className="font-bold text-secondary-600 mb-6">
+                    Plan Data Usage & Peak Times
+                  </h4> */}
+                  <div className="h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={planPerformanceData}
+                        layout="vertical"
+                        margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                        barCategoryGap="10%"
+                      >
+                        <CartesianGrid
+                          stroke="rgba(203, 213, 225, 0.5)"
+                          horizontal={false}
+                        />
+                        <XAxis
+                          type="number"
+                          stroke="#94a3b8"
+                          fontSize={12}
+                          fontFamily="Lexend"
+                          tickLine={false}
+                          axisLine={false}
+                          tickFormatter={(value) => `${value} GB`}
+                        />
+                        <YAxis
+                          dataKey="name"
+                          type="category"
+                          stroke="#64748B"
+                          fontSize={12}
+                          fontWeight={500}
+                          fontFamily="Lexend"
+                          tickLine={false}
+                          axisLine={false}
+                          width={80}
+                          tick={{ transform: "translate(-10, 0)" }}
+                        />
+                        <Tooltip
+                          cursor={{ fill: "rgba(241, 245, 249, 0.6)" }}
+                          contentStyle={{
+                            borderRadius: "12px",
+                            border: "1px solid rgba(226, 232, 240, 0.8)",
+                            backgroundColor: "rgba(255, 255, 255, 0.95)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                          }}
+                          formatter={(value, name, props) => [
+                            `${value.toFixed(1)} GB`,
+                            `Data Usage`,
+                          ]}
+                          labelFormatter={(label) => (
+                            <span className="font-bold text-secondary-600">
+                              {label} Plan
+                            </span>
+                          )}
+                          itemStyle={{ color: "#334155" }}
+                        />
+                        <Bar dataKey="dataUsage" radius={[0, 8, 8, 0]}>
+                          {planPerformanceData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
@@ -632,7 +662,7 @@ export const AdminDashboard = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={planSubscriptionData}
+                    data={planSubscriptionAnalysisData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -643,7 +673,7 @@ export const AdminDashboard = () => {
                     dataKey="users"
                     paddingAngle={4}
                   >
-                    {planSubscriptionData.map((entry, index) => (
+                    {planSubscriptionAnalysisData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
@@ -669,7 +699,7 @@ export const AdminDashboard = () => {
                 <div className="text-[0.8rem] font-sans text-slate-500">
                   Total Users:
                   <span className="ml-2 font-bold font-lexend text-secondary-600">
-                    {planSubscriptionData.reduce(
+                    {planSubscriptionAnalysisData.reduce(
                       (sum, plan) => sum + plan.users,
                       0
                     )}
@@ -680,7 +710,7 @@ export const AdminDashboard = () => {
 
             {/* Plan Details */}
             <div className="grid gap-4 shadow-inner px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50 transition-all duration-300">
-              {planSubscriptionData.map((plan, index) => (
+              {planSubscriptionAnalysisData.map((plan, index) => (
                 <div key={index} className="relative overflow-hidden ">
                   {/* Glow effect */}
                   <div
@@ -758,7 +788,7 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions - Redesigned */}
+        {/* Quick Actions */}
         <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -766,63 +796,70 @@ export const AdminDashboard = () => {
                 Quick Actions
               </h3>
               <p className="text-slate-600 text-sm">
-                Frequently used management tools
+                Quick links to frequently used management tools
               </p>
             </div>
-            <Button variant="ghost" size="sm" className="text-primary-600">
-              View all <FiChevronRight className="ml-1" size={16} />
+            <Button variant="outline" size="sm" className="px-4 py-2">
+              <FiChevronRight className="mr-1" size={16} />
+              View all
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               {
                 label: "Add User",
                 icon: RiUserAddLine,
-                color: "text-blue-600",
-                bg: "bg-blue-50",
+                color: "primary",
+                bg: "bg-primary-100",
+                border: "border-primary-200",
               },
               {
                 label: "Create Plan",
                 icon: MdLibraryAdd,
-                color: "text-emerald-600",
+                color: "emerald",
                 bg: "bg-emerald-50",
+                border: "border-emerald-200",
               },
               {
                 label: "Send SMS",
                 icon: TbMessageShare,
-                color: "text-purple-600",
+                color: "purple",
                 bg: "bg-purple-50",
+                border: "border-purple-200",
               },
               {
                 label: "Router Config",
                 icon: TbRouter,
-                color: "text-amber-600",
-                bg: "bg-amber-50",
+                color: "amber",
+                bg: "bg-amber-100",
+                border: "border-amber-200",
               },
               {
                 label: "Reports",
                 icon: TbPresentationAnalytics,
-                color: "text-indigo-600",
+                color: "indigo",
                 bg: "bg-indigo-50",
+                border: "border-indigo-200",
               },
               {
                 label: "Settings",
                 icon: TbSettings,
-                color: "text-slate-600",
+                color: "slate",
                 bg: "bg-slate-50",
+                border: "border-slate-200",
               },
             ].map((action, index) => (
               <button
                 key={index}
-                className={`group flex flex-col items-center justify-center p-4 rounded-xl ${action.bg} border border-transparent hover:border-slate-200 transition-all duration-200 hover:shadow-sm`}
+                className={`group flex flex-col items-center justify-center p-4 rounded-xl ${action.bg} border ${action.border} hover:shadow-lg transition-all duration-200`}
               >
                 <div
-                  className={`p-3 rounded-lg ${action.bg} mb-2 group-hover:scale-105 transition-transform`}
+                  className={`w-12 h-12 bg-${action.color}-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-105 transition-transform`}
                 >
-                  <action.icon className={`${action.color} text-xl`} />
+                  <action.icon size={20} />
                 </div>
-                <span className="text-xs font-medium text-slate-700">
+                <span className="text-sm font-medium text-slate-700 text-center">
                   {action.label}
                 </span>
               </button>
