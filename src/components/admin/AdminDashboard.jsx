@@ -225,13 +225,13 @@ export const AdminDashboard = () => {
     <div className="min-h-screen bg-slate-100">
       {/* Header with Glass Effect */}
       <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg shadow-blue-500/5">
-        <div className="p-4">
+        <div className="py-2 px-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-2">
-              <h1 className="text-2xl font-lexend leading-tight tracking-tight font-bold text-primary-600">
+            <div className="space-y-1.5">
+              <h1 className="text-[1.3rem] font-lexend leading-tight tracking-tight font-bold text-primary-600">
                 Admin Overview Dashboard
               </h1>
-              <p className="text-slate-500 font-medium">
+              <p className="text-slate-500 fo">
                 Real-time insights into your Hotspot network performance
               </p>
             </div>
@@ -310,7 +310,7 @@ export const AdminDashboard = () => {
                     {stat.name}
                   </p>
 
-                  <div className="w-full bg-slate-200 rounded-full h-1">
+                  <div className="w-full bg-gray-300/80 rounded-full h-1">
                     <div
                       className={`h-1 rounded-full bg-gradient-to-r ${stat.gradient} transition-all duration-1000`}
                       style={{ width: "75%" }}
@@ -497,7 +497,7 @@ export const AdminDashboard = () => {
                 <div className="lg:col-span-2 ">
                   <div className="relative flex flex-col ">
                     <p className="text-sm font-medium text-slate-500/80 mb-2">
-                      Active devices connected to the network & data usage
+                      Devices online on the network & data usage per plan
                     </p>
                     <div className="relative flex items-center">
                       <div className="relative w-full h-[210px]">
@@ -792,7 +792,7 @@ export const AdminDashboard = () => {
         <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
+              <h3 className="text-xl font-bold text-secondary-600 mb-1">
                 Quick Actions
               </h3>
               <p className="text-slate-600 text-sm">
@@ -810,44 +810,44 @@ export const AdminDashboard = () => {
               {
                 label: "Add User",
                 icon: RiUserAddLine,
-                color: "primary",
+                color: "bg-primary-500",
                 bg: "bg-primary-100",
                 border: "border-primary-200",
               },
               {
                 label: "Create Plan",
                 icon: MdLibraryAdd,
-                color: "emerald",
+                color: "bg-emerald-500",
                 bg: "bg-emerald-50",
                 border: "border-emerald-200",
               },
               {
                 label: "Send SMS",
                 icon: TbMessageShare,
-                color: "purple",
+                color: "bg-purple-500",
                 bg: "bg-purple-50",
                 border: "border-purple-200",
               },
               {
                 label: "Router Config",
                 icon: TbRouter,
-                color: "amber",
+                color: "bg-amber-500",
                 bg: "bg-amber-100",
                 border: "border-amber-200",
               },
               {
                 label: "Reports",
                 icon: TbPresentationAnalytics,
-                color: "indigo",
-                bg: "bg-indigo-50",
-                border: "border-indigo-200",
+                color: "bg-pink-500",
+                bg: "bg-pink-100",
+                border: "border-pink-200",
               },
               {
                 label: "Settings",
                 icon: TbSettings,
-                color: "slate",
-                bg: "bg-slate-50",
-                border: "border-slate-200",
+                color: "bg-gray-500",
+                bg: "bg-gray-200",
+                border: "border-gray-300",
               },
             ].map((action, index) => (
               <button
@@ -855,7 +855,7 @@ export const AdminDashboard = () => {
                 className={`group flex flex-col items-center justify-center p-4 rounded-xl ${action.bg} border ${action.border} hover:shadow-lg transition-all duration-200`}
               >
                 <div
-                  className={`w-12 h-12 bg-${action.color}-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-105 transition-transform`}
+                  className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-105 transition-transform`}
                 >
                   <action.icon size={20} />
                 </div>

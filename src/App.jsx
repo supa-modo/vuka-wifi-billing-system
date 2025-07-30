@@ -9,9 +9,7 @@ import { useContext } from "react";
 import { CaptivePortal } from "./components/captive/CaptivePortal";
 import { AdminLogin } from "./components/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
-import PaymentsManager from "./components/admin/PaymentsManager";
 import SMSLogs from "./components/admin/SMSLogs";
-import RouterManager from "./components/admin/RouterManager";
 import { WifiLogin } from "./components/captive/WifiLogin";
 import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
@@ -19,6 +17,11 @@ import AdminResetRequest from "./components/admin/AdminResetRequest";
 import AdminResetConfirm from "./components/admin/AdminResetConfirm";
 import AdminSettings from "./components/admin/AdminSettings";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import PaymentsManager from "./components/admin/PaymentsManager";
+import PaymentPlans from "./components/admin/PaymentPlans";
+import UserManagement from "./components/admin/UserManagement";
+import ActiveSessions from "./components/admin/ActiveSessions";
+import RouterManager from "./components/admin/RouterManager";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -48,18 +51,41 @@ function App() {
           <Route path="/admin/reset-password" element={<AdminResetConfirm />} />
 
           <Route
-            path="/admin/dashboard"
+            path="/admin"
             element={
               <ProtectedRoute>
                 <AdminLayout />
               </ProtectedRoute>
             }
           >
-            <Route index element={<AdminDashboard />} />
+            {/* Default admin route - redirect to dashboard */}
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+
+            {/* Dashboard */}
+            <Route path="dashboard" element={<AdminDashboard />} />
+
+            {/* Payments Management */}
             <Route path="payments" element={<PaymentsManager />} />
+
+            {/* Payment Plans */}
+            <Route path="plans" element={<PaymentPlans />} />
+
+            {/* User Management */}
+            <Route path="users" element={<UserManagement />} />
+
+            {/* Active Sessions */}
+            <Route path="sessions" element={<ActiveSessions />} />
+
+            {/* Router Management */}
+            <Route path="routers" element={<RouterManager />} />
+
+            {/* SMS Logs */}
             <Route path="sms-logs" element={<SMSLogs />} />
-            <Route path="router" element={<RouterManager />} />
+
+            {/* Settings */}
             <Route path="settings" element={<AdminSettings />} />
+
+            {/* Analytics (Coming Soon) */}
             <Route
               path="analytics"
               element={
@@ -73,29 +99,11 @@ function App() {
                 </div>
               }
             />
+
+            {/* System Status (Coming Soon) */}
             <Route
-              path="users"
+              path="system-status"
               element={
-                <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
-                  <h2 className="text-2xl font-bold mb-4">
-                    Users Management Coming Soon
-                  </h2>
-                  <p className="text-lg">Users Management will appear here.</p>
-                </div>
-              }
-            />
-            <Route
-              path="payment-plans"
-              element={
-                <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
-                  <h2 className="text-2xl font-bold mb-4">
-                    Payment Plans Coming Soon
-                  </h2>
-                  <p className="text-lg">Payment Plans will appear here.</p>
-                </div>
-              }
-            />
-            <Route path="system-status" element={
                 <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
                   <h2 className="text-2xl font-bold mb-4">
                     System Status Coming Soon
@@ -104,15 +112,12 @@ function App() {
                 </div>
               }
             />
-            <Route path="routers" element={
-              <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
-                <h2 className="text-2xl font-bold mb-4">
-                  Routers Management Coming Soon
-                </h2>
-                <p className="text-lg">Routers Management will appear here.</p>
-              </div>
-            } />
-            
+
+            {/* Catch all admin routes - redirect to dashboard */}
+            <Route
+              path="*"
+              element={<Navigate to="/admin/dashboard" replace />}
+            />
           </Route>
           {/* Catch all route - redirect to root */}
           <Route path="*" element={<Navigate to="/" replace />} />
