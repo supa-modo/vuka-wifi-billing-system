@@ -21,7 +21,6 @@ import {
 import {
   FiArrowUp,
   FiArrowDown,
-  FiRefreshCw,
   FiChevronRight,
 } from "react-icons/fi";
 import { RiUserAddLine } from "react-icons/ri";
@@ -33,6 +32,7 @@ import {
   TbMessageShare,
   TbMoneybag,
   TbPresentationAnalytics,
+  TbRefresh,
   TbRouter,
   TbSettings,
 } from "react-icons/tb";
@@ -253,7 +253,7 @@ export const AdminDashboard = () => {
                 />
               </div>
               <Button variant="primary" size="sm" className="px-4 py-2.5">
-                <FiRefreshCw size={18} className="animate-spin-slow mr-2" />
+                <TbRefresh size={18} className="animate-spin-slow mr-2" />
                 <span>Refresh Data</span>
               </Button>
             </div>

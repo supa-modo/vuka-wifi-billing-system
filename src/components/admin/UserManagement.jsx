@@ -10,6 +10,7 @@ import {
   FiArrowUp,
   FiArrowDown,
 } from "react-icons/fi";
+import { TbRefresh } from "react-icons/tb";
 
 // Mock Data
 const usersData = [
@@ -157,7 +158,7 @@ const UserManagement = () => {
             </div>
             <div className="flex items-center gap-4">
               <button className="px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg text-slate-700 font-medium shadow-lg shadow-blue-500/5 hover:shadow-xl transition-all duration-200 flex items-center gap-2">
-                <FiRefreshCw size={18} className="animate-spin-slow" />
+                <TbRefresh size={18} className="animate-spin-slow" />
                 <span>Refresh</span>
               </button>
               <button className="px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-primary-400/50 transition-shadow flex items-center gap-2">

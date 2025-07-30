@@ -5,14 +5,22 @@ import {
   FaPowerOff,
   FaBan,
   FaCheck,
+  FaSearch,
 } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
-import { TbFilterPlus, TbRefresh, TbSearch, TbX } from "react-icons/tb";
+import {
+  TbCheck,
+  TbFilterFilled,
+  TbFilterPlus,
+  TbRefresh,
+  TbSearch,
+  TbX,
+} from "react-icons/tb";
 import { FaComputer, FaTv } from "react-icons/fa6";
-import { formatDate } from "../../utils/formatDate";
 import Checkbox from "../ui/Checkbox";
 import { PiCaretDownDuotone } from "react-icons/pi";
-import { LuFilter } from "react-icons/lu";
+import { RiSearchLine } from "react-icons/ri";
+import { FiFilter } from "react-icons/fi";
 
 // Mock Data
 const initialSessions = [
@@ -68,137 +76,6 @@ const initialSessions = [
     plan: "3 Hours Plan",
     avatar: "https://i.pravatar.cc/150?u=a048581f4e29926701d",
   },
-  {
-    id: "SESS-005",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-006",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-007",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-008",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-009",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-010",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-
-  {
-    id: "SESS-011",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-012",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-013",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: "SESS-014",
-    user: "John Doe",
-    phone: "+254712345678",
-    ipAddress: "192.168.1.101",
-    macAddress: "00:1B:44:11:3A:B7",
-    deviceType: "Laptop",
-    dataUsage: 1250, // in MB
-    sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
-    plan: "1 Day Plan",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
 ];
 
 const getDeviceIcon = (deviceType) => {
@@ -244,6 +121,7 @@ const formatDateTime = (date) => {
 const FilterDropdown = ({
   isOpen,
   onClose,
+  onClear, // Add this new prop
   selectedPlans,
   onPlanToggle,
   availablePlans,
@@ -251,67 +129,57 @@ const FilterDropdown = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 z-50">
-      <div className="p-4">
+    <div className="absolute top-full left-0 mt-2 min-w-[19rem] bg-white rounded-xl shadow-2xl border border-slate-200 z-50">
+      <div className="p-3.5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">
+          <h3 className="text-sm font-semibold text-slate-600 font-lexend">
             Filter by Plan
           </h3>
           <button
-            onClick={onClose}
-            className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+            onClick={onClear} // Use the new onClear prop
+            className="text-xs font-lexend font-semibold text-primary-600 hover:text-primary-800 transition-colors"
           >
-            <TbX size={16} />
+            Clear all
           </button>
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-1 gap-2">
-            {availablePlans.map((plan) => (
-              <button
-                key={plan}
-                onClick={() => onPlanToggle(plan)}
-                className={`px-3 py-2.5 rounded-lg border transition-all duration-200 font-medium text-sm text-left ${
-                  selectedPlans.includes(plan)
-                    ? "border-primary-500 bg-primary-50 text-primary-700 shadow-sm"
-                    : "border-gray-200 hover:border-primary-300 text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {availablePlans.map((plan) => {
+              const isSelected = selectedPlans.includes(plan);
+              return (
+                <button
+                  key={plan}
+                  onClick={() => onPlanToggle(plan)}
+                  className={`px-4 py-1.5 font-lexend rounded-full border transition-all duration-200 font-medium text-[0.83rem] text-center flex items-center gap-2 ${
+                    isSelected
+                      ? "border-primary-400 bg-primary-100 text-primary-700 shadow-sm"
+                      : "border-gray-200 hover:border-primary-300 text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  {isSelected && <FaCheck size={12} className="text-primary-600" />}
                   <span>{plan}</span>
-                  {selectedPlans.includes(plan) && (
-                    <div className="w-4 h-4 bg-primary-600 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-2.5 h-2.5 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="flex gap-2 mt-4 pt-3 border-t border-slate-200">
+        <div className="flex gap-2 mt-4 pt-2.5 border-t border-slate-200">
           <button
             onClick={() => onPlanToggle("all")}
-            className="flex-1 px-3 py-2 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+            className="flex-1 px-3 py-2 text-[0.78rem] font-lexend font-semibold text-gray-500 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
           >
             Select All
           </button>
           <button
             onClick={onClose}
-            className="flex-1 px-3 py-2 text-xs font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex-1 px-3 py-2 text-[0.78rem] font-lexend font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
           >
-            Apply
+            <div className="flex items-center justify-center gap-2">
+              <FaCheck size={12} className="text-white" />
+              <span>Apply</span>
+            </div>
           </button>
         </div>
       </div>
@@ -547,24 +415,25 @@ const ActiveSessions = () => {
             <div className="relative filter-dropdown flex-shrink-0">
               <button
                 onClick={() => setShowFilterModal(!showFilterModal)}
-                className="px-4 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+                className="pl-3 pr-2 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center whitespace-nowrap"
               >
-                <LuFilter size={20} className="text-primary-600" />
-                <span>Filters</span>
+                <FiFilter size={20} className="mr-2 text-primary-600" />
+                <span className="mr-1">Filters</span>
                 {selectedPlans.length > 0 && (
-                  <span className="bg-primary-600 text-white text-xs px-2 py-0.5 rounded-full">
+                  <span className="bg-primary-600 text-white text-xs px-2 mr-2 py-0.5 rounded-full">
                     {selectedPlans.length}
                   </span>
                 )}
                 <PiCaretDownDuotone
                   size={18}
-                  className="ml-1 text-gray-600 pointer-events-none"
+                  className="ml-2 text-gray-600 pointer-events-none"
                 />
               </button>
 
               <FilterDropdown
-                isOpen={showFilterModal}
-                onClose={() => setShowFilterModal(false)}
+               isOpen={showFilterModal}
+               onClose={() => setShowFilterModal(false)}
+                onClear={() => setSelectedPlans([])} // Add this prop
                 selectedPlans={selectedPlans}
                 onPlanToggle={handlePlanToggle}
                 availablePlans={availablePlans}
@@ -573,10 +442,10 @@ const ActiveSessions = () => {
 
             {/* Search Input */}
             <div className="relative flex-1 min-w-0">
-              <TbSearch className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-400" />
+              <RiSearchLine className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search by user phone number, IP Address, or MAC Address..."
+                placeholder="Search by user phone number, IP Address, or MAC Address....."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-[0.6rem] w-full border-2 border-gray-200 rounded-[0.6rem] text-[0.95rem] font-medium focus:border-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
@@ -709,7 +578,7 @@ const ActiveSessions = () => {
                           <div className="font-semibold tracking-wide text-[0.9rem] text-slate-900">
                             {session.phone}
                           </div>
-                          <div className="text-xs tracking-tight leading-relaxed text-slate-500">
+                          <div className="text-xs tracking-tight font-medium leading-relaxed text-gray-500/80">
                             {session.plan}
                           </div>
                         </div>

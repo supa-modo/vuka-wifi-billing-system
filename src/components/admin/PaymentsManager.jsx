@@ -1,15 +1,10 @@
 import React, { useState, useMemo } from "react";
 import {
   FiSearch,
-  FiChevronDown,
-  FiDownload,
-  FiPrinter,
-  FiMail,
-  FiRefreshCw,
   FiArrowUp,
   FiArrowDown,
 } from "react-icons/fi";
-import { TbFileExport } from "react-icons/tb";
+import { TbFileExport, TbRefresh } from "react-icons/tb";
 
 // Mock Data
 const paymentsData = [
@@ -160,7 +155,7 @@ const PaymentsManager = () => {
                 <TbFileExport /> Export
               </button>
               <button className="px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-primary-400/50 transition-shadow flex items-center gap-2">
-                <FiRefreshCw /> Refresh
+                <TbRefresh /> Refresh
               </button>
             </div>
           </div>
