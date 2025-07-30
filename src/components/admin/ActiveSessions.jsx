@@ -32,6 +32,7 @@ const initialSessions = [
     macAddress: "00:1B:44:11:3A:B7",
     deviceType: "Laptop",
     dataUsage: 1250, // in MB
+    bandwidth: 2, // in Mbps
     sessionStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
     sessionEnd: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from session start
     plan: "1 Day Plan",
@@ -45,6 +46,7 @@ const initialSessions = [
     macAddress: "A4:B1:C2:D3:E4:F5",
     deviceType: "Mobile",
     dataUsage: 340, // in MB
+    bandwidth: 10, // in Mbps
     sessionStart: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
     sessionEnd: new Date(Date.now() + 45 * 60 * 1000), // 45 minutes from now
     plan: "1 Week Plan",
@@ -58,6 +60,7 @@ const initialSessions = [
     macAddress: "F8:E7:D6:C5:B4:A3",
     deviceType: "Tablet",
     dataUsage: 812, // in MB
+    bandwidth: 2, // in Mbps
     sessionStart: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
     sessionEnd: new Date(Date.now() + 5 * 60 * 60 * 1000), // 5 hours from now
     plan: "3 Hours Plan",
@@ -71,6 +74,7 @@ const initialSessions = [
     macAddress: "00:1B:44:11:3A:B7",
     deviceType: "TV",
     dataUsage: 812, // in MB
+    bandwidth: 2, // in Mbps
     sessionStart: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
     sessionEnd: new Date(Date.now() + 5 * 60 * 60 * 1000), // 5 hours from now
     plan: "3 Hours Plan",
@@ -157,7 +161,9 @@ const FilterDropdown = ({
                       : "border-gray-200 hover:border-primary-300 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  {isSelected && <FaCheck size={12} className="text-primary-600" />}
+                  {isSelected && (
+                    <FaCheck size={12} className="text-primary-600" />
+                  )}
                   <span>{plan}</span>
                 </button>
               );
@@ -431,8 +437,8 @@ const ActiveSessions = () => {
               </button>
 
               <FilterDropdown
-               isOpen={showFilterModal}
-               onClose={() => setShowFilterModal(false)}
+                isOpen={showFilterModal}
+                onClose={() => setShowFilterModal(false)}
                 onClear={() => setSelectedPlans([])} // Add this prop
                 selectedPlans={selectedPlans}
                 onPlanToggle={handlePlanToggle}
@@ -457,9 +463,12 @@ const ActiveSessions = () => {
         {/* Sessions Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500/80">
-            <thead className="text-xs text-secondary-600 uppercase bg-slate-50">
+            <thead className="text-xs text-secondary-600 uppercase bg-slate-200/50">
               <tr>
-                <th scope="col" className="pl-6 py-3 text-secondary-600">
+                <th
+                  scope="col"
+                  className="pl-6 py-3 text-secondary-600 rounded-l-xl"
+                >
                   <Checkbox
                     checked={
                       selectedSessions.length === paginatedSessions.length &&
@@ -544,7 +553,7 @@ const ActiveSessions = () => {
                 </th>
                 <th
                   scope="col"
-                  className="pr-6 py-3 text-center text-secondary-600"
+                  className="pr-6 py-3 text-center text-secondary-600 rounded-r-xl"
                 >
                   Actions
                 </th>
@@ -620,7 +629,14 @@ const ActiveSessions = () => {
                       {formatDuration(session.sessionEnd)}
                     </td>
                     <td className="px-6 py-4 font-semibold font-lexend text-primary-600">
-                      {formatDataUsage(session.dataUsage)}
+                      <div className="">
+                        <div className="">
+                          {formatDataUsage(session.dataUsage)}
+                        </div>
+                        <div className="text-xs text-gray-500/80">
+                          {session.bandwidth} Mbps
+                        </div>
+                      </div>
                     </td>
                     <td className="pr-6 py-4 text-right">
                       <button className="px-3 py-1 text-xs font-medium tracking-tight font-lexend text-red-700 bg-red-200/80 rounded-full hover:bg-red-300 hover:text-red-800 transition-colors">

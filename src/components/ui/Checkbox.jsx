@@ -18,7 +18,7 @@ const Checkbox = ({
   };
 
   return (
-    <div className={`inline-flex items-center ${className}`}>
+    <div className={`inline-flex items-center mt-1 ${className}`}>
       <div className="relative">
         <input
           type="checkbox"
