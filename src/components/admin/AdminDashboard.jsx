@@ -18,11 +18,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
-import {
-  FiArrowUp,
-  FiArrowDown,
-  FiChevronRight,
-} from "react-icons/fi";
+import { FiArrowUp, FiArrowDown, FiChevronRight } from "react-icons/fi";
 import { RiUserAddLine } from "react-icons/ri";
 import { PiCaretDownDuotone, PiUsersDuotone } from "react-icons/pi";
 import { Button } from "../ui/Button";
@@ -201,24 +197,176 @@ export const AdminDashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="flex flex-col items-center justify-center text-center">
-          <div className="relative">
-            <div className="w-8 lg:w-10 h-8 lg:h-10 border-4 border-primary-200 rounded-full animate-spin"></div>
-            <div className="absolute top-0 left-0 w-8 lg:w-10 h-8 lg:h-10 border-4 border-primary-600 rounded-full animate-spin border-t-transparent"></div>
+  // Skeleton Loading Component
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-slate-100/60">
+      {/* Header Skeleton */}
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg shadow-blue-500/5">
+        <div className="py-2 px-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-1.5">
+              <div className="h-8 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-lg w-80"></div>
+              <div className="h-5 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-96"></div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="h-10 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-lg w-32"></div>
+              <div className="h-10 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-lg w-32"></div>
+            </div>
           </div>
-          <p className="mt-4 text-sm md:text-base font-medium text-slate-500">
-            Loading Dashboard...
-          </p>
         </div>
       </div>
-    );
+
+      <div className="p-6 space-y-8">
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/30 shadow-xl shadow-blue-500/5 p-6"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-xl"></div>
+                  <div className="h-8 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded pl-2 w-20"></div>
+                </div>
+                <div className="text-right space-y-1">
+                  <div className="h-6 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-16"></div>
+                  <div className="h-3 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-12"></div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-24"></div>
+                <div className="w-full bg-gray-300/80 rounded-full h-1">
+                  <div className="h-1 rounded-full bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse w-3/4"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts Section Skeleton */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <div className="xl:col-span-2 space-y-4">
+            {/* Main Chart Skeleton */}
+            <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="space-y-2">
+                  <div className="h-6 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-48"></div>
+                  <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-64"></div>
+                </div>
+                <div className="flex items-center gap-6">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-full"></div>
+                      <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-12"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="h-[22rem] bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-xl"></div>
+            </div>
+
+            {/* Plan Performance Skeleton */}
+            <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/30 shadow-xl shadow-blue-500/5 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                {/* Device Chart Skeleton */}
+                <div className="lg:col-span-2">
+                  <div className="space-y-2 mb-4">
+                    <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-64"></div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="w-[210px] h-[210px] bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-full"></div>
+                    <div className="space-y-3">
+                      {[...Array(4)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-4 h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded"></div>
+                            <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-16"></div>
+                          </div>
+                          <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-8"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bar Chart Skeleton */}
+                <div className="lg:col-span-3">
+                  <div className="h-[250px] bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-xl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Plan Subscription Skeleton */}
+          <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
+            <div className="space-y-2 mb-6">
+              <div className="h-6 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-56"></div>
+              <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-64"></div>
+            </div>
+
+            <div className="h-80 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-xl mb-6"></div>
+
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="p-4 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="space-y-1">
+                      <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-20"></div>
+                      <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-12"></div>
+                    </div>
+                    <div className="space-y-1 text-right">
+                      <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-16"></div>
+                      <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-20"></div>
+                    </div>
+                  </div>
+                  <div className="h-2.5 bg-slate-200/60 rounded-full">
+                    <div className="h-2.5 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-full w-3/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions Skeleton */}
+        <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-white/20 shadow-xl shadow-blue-500/5 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="space-y-1">
+              <div className="h-6 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-32"></div>
+              <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-56"></div>
+            </div>
+            <div className="h-8 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-20"></div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[...Array(6)].map((_, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-100/60 border border-slate-200/60"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded-xl mb-3"></div>
+                <div className="h-4 bg-gradient-to-r from-slate-300/60 via-slate-200/60 to-slate-300/60 bg-[length:200%_100%] animate-pulse rounded w-16"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return <SkeletonLoader />;
   }
 
   return (

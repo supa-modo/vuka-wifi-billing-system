@@ -143,12 +143,12 @@ const AdminSidebar = ({
               >
                 <TbLayoutSidebarRightCollapse size={30} />
               </button>
-              <FcWiFiLogo size={50} className="text-primary-400" />
+              <FcWiFiLogo size={55} className="text-primary-400" />
             </div>
           ) : (
-            <div className="flex items-center justify-between pl-4 pr-4 mb-8">
+            <div className="flex items-center justify-between pl-4 pr-4 mb-2">
               <div className="flex items-center">
-                <FcWiFiLogo size={50} className="text-primary-400" />
+                <FcWiFiLogo size={60} className="text-primary-400" />
                 <span className="font-bold text-primary-100 text-lg tracking-wide ml-2 transition-opacity duration-300">
                   VukaWiFi
                 </span>
@@ -162,8 +162,9 @@ const AdminSidebar = ({
               </button>
             </div>
           )}
+          <hr className="text-white/10  mx-4" />
         </div>
-        <nav className="transition-all duration-500 ease-in-out">
+        <nav className="transition-all duration-500 ease-in-out pt-4">
           {navItems.map((category, index) => (
             <div key={index} className="mb-1 px-3">
               {/* Category label */}

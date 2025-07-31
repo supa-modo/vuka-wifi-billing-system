@@ -405,12 +405,13 @@ const ActiveSessions = () => {
               <div className="flex items-center gap-3 text-slate-600 min-w-[30rem]">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-lexend font-semibold text-secondary-600 whitespace-nowrap">
-                    Online & Connected Sessions
-                  </span>
-                  <span className="text-[0.8rem] text-slate-500 font-lexend tracking-tight font-semibold">
-                    ({filteredSessions.length} sessions)
+                    Connected Sessions
                   </span>
                 </div>
+                <div className="h-6 border-l border-slate-300/70"></div>
+                <p className="text-sm text-slate-500 font-lexend">
+                  {filteredSessions.length} devices connected online
+                </p>
               </div>
             )}
           </div>
@@ -639,10 +640,18 @@ const ActiveSessions = () => {
                       </div>
                     </td>
                     <td className="pr-6 py-4 text-right">
-                      <button className="px-3 py-1 text-xs font-medium tracking-tight font-lexend text-red-700 bg-red-200/80 rounded-full hover:bg-red-300 hover:text-red-800 transition-colors">
+                      {/* disconnect button */}
+                      <button className="px-3 py-1 mr-2 text-xs border border-red-300 font-medium tracking-tight font-lexend text-red-700 bg-red-200/80 rounded-full hover:bg-red-300 hover:text-red-800 transition-colors">
                         <div className="flex items-center">
                           <FaPowerOff size={12} className="mr-1.5" />
                           Disconnect
+                        </div>
+                      </button>
+                      {/* block button */}
+                      <button className="px-3 py-1 text-xs border border-amber-400 font-medium tracking-tight font-lexend text-amber-700 bg-amber-200/80 rounded-full hover:bg-amber-300 hover:text-amber-800 transition-colors">
+                        <div className="flex items-center">
+                          <FaBan size={12} className="mr-1.5" />
+                          Block
                         </div>
                       </button>
                     </td>
