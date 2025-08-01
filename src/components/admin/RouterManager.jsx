@@ -11,6 +11,13 @@ import {
   FiEye,
   FiRefreshCw,
   FiAlertCircle,
+  FiMapPin,
+  FiCpu,
+  FiHardDrive,
+  FiThermometer,
+  FiActivity,
+  FiUsers,
+  FiClock,
 } from "react-icons/fi";
 import {
   TbRefresh,
@@ -906,182 +913,219 @@ const RouterManager = () => {
           </div>
         </div>
 
-        {/* Routers Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-slate-500">
-            <thead className="text-xs text-slate-700 uppercase bg-slate-100/80">
-              <tr>
-                <th scope="col" className="p-4">
-                  <Checkbox
-                    id="select-all"
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    checked={
-                      selectedRouters.length === sortedRouters.length &&
-                      sortedRouters.length > 0
-                    }
-                  />
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("name")}
+        {/* Routers Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {sortedRouters.map((router) => (
+            <div
+              key={router.id}
+              className={`relative group bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 hover:border-primary-300/60 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 ${
+                selectedRouters.includes(router.id)
+                  ? "ring-2 ring-primary-400/50 bg-primary-50/30"
+                  : ""
+              }`}
+            >
+              {/* Selection Checkbox */}
+              <div className="absolute top-4 left-4 z-10">
+                <Checkbox
+                  id={`select-${router.id}`}
+                  onChange={(checked) => handleSelectRouter(router.id, checked)}
+                  checked={selectedRouters.includes(router.id)}
+                />
+              </div>
+
+              {/* Status Indicator */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {getStatusIcon(router.status)}
+                <span
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getStatusChip(
+                    router.status
+                  )}`}
                 >
-                  Router Name {getSortIcon("name")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("ipAddress")}
-                >
-                  IP Address {getSortIcon("ipAddress")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("model")}
-                >
-                  Model {getSortIcon("model")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("status")}
-                >
-                  Status {getSortIcon("status")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("clients")}
-                >
-                  Clients {getSortIcon("clients")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("uptime")}
-                >
-                  Uptime {getSortIcon("uptime")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => handleSort("location")}
-                >
-                  Location {getSortIcon("location")}
-                </th>
-                <th scope="col" className="px-6 py-3 text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedRouters.map((router) => (
-                <tr
-                  key={router.id}
-                  className={`bg-white border-b border-slate-200/80 hover:bg-slate-50/70 ${
-                    selectedRouters.includes(router.id)
-                      ? "bg-primary-50/50"
-                      : ""
-                  }`}
-                >
-                  <td className="w-4 p-4">
-                    <Checkbox
-                      id={`select-${router.id}`}
-                      onChange={(e) =>
-                        handleSelectRouter(router.id, e.target.checked)
-                      }
-                      checked={selectedRouters.includes(router.id)}
-                    />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary-100 rounded-lg">
-                        <TbRouter className="text-primary-600" size={16} />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-slate-900">
-                          {router.name}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          {router.id}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-mono text-sm font-medium text-slate-800">
+                  {router.status}
+                </span>
+              </div>
+
+              <div className="p-6 pt-12">
+                {/* Router Header */}
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <TbRouter className="text-white" size={32} />
+                  </div>
+                  <h3 className="text-lg font-bold font-lexend text-slate-800 mb-1">
+                    {router.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 font-mono">
                     {router.ipAddress}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-slate-700">
-                      {router.model}
+                  </p>
+                  <p className="text-xs text-slate-400">{router.id}</p>
+                </div>
+
+                {/* Router Details */}
+                <div className="space-y-4 mb-6">
+                  {/* Model & Location */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FiCpu className="w-4 h-4 text-slate-500" />
+                        <span className="text-xs font-medium text-slate-600">
+                          Model
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {router.model}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        FW: {router.firmware}
+                      </p>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      FW: {router.firmware}
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FiMapPin className="w-4 h-4 text-slate-500" />
+                        <span className="text-xs font-medium text-slate-600">
+                          Location
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {router.location}
+                      </p>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(router.status)}
-                      <span
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getStatusChip(
-                          router.status
-                        )}`}
-                      >
-                        {router.status}
-                      </span>
+                  </div>
+
+                  {/* Performance Metrics */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-blue-50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FiUsers className="w-4 h-4 text-blue-500" />
+                        <span className="text-xs font-medium text-blue-700">
+                          Clients
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold text-blue-600">
+                        {router.clients}
+                      </p>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-slate-800">
-                    {router.clients}
-                  </td>
-                  <td className="px-6 py-4 font-medium text-slate-700">
-                    {router.uptime}
-                  </td>
-                  <td className="px-6 py-4 font-medium text-slate-700">
-                    {router.location}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center gap-1 justify-end">
-                      <button
-                        onClick={() => handleRouterAction("view", router.id)}
-                        className="p-2 text-slate-500 hover:text-primary-600 hover:bg-slate-200/70 rounded-full transition-colors"
-                        title="View details"
-                      >
-                        <FiEye size={16} />
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleRouterAction("configure", router.id)
-                        }
-                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-200/70 rounded-full transition-colors"
-                        title="Configure router"
-                      >
-                        <FiSettings size={16} />
-                      </button>
-                      {router.status === "Online" && (
-                        <button
-                          onClick={() =>
-                            handleRouterAction("reboot", router.id)
-                          }
-                          className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-full transition-colors"
-                          title="Reboot router"
+                    <div className="bg-green-50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FiClock className="w-4 h-4 text-green-500" />
+                        <span className="text-xs font-medium text-green-700">
+                          Uptime
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-green-600">
+                        {router.uptime}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Resource Usage */}
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <h4 className="text-xs font-semibold text-slate-600 mb-3">
+                      System Resources
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <FiCpu className="w-3 h-3 text-slate-500" />
+                          <span className="text-xs text-slate-600">CPU</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                router.cpu < 30
+                                  ? "bg-green-500"
+                                  : router.cpu < 70
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{ width: `${router.cpu}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs font-semibold text-slate-700">
+                            {router.cpu}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <FiHardDrive className="w-3 h-3 text-slate-500" />
+                          <span className="text-xs text-slate-600">Memory</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                router.memory < 50
+                                  ? "bg-green-500"
+                                  : router.memory < 80
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{ width: `${router.memory}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs font-semibold text-slate-700">
+                            {router.memory}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <FiThermometer className="w-3 h-3 text-slate-500" />
+                          <span className="text-xs text-slate-600">Temp</span>
+                        </div>
+                        <span
+                          className={`text-xs font-semibold ${
+                            router.temperature < 50
+                              ? "text-green-600"
+                              : router.temperature < 70
+                              ? "text-yellow-600"
+                              : "text-red-600"
+                          }`}
                         >
-                          <FiRefreshCw size={16} />
-                        </button>
-                      )}
-                      <button
-                        className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/70 rounded-full transition-colors"
-                        title="More actions"
-                      >
-                        <FiMoreVertical size={16} />
-                      </button>
+                          {router.temperature}°C
+                        </span>
+                      </div>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleRouterAction("view", router.id)}
+                    className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
+                    title="View details"
+                  >
+                    <FiEye size={14} />
+                    Details
+                  </button>
+                  <button
+                    onClick={() => handleRouterAction("configure", router.id)}
+                    className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                    title="Configure router"
+                  >
+                    <FiSettings size={14} />
+                  </button>
+                  {router.status === "Online" && (
+                    <button
+                      onClick={() => handleRouterAction("reboot", router.id)}
+                      className="p-2 bg-amber-100 text-amber-600 rounded-lg hover:bg-amber-200 transition-colors"
+                      title="Reboot router"
+                    >
+                      <FiRefreshCw size={14} />
+                    </button>
+                  )}
+                  <button
+                    className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                    title="More actions"
+                  >
+                    <FiMoreVertical size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Pagination */}

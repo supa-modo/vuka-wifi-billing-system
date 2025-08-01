@@ -873,7 +873,7 @@ const SMSLogs = () => {
                 <th scope="col" className="p-4">
                   <Checkbox
                     id="select-all"
-                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    onChange={handleSelectAll}
                     checked={
                       selectedLogs.length === sortedLogs.length &&
                       sortedLogs.length > 0
@@ -934,9 +934,7 @@ const SMSLogs = () => {
                   <td className="w-4 p-4">
                     <Checkbox
                       id={`select-${log.id}`}
-                      onChange={(e) =>
-                        handleSelectLog(log.id, e.target.checked)
-                      }
+                      onChange={(checked) => handleSelectLog(log.id, checked)}
                       checked={selectedLogs.includes(log.id)}
                     />
                   </td>

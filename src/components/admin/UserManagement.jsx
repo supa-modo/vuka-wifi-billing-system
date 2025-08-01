@@ -110,17 +110,21 @@ const StatCard = ({ title, value, change, changeType, icon, gradient }) => (
             {value}
           </p>
         </div>
-        <div className={`p-3 rounded-xl text-secondary-600 ${gradient}`}>
-          {icon}
-        </div>
       </div>
-      <div
-        className={`flex items-center gap-1 text-sm font-semibold mt-4 ${
-          changeType === "increase" ? "text-emerald-500" : "text-red-500"
-        }`}
-      >
-        {changeType === "increase" ? <FiArrowUp /> : <FiArrowDown />}
-        <span>{change} this month</span>
+      <div className="flex flex-col items-end">
+        {/* <div
+          className={`p-3 rounded-xl bg-secondary-600 text-white ${gradient}`}
+        > */}
+        <div className="p-2 text-secondary-600">{icon}</div>
+
+        <div
+          className={`flex items-center gap-1 text-sm font-semibold ${
+            changeType === "increase" ? "text-emerald-500" : "text-red-500"
+          }`}
+        >
+          {changeType === "increase" ? <FiArrowUp /> : <FiArrowDown />}
+          <span>{change} this month</span>
+        </div>
       </div>
     </div>
   </div>
@@ -396,7 +400,7 @@ const UserManagement = () => {
           value="2,847"
           change="+12.5%"
           changeType="increase"
-          icon={<PiUsersThreeDuotone size={24} />}
+          icon={<PiUsersThreeDuotone size={34} />}
           gradient="from-primary-500 to-primary-600"
         />
         <StatCard
@@ -404,7 +408,7 @@ const UserManagement = () => {
           value="2,512"
           change="+8.2%"
           changeType="increase"
-          icon={<RiUserFollowLine size={22} />}
+          icon={<RiUserFollowLine size={32} />}
           gradient="from-emerald-500 to-emerald-600"
         />
         <StatCard
@@ -412,7 +416,7 @@ const UserManagement = () => {
           value="128"
           change="+30%"
           changeType="increase"
-          icon={<PiTrendUpBold size={20} />}
+          icon={<PiTrendUpBold size={32} />}
           gradient="from-blue-500 to-blue-600"
         />
         <StatCard
@@ -420,7 +424,7 @@ const UserManagement = () => {
           value="32"
           change="-2"
           changeType="decrease"
-          icon={<RiUserForbidLine size={22} />}
+          icon={<RiUserForbidLine size={32} />}
           gradient="from-red-500 to-red-600"
         />
       </div>

@@ -82,63 +82,79 @@ const demoRouterCreds = [
 const demoPlans = [
   {
     id: "plan1",
-    name: "2 Hours",
+    name: "Power Hour",
+    description: "Perfect for quick browsing and social media",
     durationHours: 2,
-    price: 10,
+    basePrice: 10,
     bandwidthLimit: "3M/1M",
     maxDevices: 3,
     isPopular: false,
+    isActive: true,
+    subscribers: 125,
     features: [
       "3 Mbps internet speed",
       "Up to 3 devices supported",
       "Unlimited Internet, Youtube + more",
     ],
     durationDisplay: "2 Hours",
+    createdAt: "2023-10-15T10:00:00Z",
   },
   {
     id: "plan2",
-    name: "3 Hours",
+    name: "Mega Hour",
+    description: "Great for extended browsing sessions",
     durationHours: 3,
-    price: 20,
+    basePrice: 20,
     bandwidthLimit: "5M/2M",
     maxDevices: 3,
     isPopular: false,
+    isActive: false,
+    subscribers: 360,
     features: [
       "5 Mbps internet speed",
       "Up to 3 devices supported",
       "Unlimited Internet, Youtube + more",
     ],
     durationDisplay: "3 Hours",
+    createdAt: "2023-10-14T14:30:00Z",
   },
   {
     id: "plan3",
-    name: "1 Day",
+    name: "Standard Day",
+    description: "Great for work and entertainment all day long",
     durationHours: 24,
-    price: 35,
+    basePrice: 35,
     bandwidthLimit: "5M/2M",
     maxDevices: 5,
-    isPopular: true,
+    isPopular: false,
+    isActive: true,
+    subscribers: 200,
     features: [
       "5 Mbps internet speed",
       "Up to 5 devices supported",
       "24/7 customer support + more",
     ],
     durationDisplay: "1 Day",
+    createdAt: "2023-10-13T09:15:00Z",
   },
   {
     id: "plan4",
-    name: "1 Week",
+    name: "Premium Week",
+    description: "Ultimate experience for heavy users and families",
     durationHours: 168,
-    price: 300,
+    basePrice: 300,
     bandwidthLimit: "10M/5M",
     maxDevices: 5,
-    isPopular: false,
+    isPopular: true,
+    isActive: true,
+    subscribers: 892,
     features: [
       "10+ Mbps premium internet speed",
       "Up to 5 devices supported",
       "Priority support + more",
     ],
     durationDisplay: "1 Week",
+    createdAt: "2023-10-12T16:45:00Z",
   },
 ];
 
@@ -280,10 +296,10 @@ class ApiService {
     if (DEMO_MODE) {
       const plan = demoPlans.find((p) => p.id === planId);
       if (!plan) return { success: false };
-      let calculatedPrice = plan.price;
+      let calculatedPrice = plan.basePrice;
       if (deviceCount > 1)
         calculatedPrice = Math.round(
-          plan.price * (1 + 0.6 * (deviceCount - 1))
+          plan.basePrice * (1 + 0.6 * (deviceCount - 1))
         );
       return { success: true, data: { calculatedPrice } };
     }

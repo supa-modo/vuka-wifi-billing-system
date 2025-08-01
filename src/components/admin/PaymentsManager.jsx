@@ -867,7 +867,7 @@ const PaymentsManager = () => {
                 <th scope="col" className="p-4">
                   <Checkbox
                     id="select-all"
-                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    onChange={handleSelectAll}
                     checked={
                       selectedPayments.length === paginatedPayments.length &&
                       paginatedPayments.length > 0
@@ -937,8 +937,8 @@ const PaymentsManager = () => {
                   <td className="w-4 p-4">
                     <Checkbox
                       id={`select-${payment.id}`}
-                      onChange={(e) =>
-                        handleSelectPayment(payment.id, e.target.checked)
+                      onChange={(checked) =>
+                        handleSelectPayment(payment.id, checked)
                       }
                       checked={selectedPayments.includes(payment.id)}
                     />

@@ -85,10 +85,8 @@ export const CaptivePortal = () => {
   };
 
   const formatPhoneNumber = (value) => {
-    // Remove all non-digits
     const cleaned = value.replace(/\D/g, "");
 
-    // Format as 254XXXXXXXXX
     if (cleaned.startsWith("0")) {
       return "254" + cleaned.slice(1);
     } else if (cleaned.startsWith("254")) {
@@ -99,27 +97,10 @@ export const CaptivePortal = () => {
     return cleaned;
   };
 
-  // Helper to get price for a plan and device count
-  const getPlanPrice = async (plan, count) => {
-    if (count <= 1) return plan.price;
-
-    try {
-      const response = await apiService.calculatePlanPrice(plan.id, count);
-      if (response.success) {
-        return response.data.calculatedPrice;
-      }
-    } catch (error) {
-      console.error("Error calculating price:", error);
-    }
-
-    // Fallback calculation
-    return Math.round(plan.price * (1 + 0.6 * (count - 1)));
-  };
-
   // Sync version for immediate display
   const getPlanPriceSync = (plan, count) => {
-    if (count <= 1) return plan.price;
-    return Math.round(plan.price * (1 + 0.6 * (count - 1)));
+    if (count <= 1) return plan.basePrice;
+    return Math.round(plan.basePrice * (1 + 0.6 * (count - 1)));
   };
 
   // Helper function to format bandwidth limit for display
@@ -137,9 +118,16 @@ export const CaptivePortal = () => {
     return `${downloadMbps} Mbps`;
   };
 
+  //Helper function to convert hours to days if hours is greater than 24
+  const convertHoursToDays = (hours) => {
+    if (hours > 24) {
+      return Math.floor(hours / 24);
+    }
+    return hours;
+  };
+
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
-      {/* Back to Login Page Button */}
       <div className="absolute top-[1.15rem] left-4 z-50">
         <button
           onClick={() => navigate("/")}
@@ -149,7 +137,6 @@ export const CaptivePortal = () => {
           Back to Login
         </button>
       </div>
-      {/* Admin Navigation Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={() => navigate("/admin/login")}
@@ -243,8 +230,17 @@ export const CaptivePortal = () => {
                           Kshs.{" "}
                           {getPlanPriceSync(plan, deviceCounts[plan.id] || 1)}
                         </div>
-                        <div className="text-sm font-lexend font-semibold text-primary-500 mb-2">
-                          {formatBandwidthLimit(plan.bandwidthLimit)}
+                        <div className="flex items-center justify-center gap-2 text-[0.83rem] font-lexend font-semibold text-primary-500 mb-2">
+                          <div className="text-gray-500">
+                            {plan.durationHours > 24
+                              ? `${convertHoursToDays(plan.durationHours)} Days`
+                              : `${plan.durationHours} Hours`}
+                          </div>
+
+                          <div className="w-1 h-1 bg-secondary-500 rounded-full"></div>
+                          <div className="">
+                            {formatBandwidthLimit(plan.bandwidthLimit)}
+                          </div>
                         </div>
                         {/* Device controls */}
                         <div className="flex items-center justify-center gap-1 mt-2">
@@ -296,7 +292,7 @@ export const CaptivePortal = () => {
                       </div>
                       <div className="mt-auto w-full">
                         <div className="space-y-2 pl-5 md:pl-0 mb-3 md:mb-4">
-                          {plan.features.map((feature, index) => {
+                          {plan.features.slice(0, 3).map((feature, index) => {
                             // Check if feature contains '+ more'
                             const moreIndex = feature.indexOf("+ more");
                             if (moreIndex !== -1) {
@@ -382,8 +378,7 @@ export const CaptivePortal = () => {
                           <p className="font-lexend font-semibold text-[0.75rem] md:text-[0.83rem] text-primary-600">
                             {/* {selectedPlan.durationDisplay ||
                               `${selectedPlan.durationHours} Hours`} */}
-                              Unlimited Internet {" "}
-                            •{" "}
+                            Unlimited Internet •{" "}
                             <span className="text-gray-500">
                               {formatBandwidthLimit(
                                 selectedPlan.bandwidthLimit

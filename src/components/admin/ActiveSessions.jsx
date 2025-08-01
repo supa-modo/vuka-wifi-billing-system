@@ -10,6 +10,7 @@ import {
 import { FaFilter } from "react-icons/fa6";
 import {
   TbCheck,
+  TbChevronDown,
   TbFilterFilled,
   TbFilterPlus,
   TbRefresh,
@@ -424,15 +425,15 @@ const ActiveSessions = () => {
                 onClick={() => setShowFilterModal(!showFilterModal)}
                 className="pl-3 pr-2 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center whitespace-nowrap"
               >
-                <FiFilter size={20} className="mr-2 text-primary-600" />
-                <span className="mr-1">Filters</span>
+                <FiFilter size={20} className="mr-2 text-gray-600" />
+                {/* <span className="mr-1">Filters</span> */}
                 {selectedPlans.length > 0 && (
                   <span className="bg-primary-600 text-white text-xs px-2 mr-2 py-0.5 rounded-full">
                     {selectedPlans.length}
                   </span>
                 )}
-                <PiCaretDownDuotone
-                  size={18}
+                <TbChevronDown
+                  size={16}
                   className="ml-2 text-gray-600 pointer-events-none"
                 />
               </button>
