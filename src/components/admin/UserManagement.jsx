@@ -17,6 +17,7 @@ import {
   TbSearch,
   TbCheck,
   TbX,
+  TbChevronDown,
 } from "react-icons/tb";
 import Checkbox from "../ui/Checkbox";
 import {
@@ -32,6 +33,7 @@ import {
 } from "react-icons/pi";
 import { RiSearchLine } from "react-icons/ri";
 import { FiFilter } from "react-icons/fi";
+import UserModal from "./UserModal";
 
 // Mock Data
 const usersData = [
@@ -197,6 +199,15 @@ const FilterDropdown = ({
           </button>
         </div>
       </div>
+
+      {/* User Modal */}
+      <UserModal
+        isOpen={showUserModal}
+        onClose={() => setShowUserModal(false)}
+        user={selectedUser}
+        onSave={handleSaveUser}
+        mode={modalMode}
+      />
     </div>
   );
 };
@@ -206,6 +217,9 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [modalMode, setModalMode] = useState("add");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
@@ -326,8 +340,39 @@ const UserManagement = () => {
   };
 
   const handleUserAction = (action, userId) => {
-    console.log(`Performing ${action} on user:`, userId);
-    // Implement individual user actions here
+    const user = users.find((u) => u.id === userId);
+
+    if (action === "edit") {
+      setSelectedUser(user);
+      setModalMode("edit");
+      setShowUserModal(true);
+    } else if (action === "delete") {
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+    } else if (action === "ban") {
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, status: "Banned" } : u))
+      );
+    }
+  };
+
+  const handleSaveUser = (userData, mode, userId) => {
+    if (mode === "edit") {
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, ...userData } : u))
+      );
+    } else {
+      const newUser = {
+        ...userData,
+        id: `USR-${Date.now()}`, // Generate unique string ID
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        connection: "Offline",
+        devicesConnected: 0,
+        totalSpent: 0,
+        avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
+      };
+      setUsers((prev) => [...prev, newUser]);
+    }
   };
 
   // Close dropdown when clicking outside
@@ -385,7 +430,14 @@ const UserManagement = () => {
                 <TbRefresh size={18} className="animate-spin-slow" />
                 <span>Refresh</span>
               </button>
-              <button className="px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-primary-400/50 transition-shadow flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setModalMode("add");
+                  setSelectedUser(null);
+                  setShowUserModal(true);
+                }}
+                className="px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-primary-400/50 transition-shadow flex items-center gap-2"
+              >
                 <FiPlus /> Add New User
               </button>
             </div>
@@ -485,7 +537,7 @@ const UserManagement = () => {
           </div>
 
           {/* Search and Filter Section */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 md:max-w-[50%] min-w-0">
             {/* Filter Button */}
             <div className="relative filter-dropdown flex-shrink-0">
               <button
@@ -493,13 +545,12 @@ const UserManagement = () => {
                 className="pl-3 pr-2 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center whitespace-nowrap"
               >
                 <FiFilter size={20} className="mr-2 text-primary-600" />
-                <span className="mr-1">Filters</span>
                 {selectedStatuses.length > 0 && (
                   <span className="bg-primary-600 text-white text-xs px-2 mr-2 py-0.5 rounded-full">
                     {selectedStatuses.length}
                   </span>
                 )}
-                <PiCaretDownDuotone
+                <TbChevronDown
                   size={18}
                   className="ml-2 text-gray-600 pointer-events-none"
                 />
@@ -837,6 +888,15 @@ const UserManagement = () => {
           </div>
         </div>
       </div>
+
+      {/* User Modal */}
+      <UserModal
+        isOpen={showUserModal}
+        onClose={() => setShowUserModal(false)}
+        user={selectedUser}
+        onSave={handleSaveUser}
+        mode={modalMode}
+      />
     </div>
   );
 };

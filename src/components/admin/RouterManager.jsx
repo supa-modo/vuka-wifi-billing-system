@@ -26,9 +26,14 @@ import {
   TbCheck,
   TbRouter,
 } from "react-icons/tb";
+import { PiCaretDownDuotone } from "react-icons/pi";
+import { RiSearchLine } from "react-icons/ri";
+import { FiFilter } from "react-icons/fi";
 import Checkbox from "../ui/Checkbox";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import RouterCard from "./RouterCard";
+import RouterModal from "./RouterModal";
 
 // Enhanced Mock Data
 const routersData = [
@@ -275,299 +280,6 @@ const FilterDropdown = ({
   );
 };
 
-const RouterDetailsModal = ({ isOpen, onClose, router }) => {
-  if (!isOpen || !router) return null;
-
-  const getStatusChip = (status) => {
-    switch (status) {
-      case "Online":
-        return "bg-emerald-100 text-emerald-700 border border-emerald-200/80";
-      case "Offline":
-        return "bg-red-100 text-red-700 border border-red-200/80";
-      case "Warning":
-        return "bg-amber-100 text-amber-600 border border-amber-200/80";
-      default:
-        return "bg-gray-100 text-gray-700 border border-gray-200/80";
-    }
-  };
-
-  const getResourceStatus = (value, type) => {
-    if (type === "cpu") {
-      if (value < 30) return "text-emerald-600";
-      if (value < 70) return "text-amber-600";
-      return "text-red-600";
-    }
-    if (type === "memory") {
-      if (value < 50) return "text-emerald-600";
-      if (value < 80) return "text-amber-600";
-      return "text-red-600";
-    }
-    if (type === "temperature") {
-      if (value < 50) return "text-emerald-600";
-      if (value < 70) return "text-amber-600";
-      return "text-red-600";
-    }
-    return "text-slate-600";
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-slate-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold font-lexend text-slate-800">
-                {router.name}
-              </h2>
-              <p className="text-slate-500 font-mono">{router.ipAddress}</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span
-                className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusChip(
-                  router.status
-                )}`}
-              >
-                {router.status}
-              </span>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">
-                Device Information
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Model
-                  </span>
-                  <span className="text-sm text-slate-800">{router.model}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    MAC Address
-                  </span>
-                  <span className="text-sm text-slate-800 font-mono">
-                    {router.macAddress}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Firmware
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.firmware}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Location
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.location}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Bandwidth
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.bandwidth}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">
-                System Resources
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-slate-600">
-                    CPU Usage
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${
-                          getResourceStatus(router.cpu, "cpu") ===
-                          "text-emerald-600"
-                            ? "bg-emerald-500"
-                            : getResourceStatus(router.cpu, "cpu") ===
-                              "text-amber-600"
-                            ? "bg-amber-500"
-                            : "bg-red-500"
-                        }`}
-                        style={{ width: `${router.cpu}%` }}
-                      ></div>
-                    </div>
-                    <span
-                      className={`text-sm font-semibold ${getResourceStatus(
-                        router.cpu,
-                        "cpu"
-                      )}`}
-                    >
-                      {router.cpu}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-slate-600">
-                    Memory Usage
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${
-                          getResourceStatus(router.memory, "memory") ===
-                          "text-emerald-600"
-                            ? "bg-emerald-500"
-                            : getResourceStatus(router.memory, "memory") ===
-                              "text-amber-600"
-                            ? "bg-amber-500"
-                            : "bg-red-500"
-                        }`}
-                        style={{ width: `${router.memory}%` }}
-                      ></div>
-                    </div>
-                    <span
-                      className={`text-sm font-semibold ${getResourceStatus(
-                        router.memory,
-                        "memory"
-                      )}`}
-                    >
-                      {router.memory}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Temperature
-                  </span>
-                  <span
-                    className={`text-sm font-semibold ${getResourceStatus(
-                      router.temperature,
-                      "temperature"
-                    )}`}
-                  >
-                    {router.temperature}°C
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Voltage
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.voltage}V
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">
-                Network Status
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Active Clients
-                  </span>
-                  <span className="text-sm font-semibold text-slate-800">
-                    {router.clients}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Uptime
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.uptime}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Total Traffic
-                  </span>
-                  <span className="text-sm text-slate-800">
-                    {router.totalTraffic}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    RADIUS
-                  </span>
-                  <span
-                    className={`text-sm font-semibold ${
-                      router.radiusEnabled ? "text-emerald-600" : "text-red-600"
-                    }`}
-                  >
-                    {router.radiusEnabled ? "Enabled" : "Disabled"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Hotspot
-                  </span>
-                  <span
-                    className={`text-sm font-semibold ${
-                      router.hotspotEnabled
-                        ? "text-emerald-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {router.hotspotEnabled ? "Enabled" : "Disabled"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          {router.notes && (
-            <div className="border-t border-slate-200 pt-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-3">
-                Notes
-              </h3>
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                <p className="text-sm text-slate-700">{router.notes}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-6 border-t border-slate-200 flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-          >
-            Close
-          </button>
-          <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium flex items-center gap-2">
-            <FiSettings size={16} />
-            Configure
-          </button>
-          <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium flex items-center gap-2">
-            <FiRefreshCw size={16} />
-            Reboot
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const RouterManager = () => {
   const [routers, setRouters] = useState(routersData);
   const [searchTerm, setSearchTerm] = useState("");
@@ -575,6 +287,7 @@ const RouterManager = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showRouterModal, setShowRouterModal] = useState(false);
   const [selectedRouter, setSelectedRouter] = useState(null);
+  const [modalMode, setModalMode] = useState("add");
   const [filters, setFilters] = useState({ status: [], location: [] });
   const [sortConfig, setSortConfig] = useState({
     key: "name",
@@ -706,6 +419,10 @@ const RouterManager = () => {
     if (action === "view") {
       setSelectedRouter(router);
       setShowRouterModal(true);
+    } else if (action === "edit") {
+      setSelectedRouter(router);
+      setModalMode("edit");
+      setShowRouterModal(true);
     } else if (action === "reboot" && router.status === "Online") {
       setRouters((prev) =>
         prev.map((r) =>
@@ -716,6 +433,23 @@ const RouterManager = () => {
       );
     } else if (action === "configure") {
       console.log("Opening configuration for router:", routerId);
+    } else if (action === "delete") {
+      setRouters((prev) => prev.filter((r) => r.id !== routerId));
+    }
+  };
+
+  const handleSaveRouter = (routerData, mode, routerId) => {
+    if (mode === "edit") {
+      setRouters((prev) =>
+        prev.map((r) => (r.id === routerId ? { ...r, ...routerData } : r))
+      );
+    } else {
+      const newRouter = {
+        ...routerData,
+        id: `RTR-${Date.now()}`, // Generate unique string ID
+        createdAt: new Date().toISOString(),
+      };
+      setRouters((prev) => [...prev, newRouter]);
     }
   };
 
@@ -777,7 +511,15 @@ const RouterManager = () => {
                 <TbRefresh size={18} />
                 <span>Refresh</span>
               </button>
-              <Button variant="gradient" className="flex items-center gap-2">
+              <Button
+                variant="gradient"
+                onClick={() => {
+                  setModalMode("add");
+                  setSelectedRouter(null);
+                  setShowRouterModal(true);
+                }}
+                className="flex items-center gap-2"
+              >
                 <FiPlus size={18} />
                 <span>Add Router</span>
               </Button>
@@ -825,82 +567,40 @@ const RouterManager = () => {
       {/* Main Content */}
       <div className="backdrop-blur-xl bg-white/70 rounded-[1.5rem] border border-white/30 shadow-xl shadow-blue-500/5 m-6 p-6">
         {/* Toolbar */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          <div
-            className={`flex items-center gap-6 pl-4 pr-[0.3rem] py-[0.35rem] rounded-lg border ${
-              selectedRouters.length > 0
-                ? "border-primary-200/50"
-                : "border-transparent"
-            } flex-shrink-0`}
-          >
-            {selectedRouters.length > 0 ? (
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2.5">
-                  <TbCheck className="text-primary-600 w-4 h-4" />
-                  <div className="text-[0.9rem] font-medium text-primary-700 whitespace-nowrap">
-                    <span className="font-lexend">
-                      {selectedRouters.length}{" "}
-                    </span>
-                    {selectedRouters.length > 1 ? "routers" : "router"} selected
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleBulkAction("reboot")}
-                    className="px-4 py-1.5 text-xs font-lexend font-medium text-amber-700 bg-amber-200 border border-amber-400 rounded-lg hover:bg-amber-300 hover:text-amber-800 transition-colors flex items-center gap-1 whitespace-nowrap"
-                  >
-                    <FiRefreshCw size={12} className="mr-1" />
-                    Reboot Selected
-                  </button>
-                  <button
-                    onClick={() => handleBulkAction("configure")}
-                    className="px-4 py-1.5 text-xs font-lexend font-medium text-primary-700 bg-primary-200 border border-primary-400 rounded-lg hover:bg-primary-300 hover:text-primary-800 transition-colors flex items-center gap-1 whitespace-nowrap"
-                  >
-                    <FiSettings size={12} className="mr-1" />
-                    Configure
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 text-slate-600 min-w-[30rem]">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-lexend font-semibold text-secondary-600 whitespace-nowrap">
-                    {sortedRouters.length} Routers
-                  </span>
-                </div>
-                <div className="h-6 border-l border-slate-300/70"></div>
-                <p className="text-sm text-slate-500 font-lexend">
-                  Monitor network infrastructure
-                </p>
-              </div>
-            )}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-12">
+          {/* Table Info */}
+          <div className="flex items-center gap-3 text-slate-600">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-lexend font-semibold text-secondary-600 whitespace-nowrap">
+                {sortedRouters.length} Network Routers
+              </span>
+            </div>
+            <div className="h-6 border-l border-slate-300/70"></div>
+            <p className="text-sm text-slate-500 font-lexend">
+              Monitor and manage network infrastructure
+            </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="relative">
-              <TbSearch
-                className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-400 z-10"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search routers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-11 pr-4 py-2.5 w-64 bg-white/80 border border-slate-200/90 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
-              />
-            </div>
-            <div className="relative filter-dropdown-container">
+          {/* Search and Filter Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 md:max-w-[50%] min-w-0">
+            {/* Filter Button */}
+            <div className="relative filter-dropdown flex-shrink-0">
               <button
                 onClick={() => setShowFilterModal(!showFilterModal)}
-                className="p-3 bg-white/80 border border-slate-200/90 rounded-lg text-slate-600 hover:bg-slate-100/70 transition-colors shadow-sm"
+                className="pl-3 pr-2 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center whitespace-nowrap"
               >
-                {filters.status.length > 0 || filters.location.length > 0 ? (
-                  <TbFilterFilled className="text-primary-600" size={20} />
-                ) : (
-                  <TbFilterFilled size={20} />
+                <FiFilter size={20} className="mr-2 text-primary-600" />
+                {filters.status.length > 0 && (
+                  <span className="bg-primary-600 text-white text-xs px-2 mr-2 py-0.5 rounded-full">
+                    {filters.status.length}
+                  </span>
                 )}
+                <PiCaretDownDuotone
+                  size={18}
+                  className="ml-2 text-gray-600 pointer-events-none"
+                />
               </button>
+
               <FilterDropdown
                 isOpen={showFilterModal}
                 onClose={() => setShowFilterModal(false)}
@@ -910,237 +610,47 @@ const RouterManager = () => {
                 availableOptions={availableOptions}
               />
             </div>
+
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-0">
+              <RiSearchLine className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by router name, IP, or location....."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-[0.6rem] w-full border-2 border-gray-200 rounded-[0.6rem] text-[0.95rem] font-medium focus:border-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+              />
+            </div>
           </div>
         </div>
 
         {/* Routers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-6 gap-6">
           {sortedRouters.map((router) => (
-            <div
+            <RouterCard
               key={router.id}
-              className={`relative group bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 hover:border-primary-300/60 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 ${
-                selectedRouters.includes(router.id)
-                  ? "ring-2 ring-primary-400/50 bg-primary-50/30"
-                  : ""
-              }`}
-            >
-              {/* Selection Checkbox */}
-              <div className="absolute top-4 left-4 z-10">
-                <Checkbox
-                  id={`select-${router.id}`}
-                  onChange={(checked) => handleSelectRouter(router.id, checked)}
-                  checked={selectedRouters.includes(router.id)}
-                />
-              </div>
-
-              {/* Status Indicator */}
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                {getStatusIcon(router.status)}
-                <span
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getStatusChip(
-                    router.status
-                  )}`}
-                >
-                  {router.status}
-                </span>
-              </div>
-
-              <div className="p-6 pt-12">
-                {/* Router Header */}
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <TbRouter className="text-white" size={32} />
-                  </div>
-                  <h3 className="text-lg font-bold font-lexend text-slate-800 mb-1">
-                    {router.name}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-mono">
-                    {router.ipAddress}
-                  </p>
-                  <p className="text-xs text-slate-400">{router.id}</p>
-                </div>
-
-                {/* Router Details */}
-                <div className="space-y-4 mb-6">
-                  {/* Model & Location */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-slate-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FiCpu className="w-4 h-4 text-slate-500" />
-                        <span className="text-xs font-medium text-slate-600">
-                          Model
-                        </span>
-                      </div>
-                      <p className="text-sm font-semibold text-slate-800">
-                        {router.model}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        FW: {router.firmware}
-                      </p>
-                    </div>
-                    <div className="bg-slate-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FiMapPin className="w-4 h-4 text-slate-500" />
-                        <span className="text-xs font-medium text-slate-600">
-                          Location
-                        </span>
-                      </div>
-                      <p className="text-sm font-semibold text-slate-800">
-                        {router.location}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Performance Metrics */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-blue-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FiUsers className="w-4 h-4 text-blue-500" />
-                        <span className="text-xs font-medium text-blue-700">
-                          Clients
-                        </span>
-                      </div>
-                      <p className="text-lg font-bold text-blue-600">
-                        {router.clients}
-                      </p>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FiClock className="w-4 h-4 text-green-500" />
-                        <span className="text-xs font-medium text-green-700">
-                          Uptime
-                        </span>
-                      </div>
-                      <p className="text-sm font-semibold text-green-600">
-                        {router.uptime}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Resource Usage */}
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <h4 className="text-xs font-semibold text-slate-600 mb-3">
-                      System Resources
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <FiCpu className="w-3 h-3 text-slate-500" />
-                          <span className="text-xs text-slate-600">CPU</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                router.cpu < 30
-                                  ? "bg-green-500"
-                                  : router.cpu < 70
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
-                              }`}
-                              style={{ width: `${router.cpu}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-xs font-semibold text-slate-700">
-                            {router.cpu}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <FiHardDrive className="w-3 h-3 text-slate-500" />
-                          <span className="text-xs text-slate-600">Memory</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                router.memory < 50
-                                  ? "bg-green-500"
-                                  : router.memory < 80
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
-                              }`}
-                              style={{ width: `${router.memory}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-xs font-semibold text-slate-700">
-                            {router.memory}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <FiThermometer className="w-3 h-3 text-slate-500" />
-                          <span className="text-xs text-slate-600">Temp</span>
-                        </div>
-                        <span
-                          className={`text-xs font-semibold ${
-                            router.temperature < 50
-                              ? "text-green-600"
-                              : router.temperature < 70
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {router.temperature}°C
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleRouterAction("view", router.id)}
-                    className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
-                    title="View details"
-                  >
-                    <FiEye size={14} />
-                    Details
-                  </button>
-                  <button
-                    onClick={() => handleRouterAction("configure", router.id)}
-                    className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                    title="Configure router"
-                  >
-                    <FiSettings size={14} />
-                  </button>
-                  {router.status === "Online" && (
-                    <button
-                      onClick={() => handleRouterAction("reboot", router.id)}
-                      className="p-2 bg-amber-100 text-amber-600 rounded-lg hover:bg-amber-200 transition-colors"
-                      title="Reboot router"
-                    >
-                      <FiRefreshCw size={14} />
-                    </button>
-                  )}
-                  <button
-                    className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
-                    title="More actions"
-                  >
-                    <FiMoreVertical size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
+              router={router}
+              onRouterAction={handleRouterAction}
+            />
           ))}
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between pt-4">
-          <span className="text-sm text-slate-600">
+        <div className="flex items-center justify-between pt-4 px-2">
+          <span className="text-sm font-lexend  font-medium text-gray-500">
             Showing {sortedRouters.length} of {routers.length} routers
           </span>
         </div>
       </div>
 
-      {/* Router Details Modal */}
-      <RouterDetailsModal
+      {/* Router Modal */}
+      <RouterModal
         isOpen={showRouterModal}
         onClose={() => setShowRouterModal(false)}
         router={selectedRouter}
+        onSave={handleSaveRouter}
+        mode={modalMode}
       />
     </div>
   );

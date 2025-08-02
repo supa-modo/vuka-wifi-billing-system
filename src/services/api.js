@@ -88,7 +88,7 @@ const demoPlans = [
     basePrice: 10,
     bandwidthLimit: "3M/1M",
     maxDevices: 3,
-    isPopular: false,
+    isPopular: true,
     isActive: true,
     subscribers: 125,
     features: [
@@ -126,7 +126,7 @@ const demoPlans = [
     basePrice: 35,
     bandwidthLimit: "5M/2M",
     maxDevices: 5,
-    isPopular: false,
+    isPopular: true,
     isActive: true,
     subscribers: 200,
     features: [
@@ -145,7 +145,7 @@ const demoPlans = [
     basePrice: 300,
     bandwidthLimit: "10M/5M",
     maxDevices: 5,
-    isPopular: true,
+    isPopular: false,
     isActive: true,
     subscribers: 892,
     features: [

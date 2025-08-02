@@ -10,6 +10,7 @@ import {
 } from "react-icons/fi";
 import { PiChecksBold, PiUsersThreeDuotone } from "react-icons/pi";
 import { TbDevices, TbEdit } from "react-icons/tb";
+import ToggleSwitch from "../ui/ToggleSwitch";
 
 const PlanCard = ({ plan, onPlanAction, formatDuration }) => {
   return (
@@ -32,21 +33,12 @@ const PlanCard = ({ plan, onPlanAction, formatDuration }) => {
           </div>
 
           <div className="flex items-center">
-            <button
-              onClick={() => onPlanAction("toggle", plan.id)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 ${
-                plan.isActive
-                  ? "bg-gradient-to-r from-emerald-500 to-green-600 shadow-lg shadow-green-500/25"
-                  : "bg-gray-300 hover:bg-gray-400"
-              }`}
+            <ToggleSwitch
+              checked={plan.isActive}
+              onChange={() => onPlanAction("toggle", plan.id)}
+              variant="success"
               title={plan.isActive ? "Deactivate Plan" : "Activate Plan"}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-all duration-300 ${
-                  plan.isActive ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -125,10 +117,10 @@ const PlanCard = ({ plan, onPlanAction, formatDuration }) => {
 
       {/* Action Buttons */}
       <div className="mt-auto">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mt-2">
           <button
             onClick={() => onPlanAction("edit", plan.id)}
-            className={`flex-1 px-4 py-2.5 text-white text-sm font-medium rounded-xl shadow-lg  hover:shadow-xl  transition-all duration-300 flex items-center justify-center gap-2 group/btn ${
+            className={`flex-1 px-4 py-3 text-white text-sm font-medium rounded-xl shadow-lg  hover:shadow-xl  transition-all duration-300 flex items-center justify-center gap-2 group/btn ${
               plan.isPopular
                 ? "bg-gradient-to-r from-secondary-500 to-secondary-600  hover:from-secondary-600 hover:to-secondary-700 shadow-secondary-500/25 hover:shadow-secondary-500/30"
                 : "bg-gradient-to-r from-primary-600 to-primary-700 shadow-primary-500/25 hover:from-primary-700 hover:to-primary-800"
@@ -143,14 +135,14 @@ const PlanCard = ({ plan, onPlanAction, formatDuration }) => {
           </button>
           <button
             onClick={() => onPlanAction("duplicate", plan.id)}
-            className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-600 rounded-xl border border-white/60 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-md"
+            className="p-3 bg-white/80 backdrop-blur-sm text-slate-600 rounded-xl border border-white/60 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-md"
             title="Duplicate plan"
           >
             <FiCopy size={14} />
           </button>
           <button
             onClick={() => onPlanAction("delete", plan.id)}
-            className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-600 rounded-xl border border-white/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-300 shadow-sm hover:shadow-md"
+            className="p-3 bg-white/80 backdrop-blur-sm text-slate-600 rounded-xl border border-white/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-300 shadow-sm hover:shadow-md"
             title="Delete plan"
           >
             <FiTrash2 size={14} />

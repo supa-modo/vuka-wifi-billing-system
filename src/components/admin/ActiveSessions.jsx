@@ -418,7 +418,7 @@ const ActiveSessions = () => {
           </div>
 
           {/* Search and Filter Section */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 md:max-w-[50%] min-w-0">
             {/* Filter Button */}
             <div className="relative filter-dropdown flex-shrink-0">
               <button

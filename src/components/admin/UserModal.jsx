@@ -5,27 +5,29 @@ import {
   FiTrash2,
   FiX,
   FiCheck,
-  FiWifi,
-  FiClock,
-  FiUsers,
+  FiUser,
+  FiMail,
+  FiPhone,
   FiDollarSign,
   FiEdit3,
+  FiUserCheck,
+  FiUserX,
 } from "react-icons/fi";
 import {
   TbCheck,
   TbX,
-  TbHexagonPlus2,
+  TbUserPlus,
   TbInfoCircle,
   TbShieldCheck,
   TbCoins,
   TbDevices,
-  TbBrandSpeedtest,
   TbCalendarTime,
   TbCalendarDollar,
   TbClockEdit,
   TbTrash,
   TbPlus,
   TbSparkles,
+  TbUserEdit,
 } from "react-icons/tb";
 import {
   PiCaretDownDuotone,
@@ -41,77 +43,66 @@ import ToggleSwitch from "../ui/ToggleSwitch";
 import { MdOutlineLibraryAdd } from "react-icons/md";
 import { RiSparkling2Line } from "react-icons/ri";
 
-const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
+const UserModal = ({ isOpen, onClose, user, onSave, mode = "add" }) => {
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
-    basePrice: "",
-    durationHours: "",
-    bandwidthLimit: "",
-    maxDevices: 1,
+    email: "",
+    phone: "",
+    status: "Active",
+    plan: "",
+    planBandwidth: "",
+    devicesConnected: 1,
+    totalSpent: "",
+    notes: "",
     isActive: true,
-    isPopular: false,
-    features: [""],
+    isPremium: false,
   });
 
   useEffect(() => {
-    if (plan && mode === "edit") {
+    if (user && mode === "edit") {
       setFormData({
-        name: plan.name,
-        description: plan.description,
-        basePrice: plan.basePrice.toString(),
-        durationHours: plan.durationHours.toString(),
-        bandwidthLimit: plan.bandwidthLimit,
-        maxDevices: plan.maxDevices,
-        isActive: plan.isActive,
-        isPopular: plan.isPopular,
-        features: plan.features.length > 0 ? plan.features : [""],
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        status: user.status,
+        plan: user.plan,
+        planBandwidth: user.planBandwidth.toString(),
+        devicesConnected: user.devicesConnected,
+        totalSpent: user.totalSpent.toString(),
+        notes: user.notes || "",
+        isActive: user.status === "Active",
+        isPremium: user.isPremium || false,
       });
     } else if (mode === "add") {
       setFormData({
         name: "",
-        description: "",
-        basePrice: "",
-        durationHours: "",
-        bandwidthLimit: "",
-        maxDevices: 1,
+        email: "",
+        phone: "",
+        status: "Active",
+        plan: "",
+        planBandwidth: "",
+        devicesConnected: 1,
+        totalSpent: "",
+        notes: "",
         isActive: true,
-        isPopular: false,
-        features: [""],
+        isPremium: false,
       });
     }
-  }, [plan, mode, isOpen]);
+  }, [user, mode, isOpen]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleFeatureChange = (index, value) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = value;
-    setFormData((prev) => ({ ...prev, features: newFeatures }));
-  };
-
-  const addFeature = () => {
-    setFormData((prev) => ({ ...prev, features: [...prev.features, ""] }));
-  };
-
-  const removeFeature = (index) => {
-    if (formData.features.length > 1) {
-      const newFeatures = formData.features.filter((_, i) => i !== index);
-      setFormData((prev) => ({ ...prev, features: newFeatures }));
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const processedData = {
       ...formData,
-      basePrice: parseFloat(formData.basePrice),
-      durationHours: parseInt(formData.durationHours),
-      features: formData.features.filter((f) => f.trim() !== ""),
+      planBandwidth: parseInt(formData.planBandwidth) || 0,
+      totalSpent: parseFloat(formData.totalSpent) || 0,
+      devicesConnected: parseInt(formData.devicesConnected),
     };
-    onSave(processedData, mode, plan?.id);
+    onSave(processedData, mode, user?.id);
     onClose();
   };
 
@@ -143,17 +134,17 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
             <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
               <div className="relative flex justify-between items-center z-10">
                 <div className="flex items-center p-1.5">
-                  <TbCalendarDollar size={40} className="text-white mr-3" />
+                  <TbUserEdit size={40} className="text-white mr-3" />
                   <div>
                     <h2 className="text-white font-semibold text-lg font-lexend">
                       {mode === "edit"
-                        ? `Edit Hotspot Payment Plan - ${plan.name}`
-                        : "Add New Payment Plan"}
+                        ? `Edit User - ${user.name}`
+                        : "Add New User"}
                     </h2>
                     <p className="text-white/80 text-sm font-outfit">
                       {mode === "edit"
-                        ? "Update and change plan details or features"
-                        : "Create a new Hotspot payment plan"}
+                        ? "Update user information and settings"
+                        : "Create a new user account"}
                     </p>
                   </div>
                 </div>
@@ -176,132 +167,136 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                   {/* Basic Information */}
                   <div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Plan Name */}
+                      {/* User Name */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Plan Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.name}
-                          onChange={(e) =>
-                            handleInputChange("name", e.target.value)
-                          }
-                          required
-                          placeholder="e.g., Premium Day"
-                          className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
-                        />
-                      </div>
-
-                      {/* Base Price */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Base Price (Kshs){" "}
-                          <span className="text-red-500">*</span>
+                          Full Name <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                          <TbCoins
+                          <FiUser
                             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
                             size={18}
                           />
                           <input
-                            type="number"
-                            value={formData.basePrice}
+                            type="text"
+                            value={formData.name}
                             onChange={(e) =>
-                              handleInputChange("basePrice", e.target.value)
+                              handleInputChange("name", e.target.value)
                             }
                             required
-                            placeholder="50"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-[3.2rem] pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                            placeholder="e.g., John Doe"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <FiMail
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            size={18}
+                          />
+                          <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
+                            required
+                            placeholder="john.doe@example.com"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                           />
                         </div>
                       </div>
                     </div>
 
-                    {/* Description */}
+                    {/* Phone Number */}
                     <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description <span className="text-red-500">*</span>
+                        Phone Number <span className="text-red-500">*</span>
                       </label>
-                      <textarea
-                        value={formData.description}
-                        onChange={(e) =>
-                          handleInputChange("description", e.target.value)
-                        }
-                        required
-                        placeholder="Brief description of the plan"
-                        rows={3}
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors resize-none"
-                      />
+                      <div className="relative">
+                        <FiPhone
+                          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                          size={18}
+                        />
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) =>
+                            handleInputChange("phone", e.target.value)
+                          }
+                          required
+                          placeholder="254712345678"
+                          className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Plan Settings */}
                   <div className="border-t border-gray-200 pt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* Duration */}
+                      {/* Current Plan */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Duration (Hours){" "}
-                          <span className="text-red-500">*</span>
+                          Current Plan
                         </label>
                         <div className="relative">
-                          <TbClockEdit
-                            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                            size={20}
-                          />
-                          <input
-                            type="number"
-                            value={formData.durationHours}
-                            onChange={(e) =>
-                              handleInputChange("durationHours", e.target.value)
-                            }
-                            required
-                            placeholder="24"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Bandwidth Limit */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Bandwidth Limit{" "}
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <TbBrandSpeedtest
+                          <TbCalendarDollar
                             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
                             size={20}
                           />
                           <input
                             type="text"
-                            value={formData.bandwidthLimit}
+                            value={formData.plan}
                             onChange={(e) =>
-                              handleInputChange(
-                                "bandwidthLimit",
-                                e.target.value
-                              )
+                              handleInputChange("plan", e.target.value)
                             }
-                            required
-                            placeholder="5M/3M"
+                            placeholder="e.g., 1 Day Plan"
                             className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                           />
                         </div>
                       </div>
 
-                      {/* Max Devices */}
+                      {/* Bandwidth */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Max Devices
+                          Bandwidth (Mbps)
+                        </label>
+                        <div className="relative">
+                          <TbDevices
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            size={20}
+                          />
+                          <input
+                            type="number"
+                            value={formData.planBandwidth}
+                            onChange={(e) =>
+                              handleInputChange("planBandwidth", e.target.value)
+                            }
+                            placeholder="10"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Devices Connected */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Devices Connected
                         </label>
                         <div className="flex items-center gap-2 bg-neutral-100 rounded-lg border border-gray-300 justify-center py-2">
                           <button
                             type="button"
                             onClick={() =>
                               handleInputChange(
-                                "maxDevices",
-                                Math.max(1, formData.maxDevices - 1)
+                                "devicesConnected",
+                                Math.max(0, formData.devicesConnected - 1)
                               )
                             }
                             className="p-1.5 rounded-md hover:bg-gray-200 transition-colors"
@@ -309,14 +304,14 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                             <FaMinus size={14} className="text-gray-600" />
                           </button>
                           <span className="px-3 py-1 text-center min-w-[40px] font-lexend font-semibold text-secondary-500 bg-slate-50 rounded-md">
-                            {formData.maxDevices}
+                            {formData.devicesConnected}
                           </span>
                           <button
                             type="button"
                             onClick={() =>
                               handleInputChange(
-                                "maxDevices",
-                                Math.min(20, formData.maxDevices + 1)
+                                "devicesConnected",
+                                Math.min(10, formData.devicesConnected + 1)
                               )
                             }
                             className="p-1.5 rounded-md hover:bg-gray-200 transition-colors"
@@ -328,62 +323,80 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                     </div>
                   </div>
 
-                  {/* Features */}
+                  {/* Financial Information */}
                   <div className="border-t border-gray-200 pt-6">
-                    <h3 className="font-semibold text-secondary-600 mb-4 flex items-center">
-                      Plan Features
-                    </h3>
-                    <div className="space-y-3">
-                      {formData.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className="flex-1 relative">
-                            <PiChecksBold
-                              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                              size={16}
-                            />
-                            <input
-                              type="text"
-                              value={feature}
-                              onChange={(e) =>
-                                handleFeatureChange(index, e.target.value)
-                              }
-                              placeholder="Enter feature description"
-                              className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-10 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
-                            />
-                          </div>
-                          {formData.features.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => removeFeature(index)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <TbTrash size={22} />
-                            </button>
-                          )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Total Spent */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Total Spent (Kshs)
+                        </label>
+                        <div className="relative">
+                          <TbCoins
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            size={20}
+                          />
+                          <input
+                            type="number"
+                            value={formData.totalSpent}
+                            onChange={(e) =>
+                              handleInputChange("totalSpent", e.target.value)
+                            }
+                            placeholder="0"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 pl-12 pr-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                          />
                         </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={addFeature}
-                        className="text-sm text-primary-600 underline underline-offset-4 hover:text-primary-700 font-medium flex items-center gap-2 hover:bg-primary-50 px-3 py-2 rounded-lg transition-colors"
-                      >
-                        <MdOutlineLibraryAdd size={20} />
-                        Add New Feature
-                      </button>
+                      </div>
+
+                      {/* Status */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Account Status
+                        </label>
+                        <div className="relative">
+                          <select
+                            value={formData.status}
+                            onChange={(e) =>
+                              handleInputChange("status", e.target.value)
+                            }
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                          >
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Banned">Banned</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Plan Status */}
+                  {/* Notes */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Notes
+                    </label>
+                    <textarea
+                      value={formData.notes}
+                      onChange={(e) =>
+                        handleInputChange("notes", e.target.value)
+                      }
+                      placeholder="Additional notes about this user..."
+                      rows={3}
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors resize-none"
+                    />
+                  </div>
+
+                  {/* User Settings */}
                   <div className="border-t border-gray-200 pt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center justify-between pl-8 pr-6 py-4 border border-gray-200 rounded-full bg-white hover:bg-gray-50 transition-colors">
                         <div className="flex items-center">
                           <div>
                             <label className="text-sm font-semibold text-gray-600 cursor-pointer">
-                              Set Plan as Active
+                              Active Account
                             </label>
                             <p className="text-xs font-sans text-gray-500">
-                              Plan is available in captive portal
+                              User can access the network
                             </p>
                           </div>
                         </div>
@@ -395,8 +408,8 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                           variant="success"
                           title={
                             formData.isActive
-                              ? "Deactivate Plan"
-                              : "Activate Plan"
+                              ? "Deactivate Account"
+                              : "Activate Account"
                           }
                         />
                       </div>
@@ -411,23 +424,23 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                           </div>
                           <div>
                             <label className="text-sm font-semibold text-gray-600 cursor-pointer">
-                              Mark as Popular
+                              Premium User
                             </label>
                             <p className="text-xs font-sans text-gray-500">
-                              Highlight this plan to users
+                              Special privileges and features
                             </p>
                           </div>
                         </div>
                         <ToggleSwitch
-                          checked={formData.isPopular}
+                          checked={formData.isPremium}
                           onChange={() =>
-                            handleInputChange("isPopular", !formData.isPopular)
+                            handleInputChange("isPremium", !formData.isPremium)
                           }
                           variant="secondary"
                           title={
-                            formData.isPopular
-                              ? "Remove Popular Mark"
-                              : "Mark as Popular"
+                            formData.isPremium
+                              ? "Remove Premium Status"
+                              : "Mark as Premium"
                           }
                         />
                       </div>
@@ -450,8 +463,8 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
                     type="submit"
                     className="px-6 py-2.5 text-sm bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-[0.6rem] hover:from-primary-700 hover:to-primary-800 transition-all duration-300 flex items-center font-semibold shadow-lg shadow-primary-500/25"
                   >
-                    <FiEdit3 className="mr-2 h-4 w-4" />
-                    {mode === "edit" ? "Update Plan" : "Create Plan"}
+                    <TbUserEdit className="mr-2 h-4 w-4" />
+                    {mode === "edit" ? "Update User" : "Create User"}
                   </button>
                 </div>
               </div>
@@ -463,4 +476,4 @@ const PlanModal = ({ isOpen, onClose, plan, onSave, mode = "add" }) => {
   );
 };
 
-export default PlanModal;
+export default UserModal;
