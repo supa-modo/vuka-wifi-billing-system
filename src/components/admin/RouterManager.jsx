@@ -34,6 +34,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import RouterCard from "./RouterCard";
 import RouterModal from "./RouterModal";
+import { useNotification } from "../../hooks/useNotification.jsx";
 
 // Enhanced Mock Data
 const routersData = [
@@ -289,6 +290,8 @@ const RouterManager = () => {
   const [selectedRouter, setSelectedRouter] = useState(null);
   const [modalMode, setModalMode] = useState("add");
   const [filters, setFilters] = useState({ status: [], location: [] });
+  const { showSuccess, showError, showDeleteConfirm, showInfo } =
+    useNotification();
   const [sortConfig, setSortConfig] = useState({
     key: "name",
     direction: "ascending",
@@ -431,10 +434,27 @@ const RouterManager = () => {
             : r
         )
       );
+      showSuccess(
+        "Router Rebooted",
+        `"${router.name}" has been rebooted successfully.`
+      );
     } else if (action === "configure") {
-      console.log("Opening configuration for router:", routerId);
+      showInfo(
+        "Feature Coming Soon",
+        "Router configuration interface will be available in the next update."
+      );
     } else if (action === "delete") {
-      setRouters((prev) => prev.filter((r) => r.id !== routerId));
+      showDeleteConfirm(
+        "Delete Router",
+        `Are you sure you want to delete "${router.name}"? This will permanently remove the router from your network infrastructure.`,
+        () => {
+          setRouters((prev) => prev.filter((r) => r.id !== routerId));
+          showSuccess(
+            "Router Deleted",
+            `"${router.name}" has been successfully removed.`
+          );
+        }
+      );
     }
   };
 
@@ -443,6 +463,10 @@ const RouterManager = () => {
       setRouters((prev) =>
         prev.map((r) => (r.id === routerId ? { ...r, ...routerData } : r))
       );
+      showSuccess(
+        "Router Updated",
+        `"${routerData.name}" has been updated successfully.`
+      );
     } else {
       const newRouter = {
         ...routerData,
@@ -450,6 +474,10 @@ const RouterManager = () => {
         createdAt: new Date().toISOString(),
       };
       setRouters((prev) => [...prev, newRouter]);
+      showSuccess(
+        "Router Added",
+        `"${routerData.name}" has been added to the network successfully.`
+      );
     }
   };
 

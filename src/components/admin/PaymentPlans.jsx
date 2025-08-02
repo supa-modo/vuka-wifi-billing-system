@@ -16,6 +16,7 @@ import { RiSearchLine } from "react-icons/ri";
 import PlanCard from "./PlanCard";
 import PlanModal from "./PlanModal";
 import apiService from "../../services/api";
+import { useNotification } from "../../hooks/useNotification.jsx";
 
 const StatCard = ({ title, value, change, changeType, icon, gradient }) => (
   <div className="group relative overflow-hidden backdrop-blur-xl bg-white/30 rounded-2xl border-2 border-white shadow-xl shadow-blue-500/5 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300">
@@ -124,6 +125,7 @@ const PaymentPlans = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const { showSuccess, showError, showDeleteConfirm } = useNotification();
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showPlanModal, setShowPlanModal] = useState(false);
@@ -143,16 +145,25 @@ const PaymentPlans = () => {
         const response = await apiService.getPaymentPlans(false); // Get all plans, not just active ones
         if (response.success) {
           setPlans(response.data);
+        } else {
+          showError(
+            "Failed to Load Plans",
+            "Unable to fetch payment plans. Please refresh the page or try again later."
+          );
         }
       } catch (error) {
         console.error("Error fetching plans:", error);
+        showError(
+          "Connection Error",
+          "Unable to connect to the server. Please check your internet connection and try again."
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchPlans();
-  }, []);
+  }, [showError]);
 
   const availableOptions = useMemo(
     () => ({
@@ -237,7 +248,7 @@ const PaymentPlans = () => {
     });
   };
 
-  const handlePlanAction = (action, planId) => {
+  const handlePlanAction = async (action, planId) => {
     const plan = plans.find((p) => p.id === planId);
 
     if (action === "edit") {
@@ -245,36 +256,144 @@ const PaymentPlans = () => {
       setModalMode("edit");
       setShowPlanModal(true);
     } else if (action === "delete") {
-      setPlans((prev) => prev.filter((p) => p.id !== planId));
-    } else if (action === "duplicate") {
-      const newPlan = {
-        ...plan,
-        id: `plan${Date.now()}`, // Generate unique string ID
-        name: `${plan.name} (Copy)`,
-        createdAt: new Date().toISOString(),
-        subscribers: 0,
-      };
-      setPlans((prev) => [...prev, newPlan]);
-    } else if (action === "toggle") {
-      setPlans((prev) =>
-        prev.map((p) => (p.id === planId ? { ...p, isActive: !p.isActive } : p))
+      showDeleteConfirm(
+        "Delete Payment Plan",
+        `Are you sure you want to delete "${plan.name}"? This action cannot be undone and will affect all users currently subscribed to this plan.`,
+        async () => {
+          try {
+            const response = await apiService.deletePaymentPlan(planId);
+            if (response.success) {
+              setPlans((prev) => prev.filter((p) => p.id !== planId));
+              showSuccess(
+                "Plan Deleted",
+                `"${plan.name}" has been successfully deleted.`
+              );
+            } else {
+              showError(
+                "Delete Failed",
+                response.message ||
+                  "Failed to delete the plan. Please try again."
+              );
+            }
+          } catch (error) {
+            console.error("Error deleting plan:", error);
+            showError(
+              "Delete Error",
+              "An unexpected error occurred while deleting the plan. Please check your connection and try again."
+            );
+          }
+        }
       );
+    } else if (action === "duplicate") {
+      try {
+        const duplicateData = {
+          ...plan,
+          name: `${plan.name} (Copy)`,
+        };
+        delete duplicateData.id; // Remove ID for new plan
+        delete duplicateData.createdAt;
+        delete duplicateData.updatedAt;
+
+        const response = await apiService.createPaymentPlan(duplicateData);
+        if (response.success) {
+          setPlans((prev) => [...prev, response.data]);
+          showSuccess(
+            "Plan Duplicated",
+            `"${duplicateData.name}" has been created successfully.`
+          );
+        } else {
+          showError(
+            "Duplication Failed",
+            response.message ||
+              "Failed to duplicate the plan. Please try again."
+          );
+        }
+      } catch (error) {
+        console.error("Error duplicating plan:", error);
+        showError(
+          "Duplication Error",
+          "An unexpected error occurred while duplicating the plan. Please check your connection and try again."
+        );
+      }
+    } else if (action === "toggle") {
+      try {
+        const response = await apiService.togglePlanStatus(planId);
+        if (response.success) {
+          setPlans((prev) =>
+            prev.map((p) => (p.id === planId ? response.data : p))
+          );
+          const status = response.data.isActive ? "activated" : "deactivated";
+          showSuccess(
+            "Status Updated",
+            `"${plan.name}" has been ${status} successfully.`
+          );
+        } else {
+          showError(
+            "Status Update Failed",
+            response.message ||
+              "Failed to update plan status. Please try again."
+          );
+        }
+      } catch (error) {
+        console.error("Error toggling plan status:", error);
+        showError(
+          "Status Update Error",
+          "An unexpected error occurred while updating the plan status. Please check your connection and try again."
+        );
+      }
     }
   };
 
-  const handleSavePlan = (planData, mode, planId) => {
-    if (mode === "edit") {
-      setPlans((prev) =>
-        prev.map((p) => (p.id === planId ? { ...p, ...planData } : p))
-      );
-    } else {
-      const newPlan = {
-        ...planData,
-        id: `plan${Date.now()}`, // Generate unique string ID
-        createdAt: new Date().toISOString(),
-        subscribers: 0,
-      };
-      setPlans((prev) => [...prev, newPlan]);
+  const handleSavePlan = async (planData, mode, planId) => {
+    try {
+      if (mode === "edit") {
+        // Update existing plan via API
+        const response = await apiService.updatePaymentPlan(planId, planData);
+        if (response.success) {
+          // Update local state with the response data
+          setPlans((prev) =>
+            prev.map((p) => (p.id === planId ? response.data : p))
+          );
+          showSuccess(
+            "Plan Updated",
+            `"${planData.name}" has been updated successfully.`
+          );
+        } else {
+          showError(
+            "Update Failed",
+            response.message || "Failed to update the plan. Please try again."
+          );
+        }
+      } else {
+        // Create new plan via API
+        const response = await apiService.createPaymentPlan(planData);
+        if (response.success) {
+          // Add new plan to local state
+          setPlans((prev) => [...prev, response.data]);
+          showSuccess(
+            "Plan Created",
+            `"${planData.name}" has been created successfully.`
+          );
+        } else {
+          showError(
+            "Creation Failed",
+            response.message || "Failed to create the plan. Please try again."
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error saving plan:", error);
+      if (error.message.includes("Authorization")) {
+        showError(
+          "Authentication Required",
+          "You need to be logged in as an admin to perform this action. Please log in and try again."
+        );
+      } else {
+        showError(
+          "Save Error",
+          "An unexpected error occurred while saving the plan. Please check your connection and try again."
+        );
+      }
     }
   };
 

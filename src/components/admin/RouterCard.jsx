@@ -94,7 +94,7 @@ const RouterCard = ({ router, onRouterAction }) => {
       <div className="text-center mb-4">
         <div className="flex items-center justify-center gap-2 my-2">
           <div className="text-sm font-lexend font-semibold text-gray-500">
-            {router.location}
+            {router.location} -
           </div>
           <div className="text-sm font-lexend font-semibold text-slate-500">
             {router.ipAddress}
@@ -105,11 +105,11 @@ const RouterCard = ({ router, onRouterAction }) => {
           <div className="text-sm font-lexend font-semibold text-gray-500 mb-2">
             {router.model}
           </div>
-          <div className="w-1 h-1 mb-1.5 bg-secondary-500 rounded-full"></div>
-          <div className="text-sm font-lexend font-semibold text-gray-500 mb-2">
+          <div className="w-1 h-4 mb-1.5 bg-primary-500 rounded-full"></div>
+          <div className="text-sm font-lexend font-semibold text-primary-500 mb-2">
             {router.bandwidth}
           </div>
-          <div className="w-1 h-1 mb-1.5 bg-secondary-500 rounded-full"></div>
+          {/* <div className="w-1 h-1 mb-1.5 bg-secondary-500 rounded-full"></div> */}
         </div>
       </div>
 

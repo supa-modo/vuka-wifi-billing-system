@@ -34,6 +34,7 @@ import {
 import { RiSearchLine } from "react-icons/ri";
 import { FiFilter } from "react-icons/fi";
 import UserModal from "./UserModal";
+import { useNotification } from "../../hooks/useNotification.jsx";
 
 // Mock Data
 const usersData = [
@@ -221,6 +222,7 @@ const UserManagement = () => {
   const [modalMode, setModalMode] = useState("add");
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const { showSuccess, showError, showDeleteConfirm } = useNotification();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: "lastLogin",
@@ -347,10 +349,24 @@ const UserManagement = () => {
       setModalMode("edit");
       setShowUserModal(true);
     } else if (action === "delete") {
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      showDeleteConfirm(
+        "Delete User",
+        `Are you sure you want to delete "${user.name}"? This will permanently remove their account and all associated data.`,
+        () => {
+          setUsers((prev) => prev.filter((u) => u.id !== userId));
+          showSuccess(
+            "User Deleted",
+            `"${user.name}" has been successfully deleted.`
+          );
+        }
+      );
     } else if (action === "ban") {
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, status: "Banned" } : u))
+      );
+      showSuccess(
+        "User Banned",
+        `"${user.name}" has been banned successfully.`
       );
     }
   };
@@ -359,6 +375,10 @@ const UserManagement = () => {
     if (mode === "edit") {
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, ...userData } : u))
+      );
+      showSuccess(
+        "User Updated",
+        `User information has been updated successfully.`
       );
     } else {
       const newUser = {
@@ -372,6 +392,10 @@ const UserManagement = () => {
         avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
       };
       setUsers((prev) => [...prev, newUser]);
+      showSuccess(
+        "User Created",
+        `"${userData.name}" has been added successfully.`
+      );
     }
   };
 

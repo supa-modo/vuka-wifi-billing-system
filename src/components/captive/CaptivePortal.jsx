@@ -29,35 +29,137 @@ export const CaptivePortal = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [deviceCounts, setDeviceCounts] = useState({});
+  const [isDemoMode, setIsDemoMode] = useState(false);
+
+  // Fetch payment plans function
+  const fetchPlans = async () => {
+    try {
+      setLoadingPlans(true);
+      const response = await apiService.getPaymentPlans(true);
+
+      if (response.success) {
+        const fetchedPlans = response.data;
+        setPlans(fetchedPlans);
+
+        // Initialize device counts (default: 1 device per plan)
+        const counts = {};
+        fetchedPlans.forEach((plan) => {
+          counts[plan.id] = 1;
+        });
+        setDeviceCounts(counts);
+
+        // Clear demo mode if we successfully connected
+        setIsDemoMode(false);
+      } else {
+        setError("Failed to load payment plans");
+      }
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+      console.log(
+        "🔄 Falling back to demo plans due to server connection issue"
+      );
+
+      // Fallback to demo plans when server is unavailable
+      const demoPlans = [
+        {
+          id: "plan1",
+          name: "Power Hour",
+          description: "Perfect for quick browsing and social media",
+          durationHours: 2,
+          basePrice: 10,
+          bandwidthLimit: "3M/1M",
+          maxDevices: 3,
+          isPopular: true,
+          isActive: true,
+          subscribers: 125,
+          features: [
+            "3 Mbps internet speed",
+            "Up to 3 devices supported",
+            "Unlimited Internet, Youtube + more",
+          ],
+          durationDisplay: "2 Hours",
+          createdAt: "2023-10-15T10:00:00Z",
+        },
+        {
+          id: "plan2",
+          name: "Mega Hour",
+          description: "Great for extended browsing sessions",
+          durationHours: 3,
+          basePrice: 20,
+          bandwidthLimit: "5M/2M",
+          maxDevices: 3,
+          isPopular: false,
+          isActive: true,
+          subscribers: 360,
+          features: [
+            "5 Mbps internet speed",
+            "Up to 3 devices supported",
+            "Unlimited Internet, Youtube + more",
+          ],
+          durationDisplay: "3 Hours",
+          createdAt: "2023-10-14T14:30:00Z",
+        },
+        {
+          id: "plan3",
+          name: "Standard Day",
+          description: "Great for work and entertainment all day long",
+          durationHours: 24,
+          basePrice: 35,
+          bandwidthLimit: "5M/2M",
+          maxDevices: 5,
+          isPopular: true,
+          isActive: true,
+          subscribers: 200,
+          features: [
+            "5 Mbps internet speed",
+            "Up to 5 devices supported",
+            "24/7 customer support + more",
+          ],
+          durationDisplay: "1 Day",
+          createdAt: "2023-10-13T09:15:00Z",
+        },
+        {
+          id: "plan4",
+          name: "Premium Week",
+          description: "Ultimate experience for heavy users and families",
+          durationHours: 168,
+          basePrice: 300,
+          bandwidthLimit: "10M/5M",
+          maxDevices: 5,
+          isPopular: false,
+          isActive: true,
+          subscribers: 892,
+          features: [
+            "10+ Mbps premium internet speed",
+            "Up to 5 devices supported",
+            "Priority support + more",
+          ],
+          durationDisplay: "1 Week",
+          createdAt: "2023-10-12T16:45:00Z",
+        },
+      ];
+
+      setPlans(demoPlans);
+
+      // Initialize device counts for demo plans
+      const counts = {};
+      demoPlans.forEach((plan) => {
+        counts[plan.id] = 1;
+      });
+      setDeviceCounts(counts);
+
+      // Set demo mode flag
+      setIsDemoMode(true);
+
+      // Clear any previous errors since we're showing demo data
+      setError("");
+    } finally {
+      setLoadingPlans(false);
+    }
+  };
 
   // Fetch payment plans on component mount
   useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        setLoadingPlans(true);
-        const response = await apiService.getPaymentPlans(true);
-
-        if (response.success) {
-          const fetchedPlans = response.data;
-          setPlans(fetchedPlans);
-
-          // Initialize device counts (default: 1 device per plan)
-          const counts = {};
-          fetchedPlans.forEach((plan) => {
-            counts[plan.id] = 1;
-          });
-          setDeviceCounts(counts);
-        } else {
-          setError("Failed to load payment plans");
-        }
-      } catch (error) {
-        console.error("Error fetching plans:", error);
-        setError("Failed to connect to server. Please try again.");
-      } finally {
-        setLoadingPlans(false);
-      }
-    };
-
     fetchPlans();
   }, []);
 
@@ -174,17 +276,35 @@ export const CaptivePortal = () => {
           {/* Conditional rendering for main area */}
           {paymentStep === "plans" && (
             <>
-              <h2 className="text-responsive-2xl font-extrabold text-secondary-400 text-center mb-5 lg:mb-8">
-                Choose Your Plan
-              </h2>
+              <div className="text-center mb-5 lg:mb-8">
+                <h2 className="text-responsive-2xl font-extrabold text-secondary-400 mb-2">
+                  Choose Your Plan
+                </h2>
+                {isDemoMode && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-100 border border-yellow-300 rounded-full text-xs text-yellow-800">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    Demo Mode - Offline Data
+                    <button
+                      onClick={() => {
+                        setIsDemoMode(false);
+                        setLoadingPlans(true);
+                        // Retry fetching from server
+                        fetchPlans();
+                      }}
+                      disabled={loadingPlans}
+                      className="ml-2 text-yellow-700 hover:text-yellow-900 underline hover:no-underline disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loadingPlans ? "Connecting..." : "Retry Connection"}
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Error State */}
               {error && (
                 <div className="text-center mb-6 max-w-3xl mx-auto">
                   <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-10 rounded-lg">
-                    <p className="font-medium">
-                      This is an example error we are displaying{error}
-                    </p>
+                    <p className="font-medium">{error}</p>
                     <button
                       onClick={() => window.location.reload()}
                       className="mt-2 text-sm underline hover:no-underline"

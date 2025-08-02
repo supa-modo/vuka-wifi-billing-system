@@ -28,7 +28,7 @@ const PlanCard = ({ plan, onPlanAction, formatDuration }) => {
           <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-200/50">
             <PiUsersThreeDuotone className="w-4 h-4 text-blue-600" />
             <span className="text-xs font-semibold font-lexend text-blue-700">
-              {plan.subscribers.toLocaleString()}
+              {plan.subscribers?.toLocaleString() || 22}
             </span>
           </div>
 

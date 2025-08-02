@@ -2,7 +2,7 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 
 const demoPayments = [
   {
@@ -159,7 +159,7 @@ const demoPlans = [
 ];
 
 export const apiFetch = async (url, options = {}) => {
-  const token = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("authToken");
   const headers = {
     ...(options.headers || {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -189,8 +189,9 @@ class ApiService {
       "Content-Type": "application/json",
     };
 
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
+    const currentToken = localStorage.getItem("authToken");
+    if (currentToken) {
+      headers.Authorization = `Bearer ${currentToken}`;
     }
 
     return headers;
@@ -283,12 +284,12 @@ class ApiService {
   // Get all payment plans
   async getPaymentPlans(activeOnly = true) {
     if (DEMO_MODE) return { success: true, data: demoPlans };
-    return this.get("/payment-plans", { active_only: activeOnly });
+    return this.get("/plans", { activeOnly: activeOnly });
   }
 
   // Get single payment plan
   async getPaymentPlan(planId) {
-    return this.get(`/payment-plans/${planId}`);
+    return this.get(`/plans/${planId}`);
   }
 
   // Calculate price for multiple devices
@@ -303,34 +304,34 @@ class ApiService {
         );
       return { success: true, data: { calculatedPrice } };
     }
-    return this.get(`/payment-plans/${planId}/calculate-price`, {
+    return this.post(`/plans/${planId}/calculate-price`, {
       deviceCount,
     });
   }
 
   // Create payment plan (admin)
   async createPaymentPlan(planData) {
-    return this.post("/payment-plans", planData);
+    return this.post("/plans", planData);
   }
 
   // Update payment plan (admin)
   async updatePaymentPlan(planId, planData) {
-    return this.put(`/payment-plans/${planId}`, planData);
+    return this.put(`/plans/${planId}`, planData);
   }
 
   // Delete payment plan (admin)
   async deletePaymentPlan(planId) {
-    return this.delete(`/payment-plans/${planId}`);
+    return this.delete(`/plans/${planId}`);
   }
 
   // Toggle plan status (admin)
   async togglePlanStatus(planId) {
-    return this.patch(`/payment-plans/${planId}/toggle`);
+    return this.patch(`/plans/${planId}/toggle`);
   }
 
   // Set popular plan (admin)
-  async setPopularPlan(planId) {
-    return this.patch(`/payment-plans/${planId}/set-popular`);
+  async setPopularPlan(planId, isPopular = true) {
+    return this.patch(`/plans/${planId}/set-popular`, { isPopular });
   }
 
   // ================================
@@ -377,7 +378,7 @@ class ApiService {
 
   // Admin login
   async adminLogin(credentials) {
-    const response = await this.post("/admin/login", credentials);
+    const response = await this.post("/auth/login", credentials);
     if (response.success && response.data.token) {
       this.setAuthToken(response.data.token);
     }
@@ -386,13 +387,13 @@ class ApiService {
 
   // Admin logout
   async adminLogout() {
-    await this.post("/admin/logout");
+    await this.post("/auth/logout");
     this.setAuthToken(null);
   }
 
   // Get admin profile
   async getAdminProfile() {
-    return this.get("/admin/profile");
+    return this.get("/auth/profile");
   }
 
   // ================================
