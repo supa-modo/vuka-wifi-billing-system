@@ -215,10 +215,17 @@ class ApiService {
     try {
       console.log("Making request to:", `${API_BASE_URL}${endpoint}`);
       console.log("Request options:", options);
+      console.log("Current origin:", window.location.origin);
 
       const response = await this.axios({
         url: endpoint,
         ...options,
+        // Add explicit headers for CORS
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...options.headers,
+        },
       });
 
       console.log("Response received:", response.status, response.statusText);
@@ -242,6 +249,17 @@ class ApiService {
         );
       } else if (error.request) {
         console.error("No response received. Request details:", error.request);
+
+        // Check if it's a CORS error
+        if (
+          error.message.includes("Network Error") ||
+          error.code === "ERR_NETWORK"
+        ) {
+          throw new Error(
+            "CORS error - server not accessible or CORS not configured properly"
+          );
+        }
+
         throw new Error("Network error - no response from server");
       } else {
         throw new Error(error.message || "Request failed");
