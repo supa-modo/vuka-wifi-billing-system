@@ -233,13 +233,6 @@ class ApiService {
       return response.data;
     } catch (error) {
       console.error("API Request Error:", error);
-      console.error("Error details:", {
-        message: error.message,
-        code: error.code,
-        response: error.response,
-        request: error.request,
-        config: error.config,
-      });
 
       if (error.response) {
         const errorData = error.response.data;
@@ -247,7 +240,6 @@ class ApiService {
           errorData.message || errorData.error || "API request failed"
         );
       } else if (error.request) {
-        console.error("No response received. Request details:", error.request);
         throw new Error("Network error - no response from server");
       } else {
         throw new Error(error.message || "Request failed");
