@@ -15,6 +15,7 @@ import { FcWiFiLogo } from "react-icons/fc";
 import { LuLogIn } from "react-icons/lu";
 import { PiPasswordDuotone } from "react-icons/pi";
 import { AuthContext } from "../../context/AuthContext";
+import apiService from "../../services/api";
 
 export const AdminLogin = () => {
   const [credentials, setCredentials] = useState({
@@ -48,26 +49,23 @@ export const AdminLogin = () => {
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
-      const data = await res.json();
-      if (data.requires2FA) {
+      const response = await apiService.adminLogin(credentials);
+
+      if (response.requires2FA) {
         setLoginStep("2fa");
         setIsLoading(false);
         return;
       }
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        setIsLoading(false);
-        return;
+
+      if (response.success) {
+        login(response.data.token, response.data.admin);
+        navigate("/admin/dashboard");
+      } else {
+        setError(response.message || response.error || "Login failed");
       }
-      login(data.token, data.admin);
-      navigate("/admin/dashboard");
     } catch (err) {
-      setError("Network server error. Please try again.");
+      console.error("Login error:", err);
+      setError(err.message || "Network server error. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -111,20 +109,21 @@ export const AdminLogin = () => {
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...credentials, twoFactorCode: code }),
+      const response = await apiService.adminLogin({
+        ...credentials,
+        twoFactorCode: code,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "2FA verification failed");
-        setIsLoading(false);
-        return;
+
+      if (response.success) {
+        login(response.data.token, response.data.admin);
+        navigate("/admin/dashboard");
+      } else {
+        setError(
+          response.message || response.error || "2FA verification failed"
+        );
       }
-      login(data.token, data.admin);
-      navigate("/admin/dashboard");
     } catch (err) {
+      console.error("2FA verification error:", err);
       setError("Network server error. Please try again.");
     } finally {
       setIsLoading(false);

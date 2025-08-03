@@ -29,6 +29,7 @@ import { FaCheck, FaBan } from "react-icons/fa";
 import {
   PiCaretDownDuotone,
   PiTrendUpBold,
+  PiUserDuotone,
   PiUsersThreeDuotone,
 } from "react-icons/pi";
 import { RiSearchLine } from "react-icons/ri";
@@ -751,11 +752,14 @@ const UserManagement = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <img
+                        {/* <img
                           className="w-10 h-10 rounded-full"
                           src={user.avatar}
                           alt={`${user.name} avatar`}
-                        />
+                        /> */}
+                        <div className="bg-gray-500/50 rounded-full p-2">
+                          <PiUserDuotone size={25} />
+                        </div>
                         <div className="font-lexend">
                           <div className="font-semibold tracking-wide text-[0.9rem] text-slate-900">
                             {user.name}

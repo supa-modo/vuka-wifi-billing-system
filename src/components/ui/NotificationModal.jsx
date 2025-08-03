@@ -145,23 +145,21 @@ const NotificationModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-lexend"
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-[5px] flex items-center justify-center z-[100] p-4 "
           onClick={handleBackdropClick}
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             className={`max-w-md w-full bg-white rounded-2xl shadow-2xl border-2 ${config.borderColor} overflow-hidden`}
           >
             {/* Header */}
-            <div
-              className={`${config.bgColor} px-6 py-5 border-b ${config.borderColor}`}
-            >
+            <div className={`${config.bgColor} px-4 pt-5 pb-3 }`}>
               <div className="flex items-start gap-4">
-                {/* Icon */}
+              
                 <div className={`${config.iconBg} p-3 rounded-xl shadow-lg`}>
                   <IconComponent size={24} className="text-white" />
                 </div>
@@ -174,7 +172,7 @@ const NotificationModal = ({
                     {title}
                   </h3>
                   <p
-                    className={`text-sm ${config.messageColor} leading-relaxed`}
+                    className={`text-sm ${config.messageColor} font-lexend leading-relaxed`}
                   >
                     {message}
                   </p>
@@ -190,16 +188,14 @@ const NotificationModal = ({
                   </button>
                 )}
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="px-6 py-5 bg-white">
-              <div className="flex gap-3 justify-end">
+              {/* Actions */}
+              <div className="flex gap-3 mt-6 justify-center">
                 {/* Cancel/Secondary Button */}
                 {(showCancel || type === "confirm" || type === "delete") && (
                   <button
                     onClick={handleCancel}
-                    className="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 hover:border-gray-300 transition-all duration-200"
+                    className="w-full px-5 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 hover:border-gray-300 transition-all duration-200"
                   >
                     {cancelText}
                   </button>
@@ -209,14 +205,21 @@ const NotificationModal = ({
                 {type === "confirm" || type === "delete" || onConfirm ? (
                   <button
                     onClick={handleConfirm}
-                    className={`px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-lg ${config.primaryButton}`}
+                    className={`w-full  px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-lg ${config.primaryButton}`}
                   >
-                    {confirmText}
+                    <div className="flex items-center justify-center gap-2">
+                      {type === "delete" ? (
+                        <TbTrash size={20} />
+                      ) : (
+                        <TbCheck size={20} />
+                      )}
+                      {confirmText}
+                    </div>
                   </button>
                 ) : (
                   <button
                     onClick={onClose}
-                    className={`px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-lg ${config.primaryButton}`}
+                    className={`w-full px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-lg ${config.primaryButton}`}
                   >
                     {type === "error" ? "Try Again" : "OK"}
                   </button>

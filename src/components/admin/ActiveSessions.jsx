@@ -19,7 +19,7 @@ import {
 } from "react-icons/tb";
 import { FaComputer, FaTv } from "react-icons/fa6";
 import Checkbox from "../ui/Checkbox";
-import { PiCaretDownDuotone } from "react-icons/pi";
+import { PiCaretDownDuotone, PiUserDuotone } from "react-icons/pi";
 import { RiSearchLine } from "react-icons/ri";
 import { FiFilter } from "react-icons/fi";
 
@@ -126,7 +126,7 @@ const formatDateTime = (date) => {
 const FilterDropdown = ({
   isOpen,
   onClose,
-  onClear, // Add this new prop
+  onClear,
   selectedPlans,
   onPlanToggle,
   availablePlans,
@@ -141,7 +141,7 @@ const FilterDropdown = ({
             Filter by Plan
           </h3>
           <button
-            onClick={onClear} // Use the new onClear prop
+            onClick={onClear}
             className="text-xs font-lexend font-semibold text-primary-600 hover:text-primary-800 transition-colors"
           >
             Clear all
@@ -211,12 +211,11 @@ const ActiveSessions = () => {
   // Effect to update session duration periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      setSessions((prevSessions) => [...prevSessions]); // Trigger re-render
-    }, 60000); // Update every minute
+      setSessions((prevSessions) => [...prevSessions]);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Get unique plans for filter
   const availablePlans = useMemo(() => {
     const plans = [...new Set(sessions.map((session) => session.plan))];
     return plans;
@@ -230,7 +229,6 @@ const ActiveSessions = () => {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
 
-        // Handle date sorting
         if (
           sortConfig.key === "sessionStart" ||
           sortConfig.key === "sessionEnd"
@@ -239,7 +237,6 @@ const ActiveSessions = () => {
           bValue = new Date(bValue).getTime();
         }
 
-        // Handle data usage sorting
         if (sortConfig.key === "dataUsage") {
           aValue = parseFloat(aValue);
           bValue = parseFloat(bValue);
@@ -317,7 +314,6 @@ const ActiveSessions = () => {
 
   const handleBulkAction = (action) => {
     console.log(`Performing ${action} on sessions:`, selectedSessions);
-    // Implement bulk actions here
     setSelectedSessions([]);
   };
 
@@ -337,7 +333,7 @@ const ActiveSessions = () => {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* Header with Glass Effect */}
+      {/* Header */}
       <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg shadow-blue-500/5">
         <div className="py-2 px-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -363,7 +359,7 @@ const ActiveSessions = () => {
       <div className="backdrop-blur-xl bg-white/70 rounded-[1.5rem] border border-white/30 shadow-xl shadow-blue-500/5 m-6 p-6">
         {/* Toolbar */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          {/* Right Side Section - Bulk Actions or Table Info */}
+          {/* Right Side Section */}
           <div
             className={`flex items-center gap-6 pl-4 pr-[0.3rem] py-[0.35rem] rounded-lg border ${
               selectedSessions.length > 0
@@ -441,7 +437,7 @@ const ActiveSessions = () => {
               <FilterDropdown
                 isOpen={showFilterModal}
                 onClose={() => setShowFilterModal(false)}
-                onClear={() => setSelectedPlans([])} // Add this prop
+                onClear={() => setSelectedPlans([])}
                 selectedPlans={selectedPlans}
                 onPlanToggle={handlePlanToggle}
                 availablePlans={availablePlans}
@@ -580,11 +576,14 @@ const ActiveSessions = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <img
+                        {/* <img
                           className="w-10 h-10 rounded-full"
                           src={session.avatar}
                           alt={`${session.user} avatar`}
-                        />
+                        /> */}
+                        <div className="bg-gray-500/50 rounded-full p-2">
+                          <PiUserDuotone size={25} />
+                        </div>
                         <div className="font-lexend">
                           <div className="font-semibold tracking-wide text-[0.9rem] text-slate-900">
                             {session.phone}

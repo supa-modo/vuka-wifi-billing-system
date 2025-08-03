@@ -6,18 +6,7 @@ import {
   FiCheckCircle,
   FiArrowUp,
   FiArrowDown,
-  FiMoreVertical,
-  FiSettings,
-  FiEye,
-  FiRefreshCw,
   FiAlertCircle,
-  FiMapPin,
-  FiCpu,
-  FiHardDrive,
-  FiThermometer,
-  FiActivity,
-  FiUsers,
-  FiClock,
 } from "react-icons/fi";
 import {
   TbRefresh,
@@ -29,14 +18,12 @@ import {
 import { PiCaretDownDuotone } from "react-icons/pi";
 import { RiSearchLine } from "react-icons/ri";
 import { FiFilter } from "react-icons/fi";
-import Checkbox from "../ui/Checkbox";
 import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
 import RouterCard from "./RouterCard";
 import RouterModal from "./RouterModal";
 import { useNotification } from "../../hooks/useNotification.jsx";
 
-// Enhanced Mock Data
+// Mock Data
 const routersData = [
   {
     id: "RTR-001",
@@ -64,7 +51,7 @@ const routersData = [
   },
   {
     id: "RTR-002",
-    name: "Sector A Repeater",
+    name: "Sector One Repeater",
     model: "MikroTik cAP ac",
     ipAddress: "192.168.1.2",
     macAddress: "4C:5E:0C:12:34:57",
@@ -112,7 +99,7 @@ const routersData = [
   },
   {
     id: "RTR-004",
-    name: "Library Access Point",
+    name: "Outdoor Bridge",
     model: "MikroTik wAP ac",
     ipAddress: "192.168.2.1",
     macAddress: "4C:5E:0C:12:34:59",
@@ -133,54 +120,6 @@ const routersData = [
     notes: "High memory usage detected",
     radiusEnabled: true,
     hotspotEnabled: true,
-  },
-  {
-    id: "RTR-005",
-    name: "Outdoor Bridge",
-    model: "MikroTik SXT LTE6",
-    ipAddress: "192.168.1.5",
-    macAddress: "4C:5E:0C:12:34:60",
-    status: "Online",
-    uptime: "25d 12h 8m",
-    uptimeSeconds: 2214480,
-    clients: 12,
-    firmware: "v7.6",
-    location: "Outdoor Unit",
-    bandwidth: "50 Mbps",
-    cpu: 6,
-    memory: 35,
-    temperature: 35,
-    voltage: 12.2,
-    lastSeen: "2023-10-26T10:00:00Z",
-    totalTraffic: "456 GB",
-    isManaged: true,
-    notes: "Backup internet connection",
-    radiusEnabled: false,
-    hotspotEnabled: false,
-  },
-  {
-    id: "RTR-006",
-    name: "Conference Room AP",
-    model: "MikroTik cAP lite",
-    ipAddress: "192.168.3.1",
-    macAddress: "4C:5E:0C:12:34:61",
-    status: "Online",
-    uptime: "2d 14h 22m",
-    uptimeSeconds: 224520,
-    clients: 8,
-    firmware: "v7.5",
-    location: "Conference Room",
-    bandwidth: "100 Mbps",
-    cpu: 3,
-    memory: 28,
-    temperature: 40,
-    voltage: 24.1,
-    lastSeen: "2023-10-26T10:00:00Z",
-    totalTraffic: "89 GB",
-    isManaged: true,
-    notes: "Dedicated conference room access",
-    radiusEnabled: true,
-    hotspotEnabled: false,
   },
 ];
 
@@ -356,37 +295,6 @@ const RouterManager = () => {
     return sortableItems;
   }, [filteredRouters, sortConfig]);
 
-  const handleSort = (key) => {
-    setSortConfig((prev) => ({
-      key,
-      direction:
-        prev.key === key && prev.direction === "ascending"
-          ? "descending"
-          : "ascending",
-    }));
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return "";
-    return sortConfig.direction === "ascending" ? "↑" : "↓";
-  };
-
-  const handleSelectAll = (checked) => {
-    if (checked) {
-      setSelectedRouters(sortedRouters.map((r) => r.id));
-    } else {
-      setSelectedRouters([]);
-    }
-  };
-
-  const handleSelectRouter = (routerId, checked) => {
-    if (checked) {
-      setSelectedRouters((prev) => [...prev, routerId]);
-    } else {
-      setSelectedRouters((prev) => prev.filter((id) => id !== routerId));
-    }
-  };
-
   const handleFilterToggle = (key, value) => {
     setFilters((prev) => {
       const newValues = prev[key].includes(value)
@@ -394,26 +302,6 @@ const RouterManager = () => {
         : [...prev[key], value];
       return { ...prev, [key]: newValues };
     });
-  };
-
-  const handleBulkAction = (action) => {
-    console.log(`Performing ${action} on routers:`, selectedRouters);
-
-    if (action === "reboot") {
-      // Simulate reboot action
-      setRouters((prev) =>
-        prev.map((router) =>
-          selectedRouters.includes(router.id) && router.status === "Online"
-            ? { ...router, uptime: "Just rebooted", uptimeSeconds: 0 }
-            : router
-        )
-      );
-    } else if (action === "configure") {
-      // Open configuration interface
-      console.log("Opening configuration for selected routers");
-    }
-
-    setSelectedRouters([]);
   };
 
   const handleRouterAction = (action, routerId) => {
@@ -481,31 +369,7 @@ const RouterManager = () => {
     }
   };
 
-  const getStatusChip = (status) => {
-    switch (status) {
-      case "Online":
-        return "bg-emerald-100 text-emerald-700 border border-emerald-200/80";
-      case "Offline":
-        return "bg-red-100 text-red-700 border border-red-200/80";
-      case "Warning":
-        return "bg-amber-100 text-amber-600 border border-amber-200/80";
-      default:
-        return "bg-gray-100 text-gray-700 border border-gray-200/80";
-    }
-  };
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "Online":
-        return <FiCheckCircle className="text-emerald-600" size={16} />;
-      case "Offline":
-        return <FiAlertCircle className="text-red-600" size={16} />;
-      case "Warning":
-        return <FiAlertTriangle className="text-amber-600" size={16} />;
-      default:
-        return <FiAlertCircle className="text-gray-600" size={16} />;
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {

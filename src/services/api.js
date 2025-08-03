@@ -1,4 +1,6 @@
 // API service for VukaWiFi Billing System
+import axios from "axios";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
@@ -158,24 +160,49 @@ const demoPlans = [
   },
 ];
 
-export const apiFetch = async (url, options = {}) => {
-  const token = localStorage.getItem("authToken");
-  const headers = {
-    ...(options.headers || {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-  return fetch(url, { ...options, headers });
-};
+// Create axios instance with default config
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Request interceptor to add auth token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle errors globally
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token is invalid, clear it
+      localStorage.removeItem("authToken");
+    }
+    return Promise.reject(error);
+  }
+);
 
 class ApiService {
   constructor() {
-    this.baseURL = API_BASE_URL;
-    this.token = localStorage.getItem("authToken");
+    this.axios = axiosInstance;
   }
 
-  // Set authentication token
   setAuthToken(token) {
-    this.token = token;
     if (token) {
       localStorage.setItem("authToken", token);
     } else {
@@ -183,40 +210,32 @@ class ApiService {
     }
   }
 
-  // Get authentication headers
-  getAuthHeaders() {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-
-    const currentToken = localStorage.getItem("authToken");
-    if (currentToken) {
-      headers.Authorization = `Bearer ${currentToken}`;
-    }
-
-    return headers;
-  }
-
-  // Generic request method
+  // Generic request method using axios
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
-    const config = {
-      headers: this.getAuthHeaders(),
-      ...options,
-    };
-
     try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+      const response = await this.axios({
+        url: endpoint,
+        ...options,
+      });
 
-      if (!response.ok) {
-        throw new Error(data.message || data.error || "API request failed");
-      }
-
-      return data;
+      return response.data;
     } catch (error) {
       console.error("API Request Error:", error);
-      throw error;
+
+      // Handle axios error format
+      if (error.response) {
+        // Server responded with error status
+        const errorData = error.response.data;
+        throw new Error(
+          errorData.message || errorData.error || "API request failed"
+        );
+      } else if (error.request) {
+        // Request was made but no response received
+        throw new Error("Network error - no response from server");
+      } else {
+        // Something else happened
+        throw new Error(error.message || "Request failed");
+      }
     }
   }
 
@@ -231,14 +250,12 @@ class ApiService {
         return { success: true, data: demoRouterCreds };
       if (endpoint === "/payment-plans")
         return { success: true, data: demoPlans };
-      // Add more demo endpoints as needed
       return { success: true, data: [] };
     }
-    const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
 
-    return this.request(url, {
+    return this.request(endpoint, {
       method: "GET",
+      params: params,
     });
   }
 
@@ -247,7 +264,7 @@ class ApiService {
     if (DEMO_MODE) return { success: true, data: {} };
     return this.request(endpoint, {
       method: "POST",
-      body: JSON.stringify(data),
+      data: data,
     });
   }
 
@@ -256,7 +273,7 @@ class ApiService {
     if (DEMO_MODE) return { success: true, data: {} };
     return this.request(endpoint, {
       method: "PUT",
-      body: JSON.stringify(data),
+      data: data,
     });
   }
 
@@ -273,7 +290,7 @@ class ApiService {
     if (DEMO_MODE) return { success: true, data: {} };
     return this.request(endpoint, {
       method: "PATCH",
-      body: JSON.stringify(data),
+      data: data,
     });
   }
 
@@ -379,7 +396,8 @@ class ApiService {
   // Admin login
   async adminLogin(credentials) {
     const response = await this.post("/auth/login", credentials);
-    if (response.success && response.data.token) {
+    // Handle response format from backend
+    if (response.success && response.data && response.data.token) {
       this.setAuthToken(response.data.token);
     }
     return response;

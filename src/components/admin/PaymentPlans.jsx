@@ -1,13 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FiPlus, FiArrowUp, FiArrowDown, FiFilter } from "react-icons/fi";
+import { FiPlus, FiArrowUp, FiArrowDown, FiFilter, FiCheck } from "react-icons/fi";
 import {
-  TbFilterFilled,
-  TbSearch,
-  TbCurrencyDollar,
   TbCalendarDollar,
   TbBuildingBroadcastTower,
-  TbMoneybag,
   TbCoins,
+  TbCheck,
 } from "react-icons/tb";
 
 import { Button } from "../ui/Button";
@@ -224,20 +221,6 @@ const PaymentPlans = () => {
     return sortableItems;
   }, [filteredPlans, sortConfig]);
 
-  const handleSort = (key) => {
-    setSortConfig((prev) => ({
-      key,
-      direction:
-        prev.key === key && prev.direction === "ascending"
-          ? "descending"
-          : "ascending",
-    }));
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return "";
-    return sortConfig.direction === "ascending" ? "↑" : "↓";
-  };
 
   const handleFilterToggle = (key, value) => {
     setFilters((prev) => {
@@ -408,17 +391,6 @@ const PaymentPlans = () => {
     }`;
   };
 
-  const getStatusChip = (isActive) => {
-    return isActive
-      ? "bg-emerald-100 text-emerald-700 border border-emerald-200/80"
-      : "bg-red-100 text-red-700 border border-red-200/80";
-  };
-
-  const calculatePlanPrice = (plan, deviceCount) => {
-    if (deviceCount <= 1) return plan.basePrice;
-    return Math.round(plan.basePrice * (1 + 0.6 * (deviceCount - 1)));
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -584,7 +556,7 @@ const PaymentPlans = () => {
           <div className="flex justify-center items-center py-12">
             <div className="text-center">
               <div className="animate-spin w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-600 font-medium">Loading plans...</p>
+              <p className="text-gray-600 font-medium">Loading plans. Please wait...</p>
             </div>
           </div>
         ) : (

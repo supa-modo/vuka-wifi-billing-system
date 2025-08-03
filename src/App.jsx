@@ -88,11 +88,24 @@ function App() {
               <Route path="routers" element={<RouterManager />} />
 
               {/* SMS Logs */}
-              <Route path="sms-logs" element={<SMSLogs />} />
+              {/* <Route path="sms-logs" element={<SMSLogs />} /> */}
 
               {/* Settings */}
-              <Route path="settings" element={<AdminSettings />} />
+              {/* <Route path="settings" element={<AdminSettings />} /> */}
+              <Route path="settings" element={<AdminDashboard />} />
 
+              {/* Analytics (Coming Soon) */}
+              <Route
+                path="sms-logs"
+                element={
+                  <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
+                    <h2 className="text-2xl font-bold mb-4">
+                      SMS Logs Coming Soon
+                    </h2>
+                    <p className="text-lg">SMS Logs will appear here.</p>
+                  </div>
+                }
+              />
               {/* Analytics (Coming Soon) */}
               <Route
                 path="analytics"

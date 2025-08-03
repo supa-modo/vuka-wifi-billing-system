@@ -1,42 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiPlus,
-  FiTrash2,
   FiX,
-  FiCheck,
-  FiWifi,
-  FiClock,
-  FiUsers,
-  FiDollarSign,
   FiEdit3,
 } from "react-icons/fi";
 import {
-  TbCheck,
-  TbX,
-  TbHexagonPlus2,
-  TbInfoCircle,
-  TbShieldCheck,
-  TbCoins,
-  TbDevices,
+    TbCoins,
   TbBrandSpeedtest,
-  TbCalendarTime,
   TbCalendarDollar,
   TbClockEdit,
   TbTrash,
-  TbPlus,
-  TbSparkles,
 } from "react-icons/tb";
-import {
-  PiCaretDownDuotone,
-  PiChecksBold,
-  PiSparkleDuotone,
-  PiUsersThreeDuotone,
-} from "react-icons/pi";
+import { PiChecksBold } from "react-icons/pi";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
-import Checkbox from "../ui/Checkbox";
 import ToggleSwitch from "../ui/ToggleSwitch";
 import { MdOutlineLibraryAdd } from "react-icons/md";
 import { RiSparkling2Line } from "react-icons/ri";
