@@ -222,18 +222,14 @@ class ApiService {
     } catch (error) {
       console.error("API Request Error:", error);
 
-      // Handle axios error format
       if (error.response) {
-        // Server responded with error status
         const errorData = error.response.data;
         throw new Error(
           errorData.message || errorData.error || "API request failed"
         );
       } else if (error.request) {
-        // Request was made but no response received
         throw new Error("Network error - no response from server");
       } else {
-        // Something else happened
         throw new Error(error.message || "Request failed");
       }
     }

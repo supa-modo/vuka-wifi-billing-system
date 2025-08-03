@@ -73,7 +73,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
 
               {/* Payments Management */}
-              <Route path="payments" element={<PaymentsManager />} />
+              {/* <Route path="payments" element={<PaymentsManager />} /> */}
 
               {/* Payment Plans */}
               <Route path="plans" element={<PaymentPlans />} />
@@ -94,7 +94,7 @@ function App() {
               {/* <Route path="settings" element={<AdminSettings />} /> */}
               <Route path="settings" element={<AdminDashboard />} />
 
-              {/* Analytics (Coming Soon) */}
+              {/* Sms (Coming Soon) */}
               <Route
                 path="sms-logs"
                 element={
@@ -103,6 +103,18 @@ function App() {
                       SMS Logs Coming Soon
                     </h2>
                     <p className="text-lg">SMS Logs will appear here.</p>
+                  </div>
+                }
+              />
+              {/* Payments (Coming Soon) */}
+              <Route
+                path="payments"
+                element={
+                  <div className="glass p-8 rounded-2xl shadow-glow text-center text-primary-700">
+                    <h2 className="text-2xl font-bold mb-4">
+                      Payments Coming Soon
+                    </h2>
+                    <p className="text-lg">Payments will appear here.</p>
                   </div>
                 }
               />
