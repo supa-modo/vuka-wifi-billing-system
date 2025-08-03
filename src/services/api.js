@@ -4,6 +4,14 @@ import axios from "axios";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
+// Debug logging
+console.log("API Base URL:", API_BASE_URL);
+console.log("Environment variables:", {
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  NODE_ENV: import.meta.env.NODE_ENV,
+  MODE: import.meta.env.MODE,
+});
+
 const DEMO_MODE = false;
 
 const demoPayments = [
@@ -213,14 +221,25 @@ class ApiService {
   // Generic request method using axios
   async request(endpoint, options = {}) {
     try {
+      console.log("Making request to:", `${API_BASE_URL}${endpoint}`);
+      console.log("Request options:", options);
+
       const response = await this.axios({
         url: endpoint,
         ...options,
       });
 
+      console.log("Response received:", response.status, response.statusText);
       return response.data;
     } catch (error) {
       console.error("API Request Error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        response: error.response,
+        request: error.request,
+        config: error.config,
+      });
 
       if (error.response) {
         const errorData = error.response.data;
@@ -228,6 +247,7 @@ class ApiService {
           errorData.message || errorData.error || "API request failed"
         );
       } else if (error.request) {
+        console.error("No response received. Request details:", error.request);
         throw new Error("Network error - no response from server");
       } else {
         throw new Error(error.message || "Request failed");
