@@ -14,6 +14,7 @@ import {
 import { FcWiFiLogo } from "react-icons/fc";
 import { LuLogIn } from "react-icons/lu";
 import { PiPasswordDuotone } from "react-icons/pi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 import apiService from "../../services/api";
 
@@ -26,6 +27,7 @@ export const AdminLogin = () => {
   const [error, setError] = useState("");
   const [loginStep, setLoginStep] = useState("credentials");
   const [twoFactorCode, setTwoFactorCode] = useState(["", "", "", "", "", ""]);
+  const [showPassword, setShowPassword] = useState(false);
   const inputRefs = useRef([]);
 
   const navigate = useNavigate();
@@ -38,6 +40,10 @@ export const AdminLogin = () => {
       [field]: value,
     }));
     if (error) setError("");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleCredentialsSubmit = async (e) => {
@@ -184,7 +190,7 @@ export const AdminLogin = () => {
                 <Input
                   label="Email Address"
                   type="email"
-                  placeholder="admin@vukawifi.com"
+                  placeholder="admin@vukawifi.online"
                   value={credentials.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   disabled={isLoading}
@@ -193,7 +199,7 @@ export const AdminLogin = () => {
                 />
                 <Input
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={credentials.password}
                   onChange={(e) =>
@@ -202,6 +208,22 @@ export const AdminLogin = () => {
                   disabled={isLoading}
                   className="text-base focus:outline-none"
                   icon={<PiPasswordDuotone size={20} />}
+                  rightIcon={
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="text-primary-500 hover:text-primary-600 focus:outline-none"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash size={20} />
+                      ) : (
+                        <FaEye size={20} />
+                      )}
+                    </button>
+                  }
                 />
               </div>
               <Button

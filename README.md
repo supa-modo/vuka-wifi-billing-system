@@ -70,7 +70,7 @@ The application starts with a demo selector that allows you to choose between:
 ### Admin Dashboard
 
 - **Login Credentials:**
-  - Email: `admin@vukawifi.com`
+  - Email: `admin@vukawifi.online`
   - Password: `admin123`
 - Explore dashboard analytics and statistics
 - Manage payments with search and filtering

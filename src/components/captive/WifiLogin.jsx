@@ -13,7 +13,12 @@ import {
 } from "react-icons/tb";
 import { PiPasswordDuotone, PiUserDuotone } from "react-icons/pi";
 import { RiAdminLine } from "react-icons/ri";
-import { FaChevronRight, FaCreditCard } from "react-icons/fa";
+import {
+  FaChevronRight,
+  FaCreditCard,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 
 export const WifiLogin = () => {
   const [credentials, setCredentials] = useState({
@@ -22,12 +27,17 @@ export const WifiLogin = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleInputChange = (field, value) => {
     setCredentials((prev) => ({ ...prev, [field]: value }));
     if (error) setError("");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -114,13 +124,29 @@ export const WifiLogin = () => {
               />
               <Input
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={credentials.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 disabled={isLoading}
                 className="text-base focus:outline-none"
                 icon={<PiPasswordDuotone size={20} />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="text-primary-500 hover:text-primary-600 focus:outline-none"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash size={20} />
+                    ) : (
+                      <FaEye size={20} />
+                    )}
+                  </button>
+                }
               />
             </div>
             <Button
@@ -179,11 +205,11 @@ export const WifiLogin = () => {
               </a>
               <div className="w-px h-4 bg-primary-400/30"></div>
               <a
-                href="mailto:support@vukawifi.com"
+                href="mailto:support@vukawifi.online"
                 className="flex items-center space-x-2 hover:text-secondary-500 transition-colors group"
               >
                 <TbMailFilled className="w-4 h-4 " />
-                <span className="hover:underline">support@vukawifi.com</span>
+                <span className="hover:underline">support@vukawifi.online</span>
               </a>
             </div>
           </div>

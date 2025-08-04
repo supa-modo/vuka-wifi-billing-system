@@ -3,6 +3,7 @@ export const Input = ({
   error,
   helperText,
   icon,
+  rightIcon,
   className = "",
   type = "text",
   ...props
@@ -26,9 +27,16 @@ export const Input = ({
         )}
         <input
           type={type}
-          className={`${inputClasses} ${icon ? "pl-11" : ""}`}
+          className={`${inputClasses} ${icon ? "pl-11" : ""} ${
+            rightIcon ? "pr-11" : ""
+          }`}
           {...props}
         />
+        {rightIcon && (
+          <div className="absolute inset-y-0 right-0 pr-6 flex items-center">
+            {rightIcon}
+          </div>
+        )}
       </div>
       {error && <p className="mt-1 text-sm text-danger-500">{error}</p>}
       {helperText && !error && (

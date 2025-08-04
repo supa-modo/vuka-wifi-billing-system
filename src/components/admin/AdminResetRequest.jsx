@@ -71,7 +71,7 @@ const AdminResetRequest = () => {
               <Input
                 label="Admin Email"
                 type="email"
-                placeholder="admin@vukawifi.com"
+                placeholder="admin@vukawifi.online"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}

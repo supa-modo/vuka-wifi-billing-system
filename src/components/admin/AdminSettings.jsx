@@ -75,7 +75,7 @@ const TABS = [
 
 const initialProfile = {
   name: "Admin User",
-  email: "admin@vukawifi.com",
+  email: "admin@vukawifi.online",
   phone: "+254 700 000000",
 };
 const initialSecurity = {
