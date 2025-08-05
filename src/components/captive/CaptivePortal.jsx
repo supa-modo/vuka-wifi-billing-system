@@ -179,11 +179,68 @@ export const CaptivePortal = () => {
     setIsLoading(true);
     setPaymentStep("processing");
 
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      // Calculate total amount
+      const deviceCount = deviceCounts[selectedPlan.id] || 1;
+      const totalAmount = getPlanPriceSync(selectedPlan, deviceCount);
+
+      // Initiate payment
+      const paymentData = {
+        phoneNumber: phoneNumber,
+        planId: selectedPlan.id,
+        deviceCount: deviceCount,
+        amount: totalAmount,
+      };
+
+      const response = await apiService.initiatePayment(paymentData);
+
+      if (response.success) {
+        // In real implementation, this would wait for M-Pesa callback
+        // For demo, simulate successful payment after 3 seconds
+        setTimeout(async () => {
+          try {
+            // Simulate payment success callback
+            const successData = {
+              phoneNumber: phoneNumber,
+              planId: selectedPlan.id,
+              deviceCount: deviceCount,
+              amount: totalAmount,
+              mpesaReceiptNumber: `MOCK${Date.now()}`,
+              mpesaTransactionId: `TXN${Date.now()}`,
+            };
+
+            const sessionResponse = await apiService.handlePaymentSuccess(
+              successData
+            );
+
+            if (sessionResponse.success) {
+              setIsLoading(false);
+              setPaymentStep("success");
+              // Store credentials for display
+              window.sessionCredentials = sessionResponse.credentials;
+            } else {
+              throw new Error(
+                sessionResponse.error || "Failed to create session"
+              );
+            }
+          } catch (error) {
+            console.error("Error handling payment success:", error);
+            setError(
+              "Payment successful but session creation failed. Please contact support."
+            );
+            setIsLoading(false);
+            setPaymentStep("plans");
+          }
+        }, 3000);
+      } else {
+        throw new Error(response.error || "Payment initiation failed");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      setError(error.message || "Payment failed. Please try again.");
       setIsLoading(false);
-      setPaymentStep("success");
-    }, 3000);
+      setPaymentStep("payment");
+    }
   };
 
   const formatPhoneNumber = (value) => {
@@ -633,29 +690,34 @@ export const CaptivePortal = () => {
                     <div className="flex justify-between">
                       <span className="text-success-700">Username:</span>
                       <span className="font-mono text-success-900">
-                        {/* User's phone number */}
-                        {phoneNumber}
+                        {window.sessionCredentials?.username || phoneNumber}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-success-700">Password:</span>
                       <span className="font-mono text-success-900">
-                        temp_xyz789
+                        {window.sessionCredentials?.password || "temp_xyz789"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-success-700">Valid Until:</span>
                       <span className="font-mono text-success-900">
-                        {new Date(
-                          Date.now() +
-                            (selectedPlan?.name === "1 Hour"
-                              ? 3600000
-                              : selectedPlan?.name === "1 Day"
-                              ? 86400000
-                              : selectedPlan?.name === "1 Week"
-                              ? 604800000
-                              : 2592000000)
-                        ).toLocaleString()}
+                        {window.sessionCredentials?.validUntil
+                          ? new Date(
+                              window.sessionCredentials.validUntil
+                            ).toLocaleString()
+                          : new Date(
+                              Date.now() +
+                                (selectedPlan?.durationHours === 2
+                                  ? 2 * 3600000
+                                  : selectedPlan?.durationHours === 3
+                                  ? 3 * 3600000
+                                  : selectedPlan?.durationHours === 24
+                                  ? 24 * 3600000
+                                  : selectedPlan?.durationHours === 168
+                                  ? 168 * 3600000
+                                  : 2 * 3600000)
+                            ).toLocaleString()}
                       </span>
                     </div>
                   </div>

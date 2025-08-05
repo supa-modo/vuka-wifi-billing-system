@@ -6,8 +6,9 @@ import {
   FaBan,
   FaCheck,
   FaSearch,
+  FaCog,
 } from "react-icons/fa";
-import { FaFilter } from "react-icons/fa6";
+import { FaEllipsisVertical, FaFilter } from "react-icons/fa6";
 import {
   TbCheck,
   TbChevronDown,
@@ -16,12 +17,19 @@ import {
   TbRefresh,
   TbSearch,
   TbX,
+  TbSettings,
+  TbDotsVertical,
+  TbAlertTriangle,
+  TbLoader2,
 } from "react-icons/tb";
 import { FaComputer, FaTv } from "react-icons/fa6";
 import Checkbox from "../ui/Checkbox";
 import { PiCaretDownDuotone, PiUserDuotone } from "react-icons/pi";
 import { RiSearchLine } from "react-icons/ri";
 import { FiFilter } from "react-icons/fi";
+import SessionActions from "./SessionActions";
+import NotificationModal from "../ui/NotificationModal";
+import apiService from "../../services/api";
 
 // Mock Data
 const initialSessions = [
@@ -195,7 +203,7 @@ const FilterDropdown = ({
 };
 
 const ActiveSessions = () => {
-  const [sessions, setSessions] = useState(initialSessions);
+  const [sessions, setSessions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSessions, setSelectedSessions] = useState([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -206,12 +214,77 @@ const ActiveSessions = () => {
     direction: "descending",
   });
 
+  // CoA Modal state
+  const [showSessionActions, setShowSessionActions] = useState(false);
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Notification modal states
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationConfig, setNotificationConfig] = useState({
+    type: "info",
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
   const itemsPerPage = 10;
 
-  // Effect to update session duration periodically
+  // Fetch active sessions from API
+  const fetchActiveSessions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiService.getActiveSessions();
+      if (response.success) {
+        // Transform API data to match component structure
+        const transformedSessions = response.sessions.map((session) => ({
+          id: session.acctsessionid || session.session_id,
+          user: session.username,
+          phone: session.phoneNumber,
+          ipAddress: session.framedipaddress || "N/A",
+          macAddress: session.callingstationid || "N/A",
+          deviceType: "Unknown", // Could be enhanced based on MAC or user agent
+          dataUsage: Math.round(
+            (session.acctinputoctets + session.acctoutputoctets) / (1024 * 1024)
+          ), // Convert to MB
+          bandwidth: session.bandwidth_limit || 2,
+          sessionStart: new Date(session.acctstarttime || session.sessionStart),
+          sessionEnd: new Date(session.expires_at || session.expiresAt),
+          plan: session.plan_name,
+          username: session.username, // Keep original username for CoA operations
+          nasipaddress: session.nasipaddress,
+          acctsessionid: session.acctsessionid,
+        }));
+        setSessions(transformedSessions);
+      } else {
+        // Fallback to mock data if API fails
+        setSessions(initialSessions);
+        setError("Failed to load sessions from server. Showing demo data.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch sessions:", error);
+      setSessions(initialSessions);
+      setError("Connection error. Showing demo data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect to fetch sessions on component mount
+  useEffect(() => {
+    fetchActiveSessions();
+  }, []);
+
+  // Effect to update session duration periodically and refresh data
   useEffect(() => {
     const interval = setInterval(() => {
       setSessions((prevSessions) => [...prevSessions]);
+      // Refresh data every 5 minutes
+      if (Date.now() % 300000 < 60000) {
+        fetchActiveSessions();
+      }
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -220,6 +293,73 @@ const ActiveSessions = () => {
     const plans = [...new Set(sessions.map((session) => session.plan))];
     return plans;
   }, [sessions]);
+
+  // CoA Action Handlers
+  const handleQuickDisconnect = async (session) => {
+    // Show confirmation modal instead of browser confirm
+    setNotificationConfig({
+      type: "confirm",
+      title: "Disconnect User",
+      message: `Are you sure you want to disconnect ${
+        session.user || session.username
+      }? This will immediately terminate their session.`,
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          const response = await apiService.disconnectUser(
+            session.username || session.user
+          );
+          if (response.success) {
+            setNotificationConfig({
+              type: "success",
+              title: "Disconnect Successful",
+              message: `Successfully disconnected ${
+                response.disconnectedSessions || 1
+              } session(s)`,
+              onConfirm: () => {
+                fetchActiveSessions(); // Refresh the list
+              },
+            });
+          } else {
+            setNotificationConfig({
+              type: "error",
+              title: "Disconnect Failed",
+              message: `Failed to disconnect: ${
+                response.error || "Unknown error"
+              }`,
+              onConfirm: null,
+            });
+          }
+        } catch (error) {
+          console.error("Quick disconnect error:", error);
+          setNotificationConfig({
+            type: "error",
+            title: "Disconnect Failed",
+            message: "Failed to disconnect user. Please try again.",
+            onConfirm: null,
+          });
+        } finally {
+          setLoading(false);
+        }
+        setShowNotification(true);
+      },
+    });
+    setShowNotification(true);
+  };
+
+  const handleSessionActions = (session) => {
+    setSelectedSession(session);
+    setShowSessionActions(true);
+  };
+
+  const handleSessionActionsClose = () => {
+    setShowSessionActions(false);
+    setSelectedSession(null);
+  };
+
+  const handleSessionUpdate = () => {
+    fetchActiveSessions(); // Refresh the sessions list
+  };
 
   const sortedSessions = useMemo(() => {
     let sortableItems = [...sessions];
@@ -346,9 +486,16 @@ const ActiveSessions = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <button className="px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg text-slate-700 font-medium shadow-lg shadow-blue-500/5 hover:shadow-xl transition-all duration-200 flex items-center gap-2">
-                <TbRefresh size={18} className="animate-spin-slow" />
-                <span>Refresh</span>
+              <button
+                onClick={fetchActiveSessions}
+                disabled={loading}
+                className="px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg text-slate-700 font-medium shadow-lg shadow-blue-500/5 hover:shadow-xl transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
+              >
+                <TbRefresh
+                  size={18}
+                  className={loading ? "animate-spin" : ""}
+                />
+                <span>{loading ? "Refreshing..." : "Refresh"}</span>
               </button>
             </div>
           </div>
@@ -640,18 +787,23 @@ const ActiveSessions = () => {
                       </div>
                     </td>
                     <td className="pr-6 py-4 text-right">
-                      {/* disconnect button */}
-                      <button className="px-3 py-1 mr-2 text-xs border border-red-300 font-medium tracking-tight font-lexend text-red-700 bg-red-200/80 rounded-full hover:bg-red-300 hover:text-red-800 transition-colors">
+                      {/* quick disconnect button */}
+                      <button
+                        onClick={() => handleQuickDisconnect(session)}
+                        className="px-3 py-1 mr-2 text-xs border border-red-300 font-medium tracking-tight font-lexend text-red-700 bg-red-200/80 rounded-full hover:bg-red-300 hover:text-red-800 transition-colors"
+                      >
                         <div className="flex items-center">
                           <FaPowerOff size={12} className="mr-1.5" />
                           Disconnect
                         </div>
                       </button>
-                      {/* block button */}
-                      <button className="px-3 py-1 text-xs border border-amber-400 font-medium tracking-tight font-lexend text-amber-700 bg-amber-200/80 rounded-full hover:bg-amber-300 hover:text-amber-800 transition-colors">
+                      {/* session actions button */}
+                      <button
+                        onClick={() => handleSessionActions(session)}
+                        className="p-2 text-xs border border-secondary-400 font-medium tracking-tight font-lexend text-secondary-700 bg-secondary-200/80 rounded-full hover:bg-secondary-300 hover:text-secondary-800 transition-colors"
+                      >
                         <div className="flex items-center">
-                          <FaBan size={12} className="mr-1.5" />
-                          Block
+                          <FaEllipsisVertical size={14} className="" />
                         </div>
                       </button>
                     </td>
@@ -709,7 +861,69 @@ const ActiveSessions = () => {
             </button>
           </div>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="flex items-center gap-2 mt-4 pl-6 p-4 bg-amber-100/60 border border-amber-300 rounded-lg">
+            <TbAlertTriangle size={18} className="text-amber-700" />
+            <p className="text-amber-700 text-sm font-medium">{error}</p>
+          </div>
+        )}
+
+        {/* Loading Overlay */}
+        {!loading && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-[10px] rounded-2xl flex items-center justify-center z-10">
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              {/* Animated spinner container */}
+              <div className="relative">
+                {/* Outer ring */}
+                <div className="w-10 h-10 border-4 border-gray-200 rounded-full"></div>
+                {/* Spinning ring */}
+                <div className="absolute top-0 left-0 w-10 h-10 border-4 border-transparent border-t-secondary-500 border-r-secondary-500 rounded-full animate-spin"></div>
+                {/* Inner dot */}
+                <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-secondary-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+              </div>
+
+              {/* Loading text */}
+              <div className="text-center space-y-1">
+                <p className="text-gray-500 font- font-semibold text-[0.95rem]">
+                  Loading active sessions...
+                </p>
+                <p className="text-gray-400 text-xs">Please wait a moment</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* SessionActions Modal */}
+      {showSessionActions && selectedSession && (
+        <SessionActions
+          session={selectedSession}
+          onUpdate={handleSessionUpdate}
+          onClose={handleSessionActionsClose}
+        />
+      )}
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={showNotification}
+        onClose={() => setShowNotification(false)}
+        type={notificationConfig.type}
+        title={notificationConfig.title}
+        message={notificationConfig.message}
+        onConfirm={notificationConfig.onConfirm}
+        confirmText={
+          notificationConfig.type === "confirm" ? "Disconnect" : "OK"
+        }
+        cancelText="Cancel"
+        showCancel={notificationConfig.type === "confirm"}
+        autoClose={
+          notificationConfig.type === "success" ||
+          notificationConfig.type === "info"
+        }
+        autoCloseDelay={3000}
+      />
     </div>
   );
 };

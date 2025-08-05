@@ -443,12 +443,257 @@ class ApiService {
   }
 
   // ================================
+  // RADIUS INTEGRATION API
+  // ================================
+
+  // RADIUS authentication
+  async radiusAuthenticate(credentials) {
+    return this.post("/radius/authenticate", credentials);
+  }
+
+  // Get active RADIUS sessions
+  async getActiveSessions(filters = {}) {
+    return this.get("/radius/sessions/active", filters);
+  }
+
+  // Disconnect user session
+  async disconnectUser(username, reason = "Admin-Request") {
+    return this.post("/radius/disconnect", { username, reason });
+  }
+
+  // Get session accounting data
+  async getSessionAccounting(username) {
+    return this.get(`/radius/accounting/${username}`);
+  }
+
+  // Test RADIUS connectivity
+  async testRadiusConnectivity() {
+    return this.get("/radius/test");
+  }
+
+  // ================================
+  // CHANGE OF AUTHORIZATION (CoA) API
+  // ================================
+
+  // Generic CoA request
+  async sendCoA(username, sessionId, action, params = {}) {
+    return this.post("/radius/coa", {
+      username,
+      sessionId,
+      action,
+      params,
+    });
+  }
+
+  // Disconnect user (updated to use new endpoint)
+  async disconnectUser(username, reason = "Admin-Request") {
+    return this.post(`/radius/disconnect/${username}`, { reason });
+  }
+
+  // Update user bandwidth
+  async updateUserBandwidth(username, bandwidth) {
+    return this.post(`/radius/bandwidth/${username}`, { bandwidth });
+  }
+
+  // Extend user session
+  async extendUserSession(username, timeoutSeconds) {
+    return this.post(`/radius/extend/${username}`, { timeoutSeconds });
+  }
+
+  // Quick bandwidth presets
+  async setUserBandwidthPreset(username, preset) {
+    const presets = {
+      basic: "512k/1M",
+      standard: "1M/2M",
+      premium: "2M/5M",
+      unlimited: "10M/20M",
+    };
+
+    const bandwidth = presets[preset] || preset;
+    return this.updateUserBandwidth(username, bandwidth);
+  }
+
+  // Bulk CoA operations
+  async bulkDisconnectUsers(usernames, reason = "Admin-Request") {
+    const results = await Promise.all(
+      usernames.map((username) => this.disconnectUser(username, reason))
+    );
+    return {
+      success: results.some((r) => r.success),
+      results,
+      successCount: results.filter((r) => r.success).length,
+      totalCount: results.length,
+    };
+  }
+
+  // ================================
+  // USER SESSION MANAGEMENT API
+  // ================================
+
+  // Get user session by phone number
+  async getUserSessionByPhone(phoneNumber) {
+    return this.get(`/sessions/user/${phoneNumber}`);
+  }
+
+  // Get all sessions (admin)
+  async getAllSessions(filters = {}) {
+    return this.get("/sessions/all", filters);
+  }
+
+  // Terminate session
+  async terminateSession(sessionId, reason = "Admin-Request") {
+    return this.post(`/sessions/${sessionId}/terminate`, { reason });
+  }
+
+  // Bulk terminate sessions
+  async bulkTerminateSessions(sessionIds, reason = "Admin-Request") {
+    return this.post("/sessions/bulk-terminate", { sessionIds, reason });
+  }
+
+  // Get session statistics
+  async getSessionStatistics() {
+    return this.get("/sessions/statistics");
+  }
+
+  // ================================
+  // PAYMENT INTEGRATION API
+  // ================================
+
+  // Handle payment success (creates user session)
+  async handlePaymentSuccess(paymentData) {
+    return this.post("/payments/success", paymentData);
+  }
+
+  // Handle payment failure
+  async handlePaymentFailure(paymentData) {
+    return this.post("/payments/failure", paymentData);
+  }
+
+  // Get payment history for admin
+  async getAdminPaymentHistory(filters = {}) {
+    return this.get("/admin/payments", filters);
+  }
+
+  // ================================
+  // USER MANAGEMENT API
+  // ================================
+
+  // Get all users (admin)
+  async getUsers(filters = {}) {
+    return this.get("/users", filters);
+  }
+
+  // Get single user
+  async getUser(userId) {
+    return this.get(`/users/${userId}`);
+  }
+
+  // Create user (admin)
+  async createUser(userData) {
+    return this.post("/users", userData);
+  }
+
+  // Update user (admin)
+  async updateUser(userId, userData) {
+    return this.put(`/users/${userId}`, userData);
+  }
+
+  // Delete user (admin)
+  async deleteUser(userId) {
+    return this.delete(`/users/${userId}`);
+  }
+
+  // Toggle user status
+  async toggleUserStatus(userId) {
+    return this.patch(`/users/${userId}/toggle-status`);
+  }
+
+  // Get user sessions
+  async getUserSessions(userId) {
+    return this.get(`/users/${userId}/sessions`);
+  }
+
+  // ================================
+  // ANALYTICS AND DASHBOARD API
+  // ================================
+
+  // Get dashboard statistics
+  async getDashboardStats() {
+    return this.get("/admin/dashboard/stats");
+  }
+
+  // Get revenue analytics
+  async getRevenueAnalytics(period = "week") {
+    return this.get("/admin/dashboard/revenue", { period });
+  }
+
+  // Get user analytics
+  async getUserAnalytics(period = "week") {
+    return this.get("/admin/dashboard/users", { period });
+  }
+
+  // Get plan analytics
+  async getPlanAnalytics(period = "week") {
+    return this.get("/admin/dashboard/plans", { period });
+  }
+
+  // ================================
+  // SYSTEM MANAGEMENT API
+  // ================================
+
+  // Get system settings
+  async getSystemSettings() {
+    return this.get("/admin/settings");
+  }
+
+  // Update system settings
+  async updateSystemSettings(settings) {
+    return this.put("/admin/settings", settings);
+  }
+
+  // Get SMS logs
+  async getSMSLogs(filters = {}) {
+    if (DEMO_MODE) return { success: true, data: demoSMSLogs };
+    return this.get("/admin/sms", filters);
+  }
+
+  // Send test SMS
+  async sendTestSMS(phoneNumber, message) {
+    return this.post("/admin/sms/test", { phoneNumber, message });
+  }
+
+  // Get router status
+  async getRouterStatus() {
+    return this.get("/admin/router/status");
+  }
+
+  // Update router configuration
+  async updateRouterConfig(config) {
+    return this.put("/admin/router/config", config);
+  }
+
+  // ================================
   // HEALTH CHECK
   // ================================
 
   // Check API health
   async checkHealth() {
     return this.get("/health");
+  }
+
+  // Check database connectivity
+  async checkDatabase() {
+    return this.get("/health/database");
+  }
+
+  // Check RADIUS connectivity
+  async checkRadiusHealth() {
+    return this.get("/health/radius");
+  }
+
+  // Get system status
+  async getSystemStatus() {
+    return this.get("/health/system");
   }
 }
 

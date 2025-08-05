@@ -1,14 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiX,
-  FiCheck,
-  FiAlertTriangle,
-  FiInfo,
-  FiAlertCircle,
-  FiTrash2,
-  FiSave,
-} from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 import {
   TbCheck,
   TbX,
@@ -18,6 +10,7 @@ import {
   TbExclamationMark,
 } from "react-icons/tb";
 import { Button } from "./Button";
+import { FaExclamation } from "react-icons/fa";
 
 const NotificationModal = ({
   isOpen,
@@ -81,9 +74,9 @@ const NotificationModal = ({
         };
       case "confirm":
         return {
-          icon: CustomIcon || TbExclamationMark,
+          icon: CustomIcon || FaExclamation,
           iconBg: "bg-gradient-to-br from-blue-500 to-blue-600",
-          borderColor: "border-blue-200",
+          borderColor: "border-blue-300",
           bgColor: "bg-blue-50",
           titleColor: "text-blue-900",
           messageColor: "text-blue-700",
@@ -159,7 +152,6 @@ const NotificationModal = ({
             {/* Header */}
             <div className={`${config.bgColor} px-4 pt-5 pb-3 }`}>
               <div className="flex items-start gap-4">
-              
                 <div className={`${config.iconBg} p-3 rounded-xl shadow-lg`}>
                   <IconComponent size={24} className="text-white" />
                 </div>

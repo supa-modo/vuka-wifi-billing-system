@@ -48,18 +48,74 @@ export const WifiLogin = () => {
     }
     setIsLoading(true);
     setError("");
-    // Simulate login
-    setTimeout(() => {
-      // Demo: Accept any phone/password for now
-      if (credentials.phone.length >= 10 && credentials.password.length >= 4) {
-        // In real system, redirect to success page or dashboard
-        setError("");
-        alert("Logged in! (Demo only)");
-      } else {
-        setError("Invalid phone number or password");
+
+    try {
+      // Format phone number for username lookup
+      const formattedPhone = credentials.phone.startsWith("254")
+        ? credentials.phone
+        : credentials.phone.startsWith("0")
+        ? "254" + credentials.phone.slice(1)
+        : "254" + credentials.phone;
+
+      // First, get user session by phone number
+      const sessionResponse = await apiService.getUserSessionByPhone(
+        formattedPhone
+      );
+
+      if (!sessionResponse.success || !sessionResponse.session) {
+        setError(
+          "No active session found for this phone number. Please purchase a plan first."
+        );
+        setIsLoading(false);
+        return;
       }
+
+      // Use the RADIUS username from the session
+      const radiusUsername = sessionResponse.session.radius_username;
+
+      // Authenticate with RADIUS
+      const authResponse = await apiService.radiusAuthenticate({
+        username: radiusUsername,
+        password: credentials.password,
+      });
+
+      if (authResponse.success && authResponse.code === "Access-Accept") {
+        // Authentication successful
+        setError("");
+
+        // Store session info
+        localStorage.setItem(
+          "wifiSession",
+          JSON.stringify({
+            username: radiusUsername,
+            phoneNumber: formattedPhone,
+            planName: sessionResponse.session.Plan?.name,
+            expiresAt: sessionResponse.session.expires_at,
+            loginTime: new Date().toISOString(),
+          })
+        );
+
+        // Show success message
+        alert(
+          `Login successful! Welcome to VukaWiFi.\n\nPlan: ${
+            sessionResponse.session.Plan?.name
+          }\nExpires: ${new Date(
+            sessionResponse.session.expires_at
+          ).toLocaleString()}`
+        );
+
+        // In a real system, this would redirect to a success page or close the login window
+        // For now, redirect to captive portal
+        navigate("/portal");
+      } else {
+        setError(authResponse.message || "Invalid username or password");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Login failed. Please check your credentials and try again.");
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
 
   return (
