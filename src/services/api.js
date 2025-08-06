@@ -527,6 +527,35 @@ class ApiService {
   }
 
   // ================================
+  // PAYMENTS API
+  // ================================
+
+  // Get all payments
+  async getPayments(limit = 100, offset = 0) {
+    return this.get("/payments", { limit, offset });
+  }
+
+  // Get payment by ID
+  async getPayment(paymentId) {
+    return this.get(`/payments/${paymentId}`);
+  }
+
+  // Get payments by phone number
+  async getPaymentsByPhone(phoneNumber) {
+    return this.get(`/payments/phone/${phoneNumber}`);
+  }
+
+  // Initiate payment
+  async initiatePayment(paymentData) {
+    return this.post("/payments/initiate", paymentData);
+  }
+
+  // Check payment status
+  async checkPaymentStatus(paymentId) {
+    return this.get(`/payments/${paymentId}/status`);
+  }
+
+  // ================================
   // USER SESSION MANAGEMENT API
   // ================================
 

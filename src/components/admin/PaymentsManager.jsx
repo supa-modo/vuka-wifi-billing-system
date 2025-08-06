@@ -22,10 +22,17 @@ import {
   TbCreditCard,
   TbDeviceMobile,
   TbReceipt,
+  TbChevronDown,
+  TbAlertTriangle,
+  TbLoader2,
 } from "react-icons/tb";
 import { FaPaypal } from "react-icons/fa";
+import { RiSearchLine } from "react-icons/ri";
+import { FiFilter } from "react-icons/fi";
 import Checkbox from "../ui/Checkbox";
 import MpesaIcon from "../ui/MpesaIcon";
+import NotificationModal from "../ui/NotificationModal";
+import apiService from "../../services/api";
 
 // Enhanced Mock Data with more realistic transactions
 const paymentsData = [
@@ -479,7 +486,7 @@ const PaymentDetailsModal = ({ isOpen, onClose, payment }) => {
 };
 
 const PaymentsManager = () => {
-  const [payments, setPayments] = useState(paymentsData);
+  const [payments, setPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -491,8 +498,83 @@ const PaymentsManager = () => {
     key: "date",
     direction: "descending",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Notification modal states
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationConfig, setNotificationConfig] = useState({
+    type: "info",
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
   const itemsPerPage = 10;
+
+  // Fetch payments from API
+  const fetchPayments = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiService.getPayments();
+      if (response.success && response.payments) {
+        // Transform API data to match component structure
+        const transformedPayments = response.payments.map((payment) => ({
+          id: payment.id,
+          user: payment.user?.username || "Unknown User",
+          email: payment.user?.email || "N/A",
+          phone: payment.phoneNumber,
+          plan: payment.plan?.name || "Unknown Plan",
+          planDuration: payment.plan?.durationHours
+            ? `${payment.plan.durationHours} hours`
+            : "N/A",
+          amount: parseFloat(payment.amount),
+          deviceCount: payment.deviceCount,
+          status:
+            payment.status.charAt(0).toUpperCase() + payment.status.slice(1),
+          date: payment.createdAt,
+          completedAt: payment.completedAt,
+          gateway:
+            payment.paymentMethod === "mpesa"
+              ? "M-Pesa"
+              : payment.paymentMethod,
+          mpesaCode: payment.mpesaReceiptNumber,
+          transactionFee: 0, // Calculate if needed
+          netAmount: parseFloat(payment.amount),
+          reference: payment.id,
+          failureReason: payment.failureReason,
+          refundReason: payment.refundReason,
+          refundedAt: payment.refundedAt,
+        }));
+        setPayments(transformedPayments);
+      } else {
+        // Fallback to mock data if API fails
+        setPayments(paymentsData);
+        setError("Failed to load payments from server. Showing demo data.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch payments:", error);
+      setPayments(paymentsData);
+      setError("Connection error. Showing demo data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect to fetch payments on component mount
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  // Effect to refresh payments periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPayments();
+    }, 300000); // Refresh every 5 minutes
+    return () => clearInterval(interval);
+  }, []);
+
   const availableOptions = useMemo(
     () => ({
       status: [...new Set(payments.map((p) => p.status))],
@@ -706,7 +788,7 @@ const PaymentsManager = () => {
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Header */}
-      <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg shadow-blue-500/5">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg shadow-blue-500/5">
         <div className="py-2 px-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-1.5">
@@ -714,17 +796,24 @@ const PaymentsManager = () => {
                 Payments Manager
               </h1>
               <p className="text-slate-500 font-lexend text-sm">
-                Track and manage all payment transactions and revenue.
+                Track and manage all payment transactions and revenue
               </p>
             </div>
             <div className="flex items-center gap-4">
+              <button
+                onClick={fetchPayments}
+                disabled={loading}
+                className="px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg text-slate-700 font-medium shadow-lg shadow-blue-500/5 hover:shadow-xl transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
+              >
+                <TbRefresh
+                  size={18}
+                  className={loading ? "animate-spin" : ""}
+                />
+                <span>{loading ? "Refreshing..." : "Refresh"}</span>
+              </button>
               <button className="px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg text-slate-700 font-medium shadow-lg shadow-blue-500/5 hover:shadow-xl transition-all duration-200 flex items-center gap-2">
                 <TbFileExport size={18} />
                 <span>Export</span>
-              </button>
-              <button className="px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-primary-400/50 transition-shadow flex items-center gap-2">
-                <TbRefresh size={18} />
-                <span>Refresh</span>
               </button>
             </div>
           </div>
@@ -771,6 +860,7 @@ const PaymentsManager = () => {
       <div className="backdrop-blur-xl bg-white/70 rounded-[1.5rem] border border-white/30 shadow-xl shadow-blue-500/5 m-6 p-6">
         {/* Toolbar */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          {/* Left Side Section */}
           <div
             className={`flex items-center gap-6 pl-4 pr-[0.3rem] py-[0.35rem] rounded-lg border ${
               selectedPayments.length > 0
@@ -779,9 +869,10 @@ const PaymentsManager = () => {
             } flex-shrink-0`}
           >
             {selectedPayments.length > 0 ? (
-              <div className="flex items-center gap-6">
+              /* Bulk Actions */
+              <div className="flex items-center gap-6 bg-primary-50/50 border-primary-200/50">
                 <div className="flex items-center gap-2.5">
-                  <TbCheck className="text-primary-600 w-4 h-4" />
+                  <TbCheck className="text-primary-600 w-3" />
                   <div className="text-[0.9rem] font-medium text-primary-700 whitespace-nowrap">
                     <span className="font-lexend">
                       {selectedPayments.length}{" "}
@@ -793,14 +884,14 @@ const PaymentsManager = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleBulkAction("complete")}
-                    className="px-4 py-1.5 text-xs font-lexend font-medium text-emerald-700 bg-emerald-200 border border-emerald-400 rounded-lg hover:bg-emerald-300 hover:text-emerald-800 transition-colors flex items-center gap-1 whitespace-nowrap"
+                    className="px-4 py-1.5 text-xs font-lexend font-medium text-emerald-700 bg-emerald-200 border border-emerald-300 rounded-lg hover:bg-emerald-300 hover:text-emerald-800 transition-colors flex items-center gap-1 whitespace-nowrap"
                   >
                     <FiCheckCircle size={12} className="mr-1" />
                     Complete Pending
                   </button>
                   <button
                     onClick={() => handleBulkAction("refund")}
-                    className="px-4 py-1.5 text-xs font-lexend font-medium text-blue-700 bg-blue-200 border border-blue-400 rounded-lg hover:bg-blue-300 hover:text-blue-800 transition-colors flex items-center gap-1 whitespace-nowrap"
+                    className="px-4 py-1.5 text-xs font-lexend font-medium text-blue-700 bg-blue-200 border border-blue-300 rounded-lg hover:bg-blue-300 hover:text-blue-800 transition-colors flex items-center gap-1 whitespace-nowrap"
                   >
                     <FiRefreshCw size={12} className="mr-1" />
                     Refund
@@ -808,45 +899,41 @@ const PaymentsManager = () => {
                 </div>
               </div>
             ) : (
+              /* Table Info */
               <div className="flex items-center gap-3 text-slate-600 min-w-[30rem]">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-lexend font-semibold text-secondary-600 whitespace-nowrap">
-                    {filteredPayments.length} Payments
+                    Payment Transactions
                   </span>
                 </div>
                 <div className="h-6 border-l border-slate-300/70"></div>
                 <p className="text-sm text-slate-500 font-lexend">
-                  Browse and manage all transactions
+                  {filteredPayments.length} transactions processed
                 </p>
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="relative">
-              <TbSearch
-                className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-400 z-10"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search payments..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-11 pr-4 py-2.5 w-64 bg-white/80 border border-slate-200/90 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
-              />
-            </div>
-            <div className="relative filter-dropdown-container">
+          {/* Search and Filter Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1 md:max-w-[50%] min-w-0">
+            {/* Filter Button */}
+            <div className="relative filter-dropdown-container flex-shrink-0">
               <button
                 onClick={() => setShowFilterModal(!showFilterModal)}
-                className="p-3 bg-white/80 border border-slate-200/90 rounded-lg text-slate-600 hover:bg-slate-100/70 transition-colors shadow-sm"
+                className="pl-3 pr-2 py-[0.6rem] bg-white/90 border-2 border-gray-200 rounded-lg text-gray-600 font-lexend text-sm md:text-[0.9rem] font-semibold shadow-inner hover:shadow-md transition-all duration-200 flex items-center whitespace-nowrap"
               >
-                {filters.status.length > 0 || filters.gateway.length > 0 ? (
-                  <TbFilterFilled className="text-primary-600" size={20} />
-                ) : (
-                  <TbFilterFilled size={20} />
+                <FiFilter size={20} className="mr-2 text-gray-600" />
+                {(filters.status.length > 0 || filters.gateway.length > 0) && (
+                  <span className="bg-primary-600 text-white text-xs px-2 mr-2 py-0.5 rounded-full">
+                    {filters.status.length + filters.gateway.length}
+                  </span>
                 )}
+                <TbChevronDown
+                  size={16}
+                  className="ml-2 text-gray-600 pointer-events-none"
+                />
               </button>
+
               <FilterDropdown
                 isOpen={showFilterModal}
                 onClose={() => setShowFilterModal(false)}
@@ -856,115 +943,178 @@ const PaymentsManager = () => {
                 availableOptions={availableOptions}
               />
             </div>
+
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-0">
+              <RiSearchLine className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by user, transaction ID, phone number....."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-[0.6rem] w-full border-2 border-gray-200 rounded-[0.6rem] text-[0.95rem] font-medium focus:border-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+              />
+            </div>
           </div>
         </div>
 
         {/* Payments Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-slate-500">
-            <thead className="text-xs text-slate-700 uppercase bg-slate-100/80">
+        <div className="overflow-x-auto relative">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="text-xs text-secondary-600 uppercase bg-slate-200/50">
               <tr>
-                <th scope="col" className="p-4">
+                <th
+                  scope="col"
+                  className="pl-6 py-3 text-secondary-600 rounded-l-xl"
+                >
                   <Checkbox
-                    id="select-all"
-                    onChange={handleSelectAll}
                     checked={
                       selectedPayments.length === paginatedPayments.length &&
                       paginatedPayments.length > 0
                     }
+                    onChange={handleSelectAll}
+                    id="select-all"
                   />
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 cursor-pointer"
+                  className="px-6 py-3 text-secondary-600 cursor-pointer hover:text-primary-600 transition-colors"
                   onClick={() => requestSort("id")}
                 >
-                  Transaction ID {getSortIcon("id")}
+                  <div className="flex items-center gap-1">
+                    Transaction ID
+                    {getSortIcon("id") && (
+                      <span className="text-primary-600">
+                        {getSortIcon("id")}
+                      </span>
+                    )}
+                  </div>
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 cursor-pointer"
+                  className="px-6 py-3 text-secondary-600 cursor-pointer hover:text-primary-600 transition-colors"
                   onClick={() => requestSort("user")}
                 >
-                  Customer {getSortIcon("user")}
+                  <div className="flex items-center gap-1">
+                    Customer
+                    {getSortIcon("user") && (
+                      <span className="text-primary-600">
+                        {getSortIcon("user")}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3 text-secondary-600">
+                  Plan Details
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 cursor-pointer"
-                  onClick={() => requestSort("plan")}
-                >
-                  Plan {getSortIcon("plan")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 cursor-pointer"
+                  className="px-6 py-3 text-secondary-600 cursor-pointer hover:text-primary-600 transition-colors"
                   onClick={() => requestSort("amount")}
                 >
-                  Amount {getSortIcon("amount")}
+                  <div className="flex items-center gap-1">
+                    Amount
+                    {getSortIcon("amount") && (
+                      <span className="text-primary-600">
+                        {getSortIcon("amount")}
+                      </span>
+                    )}
+                  </div>
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 text-secondary-600">
                   Gateway
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 cursor-pointer"
+                  className="px-6 py-3 text-secondary-600 cursor-pointer hover:text-primary-600 transition-colors"
                   onClick={() => requestSort("status")}
                 >
-                  Status {getSortIcon("status")}
+                  <div className="flex items-center gap-1">
+                    Status
+                    {getSortIcon("status") && (
+                      <span className="text-primary-600">
+                        {getSortIcon("status")}
+                      </span>
+                    )}
+                  </div>
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 cursor-pointer"
+                  className="px-6 py-3 text-secondary-600 cursor-pointer hover:text-primary-600 transition-colors"
                   onClick={() => requestSort("date")}
                 >
-                  Date {getSortIcon("date")}
+                  <div className="flex items-center gap-1">
+                    Date
+                    {getSortIcon("date") && (
+                      <span className="text-primary-600">
+                        {getSortIcon("date")}
+                      </span>
+                    )}
+                  </div>
                 </th>
-                <th scope="col" className="px-6 py-3 text-right">
+                <th
+                  scope="col"
+                  className="pr-6 py-3 text-center text-secondary-600 rounded-r-xl"
+                >
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white divide-y divide-slate-100">
               {paginatedPayments.map((payment) => (
                 <tr
                   key={payment.id}
-                  className={`bg-white border-b border-slate-200/80 hover:bg-slate-50/70 ${
+                  className={`hover:bg-slate-50 ${
                     selectedPayments.includes(payment.id)
                       ? "bg-primary-50/50"
                       : ""
                   }`}
                 >
-                  <td className="w-4 p-4">
+                  <td className="pl-6 py-4">
                     <Checkbox
-                      id={`select-${payment.id}`}
+                      checked={selectedPayments.includes(payment.id)}
                       onChange={(checked) =>
                         handleSelectPayment(payment.id, checked)
                       }
-                      checked={selectedPayments.includes(payment.id)}
+                      id={`payment-${payment.id}`}
                     />
                   </td>
-                  <td className="px-6 py-4 font-mono text-xs font-medium text-slate-800 whitespace-nowrap">
-                    {payment.id}
-                  </td>
                   <td className="px-6 py-4">
-                    <div className="font-semibold text-slate-900">
-                      {payment.user}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {payment.phone}
+                    <div className="font-mono text-xs font-medium text-slate-800 whitespace-nowrap">
+                      {payment.id}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-700">
-                      {payment.plan}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {payment.deviceCount} device
-                      {payment.deviceCount > 1 ? "s" : ""}
+                    <div className="font-lexend">
+                      <div className="font-semibold tracking-wide text-[0.9rem] text-slate-900">
+                        {payment.phone}
+                      </div>
+                      <div className="text-xs tracking-tight font-medium leading-relaxed text-gray-500/80">
+                        {payment.user}
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-semibold text-slate-800">
-                    Kshs. {payment.amount.toFixed(2)}
+                  <td className="px-6 py-4">
+                    <div className="font-lexend">
+                      <div className="font-medium text-slate-700">
+                        {payment.plan}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {payment.deviceCount} device
+                        {payment.deviceCount > 1 ? "s" : ""} •{" "}
+                        {payment.planDuration}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 font-semibold font-lexend text-primary-600">
+                    <div>
+                      <div>Kshs. {payment.amount.toFixed(2)}</div>
+                      {payment.mpesaCode && (
+                        <div className="text-xs text-gray-500/80 font-mono">
+                          {payment.mpesaCode}
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -983,10 +1133,21 @@ const PaymentsManager = () => {
                       {payment.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
-                    {new Date(payment.date).toLocaleDateString()}
+                  <td className="px-6 py-4 font-lexend">
+                    <div className="space-y-1">
+                      <div className="text-sm font-semibold tracking-tight text-gray-600">
+                        {new Date(payment.date).toLocaleDateString()}
+                      </div>
+                      <div className="text-xs font-medium text-slate-500/80 leading-2.5">
+                        {new Date(payment.date).toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="pr-6 py-4 text-right">
                     <div className="flex items-center gap-1 justify-end">
                       <button
                         onClick={() => handlePaymentAction("view", payment.id)}
@@ -1033,11 +1194,99 @@ const PaymentsManager = () => {
 
         {/* Pagination */}
         <div className="flex items-center justify-between pt-4">
-          <span className="text-sm text-slate-600">
+          <span className="text-[0.83rem] font-lexend tracking-tight text-gray-500">
             Showing {paginatedPayments.length} of {filteredPayments.length}{" "}
             payments
           </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-primary-50 hover:border-primary-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from(
+                {
+                  length: Math.min(
+                    5,
+                    Math.ceil(filteredPayments.length / itemsPerPage)
+                  ),
+                },
+                (_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`px-3 py-1.5 font-lexend text-sm font-medium rounded-lg transition-colors ${
+                        currentPage === pageNum
+                          ? "bg-primary-600 text-white"
+                          : "text-slate-600 bg-white border border-slate-200 hover:bg-primary-50 hover:border-primary-600/30"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                }
+              )}
+            </div>
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(
+                    prev + 1,
+                    Math.ceil(filteredPayments.length / itemsPerPage)
+                  )
+                )
+              }
+              disabled={
+                currentPage ===
+                Math.ceil(filteredPayments.length / itemsPerPage)
+              }
+              className="px-3 py-1.5 font-lexend text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-primary-50 hover:border-primary-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="flex items-center gap-2 mt-4 pl-6 p-4 bg-amber-100/60 border border-amber-300 rounded-lg">
+            <TbAlertTriangle size={18} className="text-amber-700" />
+            <p className="text-amber-700 text-sm font-medium">{error}</p>
+          </div>
+        )}
+
+        {/* Loading Overlay */}
+        {loading && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-[10px] rounded-2xl flex items-center justify-center z-10">
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              {/* Animated spinner container */}
+              <div className="relative">
+                {/* Outer ring */}
+                <div className="w-10 h-10 border-4 border-gray-200 rounded-full"></div>
+                {/* Spinning ring */}
+                <div className="absolute top-0 left-0 w-10 h-10 border-4 border-transparent border-t-secondary-500 border-r-secondary-500 rounded-full animate-spin"></div>
+                {/* Inner dot */}
+                <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-secondary-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+              </div>
+
+              {/* Loading text */}
+              <div className="text-center space-y-1">
+                <p className="text-gray-500 font-semibold text-[0.95rem]">
+                  Loading payments...
+                </p>
+                <p className="text-gray-400 text-xs">Please wait a moment</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Payment Details Modal */}
@@ -1045,6 +1294,24 @@ const PaymentsManager = () => {
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         payment={selectedPayment}
+      />
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={showNotification}
+        onClose={() => setShowNotification(false)}
+        type={notificationConfig.type}
+        title={notificationConfig.title}
+        message={notificationConfig.message}
+        onConfirm={notificationConfig.onConfirm}
+        confirmText={notificationConfig.type === "confirm" ? "Confirm" : "OK"}
+        cancelText="Cancel"
+        showCancel={notificationConfig.type === "confirm"}
+        autoClose={
+          notificationConfig.type === "success" ||
+          notificationConfig.type === "info"
+        }
+        autoCloseDelay={3000}
       />
     </div>
   );

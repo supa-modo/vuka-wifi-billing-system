@@ -173,6 +173,10 @@ export const CaptivePortal = () => {
     }
   };
 
+  // State for payment monitoring
+  const [paymentId, setPaymentId] = useState(null);
+  const [credentials, setCredentials] = useState(null);
+
   const handlePayment = async () => {
     if (!phoneNumber || !selectedPlan) return;
 
@@ -184,56 +188,27 @@ export const CaptivePortal = () => {
       const deviceCount = deviceCounts[selectedPlan.id] || 1;
       const totalAmount = getPlanPriceSync(selectedPlan, deviceCount);
 
+      // Format phone number properly
+      const formattedPhone = formatPhoneNumber(phoneNumber);
+
       // Initiate payment
       const paymentData = {
-        phoneNumber: phoneNumber,
+        phoneNumber: formattedPhone,
         planId: selectedPlan.id,
         deviceCount: deviceCount,
         amount: totalAmount,
       };
 
+      console.log("Initiating payment:", paymentData);
       const response = await apiService.initiatePayment(paymentData);
 
       if (response.success) {
-        // In real implementation, this would wait for M-Pesa callback
-        // For demo, simulate successful payment after 3 seconds
-        setTimeout(async () => {
-          try {
-            // Simulate payment success callback
-            const successData = {
-              phoneNumber: phoneNumber,
-              planId: selectedPlan.id,
-              deviceCount: deviceCount,
-              amount: totalAmount,
-              mpesaReceiptNumber: `MOCK${Date.now()}`,
-              mpesaTransactionId: `TXN${Date.now()}`,
-            };
+        setPaymentId(response.payment.id);
 
-            const sessionResponse = await apiService.handlePaymentSuccess(
-              successData
-            );
-
-            if (sessionResponse.success) {
-              setIsLoading(false);
-              setPaymentStep("success");
-              // Store credentials for display
-              window.sessionCredentials = sessionResponse.credentials;
-            } else {
-              throw new Error(
-                sessionResponse.error || "Failed to create session"
-              );
-            }
-          } catch (error) {
-            console.error("Error handling payment success:", error);
-            setError(
-              "Payment successful but session creation failed. Please contact support."
-            );
-            setIsLoading(false);
-            setPaymentStep("plans");
-          }
-        }, 3000);
+        // Start monitoring payment status
+        monitorPaymentStatus(response.payment.id);
       } else {
-        throw new Error(response.error || "Payment initiation failed");
+        throw new Error(response.message || "Payment initiation failed");
       }
     } catch (error) {
       console.error("Payment error:", error);
@@ -241,6 +216,67 @@ export const CaptivePortal = () => {
       setIsLoading(false);
       setPaymentStep("payment");
     }
+  };
+
+  // Monitor payment status with polling
+  const monitorPaymentStatus = (id) => {
+    let attempts = 0;
+    const maxAttempts = 60; // Check for 10 minutes (10s intervals)
+
+    const checkStatus = async () => {
+      try {
+        const response = await apiService.checkPaymentStatus(id);
+
+        if (response.success && response.payment) {
+          const payment = response.payment;
+
+          if (payment.status === "completed") {
+            // Payment successful
+            if (payment.userCredentials) {
+              setCredentials(payment.userCredentials);
+              setPaymentStep("success");
+              setIsLoading(false);
+              return;
+            } else {
+              // Payment completed but no credentials yet, keep checking
+              attempts++;
+              if (attempts < maxAttempts) {
+                setTimeout(checkStatus, 10000);
+              } else {
+                throw new Error(
+                  "Session creation timed out. Please contact support."
+                );
+              }
+            }
+          } else if (
+            payment.status === "failed" ||
+            payment.status === "cancelled"
+          ) {
+            throw new Error("Payment was not successful. Please try again.");
+          } else {
+            // Payment still pending, continue checking
+            attempts++;
+            if (attempts < maxAttempts) {
+              setTimeout(checkStatus, 10000); // Check every 10 seconds
+            } else {
+              throw new Error(
+                "Payment confirmation timed out. Please contact support if payment was deducted."
+              );
+            }
+          }
+        } else {
+          throw new Error("Failed to check payment status");
+        }
+      } catch (err) {
+        console.error("Payment status check error:", err);
+        setError(err.message || "Failed to confirm payment status");
+        setIsLoading(false);
+        setPaymentStep("payment");
+      }
+    };
+
+    // Start checking after 5 seconds (gives time for M-Pesa processing)
+    setTimeout(checkStatus, 5000);
   };
 
   const formatPhoneNumber = (value) => {
@@ -690,22 +726,20 @@ export const CaptivePortal = () => {
                     <div className="flex justify-between">
                       <span className="text-success-700">Username:</span>
                       <span className="font-mono text-success-900">
-                        {window.sessionCredentials?.username || phoneNumber}
+                        {credentials?.username || phoneNumber}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-success-700">Password:</span>
                       <span className="font-mono text-success-900">
-                        {window.sessionCredentials?.password || "temp_xyz789"}
+                        {credentials?.password || "temp_xyz789"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-success-700">Valid Until:</span>
                       <span className="font-mono text-success-900">
-                        {window.sessionCredentials?.validUntil
-                          ? new Date(
-                              window.sessionCredentials.validUntil
-                            ).toLocaleString()
+                        {credentials?.expiresAt
+                          ? new Date(credentials.expiresAt).toLocaleString()
                           : new Date(
                               Date.now() +
                                 (selectedPlan?.durationHours === 2

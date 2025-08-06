@@ -871,7 +871,7 @@ const ActiveSessions = () => {
         )}
 
         {/* Loading Overlay */}
-        {!loading && (
+        {loading && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-[10px] rounded-2xl flex items-center justify-center z-10">
             <div className="flex flex-col items-center justify-center space-y-4 p-8">
               {/* Animated spinner container */}
